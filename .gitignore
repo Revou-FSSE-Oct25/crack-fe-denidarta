@@ -1,62 +1,44 @@
-### Example user template template
-### Example user template
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# IntelliJ project files
-.idea
-*.iml
-out
-gen
-### Windows template
-# Windows thumbnail cache files
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# Dump file
-*.stackdump
+# testing
+/coverage
 
-# Folder config file
-[Dd]esktop.ini
+# next.js
+/.next/
+/out/
 
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
+# production
+/build
 
-# Windows Installer files
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-
-# Windows shortcuts
-*.lnk
-
-### macOS template
-# General
+# misc
 .DS_Store
-.AppleDouble
-.LSOverride
+*.pem
 
-# Icon must end with two \r
-Icon
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Thumbnails
-._*
+# env files (can opt-in for committing if needed)
+.env*
 
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
+# vercel
+.vercel
 
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 
+*storybook.log
+storybook-static
