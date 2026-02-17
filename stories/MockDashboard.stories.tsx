@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/nextjs-vite';
-import MockDashboard from '../src/components/MockDashboard';
+import MockDashboard from '@/src/components/MockDashboard';
 
 const meta = {
 	title: 'Pages/Mock Dashboard (Carbon)',

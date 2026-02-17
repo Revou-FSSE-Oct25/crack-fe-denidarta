@@ -19,6 +19,7 @@ import {
 	Tile,
 } from '@carbon/react';
 import {Add, Download, Filter} from '@carbon/icons-react';
+import React from 'react';
 
 const kpis = [
 	{label: 'Active users', value: '1,284', delta: '+4.1%'},
