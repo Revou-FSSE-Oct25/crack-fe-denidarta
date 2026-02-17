@@ -43,7 +43,7 @@ const rowData = [
 	{id: 'A-1012', title: 'New workspace request', status: 'Done', owner: 'J. Kim', updated: '3d ago'},
 ];
 
-function statusTagType (status: string): React.ComponentProps<typeof Tag>['type'] {
+function statusTagType (status: string) {
 	switch (status) {
 		case 'Done':
 			return 'green';
@@ -155,22 +155,22 @@ export default function MockDashboard () {
 									<TableContainer title="" description="" {...getTableContainerProps ()}>
 										<Table {...getTableProps ()}>
 											<TableHead>
-												<TableRow>
-													{headers.map ((header) => (
-														<TableHeader key={header.key} {...getHeaderProps ({header})}>
-															{header.header}
-														</TableHeader>
-													))}
-													<TableHeader/>
-												</TableRow>
+													<TableRow>
+														{headers.map ((header) => (
+															<TableHeader {...getHeaderProps ({header})}>
+																{header.header}
+															</TableHeader>
+														))}
+														<TableHeader/>
+													</TableRow>
 											</TableHead>
-											<TableBody>
-												{rows.map ((row) => (
-													<TableRow key={row.id} {...getRowProps ({row})}>
-														{row.cells.map ((cell) => {
-															if (cell.info.header === 'status') {
-																return (
-																	<TableCell key={cell.id}>
+												<TableBody>
+													{rows.map ((row) => (
+														<TableRow {...getRowProps ({row})}>
+															{row.cells.map ((cell) => {
+																if (cell.info.header === 'status') {
+																	return (
+																		<TableCell key={cell.id}>
 																		<Tag type={statusTagType (String (cell.value))}
 																		     size="sm">
 																			{String (cell.value)}

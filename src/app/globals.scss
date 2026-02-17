@@ -1,3 +1,11 @@
+// Configure Carbon's IBM Plex font asset path for modern bundlers (Turbopack).
+// Carbon defaults to `~@ibm/plex` (webpack tilde convention) which Turbopack
+// does not resolve.
+@use '@carbon/styles/scss/config' with (
+  // Prefer the IBM CDN to avoid bundler-specific `url(~@ibm/plex/...)` handling.
+  $use-akamai-cdn: true
+);
+
 @use '@carbon/styles';
 
 @tailwind base;
