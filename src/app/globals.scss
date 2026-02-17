@@ -1,5 +1,8 @@
 @use '@carbon/styles';
-@import "../../node_modules/tailwindcss/dist/lib.d.mts";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
