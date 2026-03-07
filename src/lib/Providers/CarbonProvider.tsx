@@ -8,5 +8,5 @@ export default function CarbonProvider({
                                        }: {
 	children: React.ReactNode;
 }) {
-	return <Theme theme="g10">{children}</Theme>;
+	return <Theme theme="g100">{children}</Theme>;
 }
