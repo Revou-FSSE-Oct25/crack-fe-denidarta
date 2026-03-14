@@ -6,7 +6,7 @@ import {
 } from '@carbon/react';
 import { Add, Download, Filter } from '@carbon/icons-react';
 import React from 'react';
-import { kpis, headerData, rowData, statusTagType } from './data';
+import { kpis, headerData, rowData, statusTagType } from './MockData';
 import styles from './page.module.scss';
 
 export default function DashboardPage() {
@@ -64,7 +64,7 @@ export default function DashboardPage() {
             <div className={styles.tableWrapper}>
               <DataTable rows={rowData} headers={headerData} isSortable>
                 {({ rows, headers, getTableProps, getHeaderProps, getRowProps, getTableContainerProps }) => (
-                  <TableContainer title="" description="" {...getTableContainerProps()}>
+                  <TableContainer title="adc" description="asdffasdf" {...getTableContainerProps()}>
                     <Table {...getTableProps()}>
                       <TableHead>
                         <TableRow>

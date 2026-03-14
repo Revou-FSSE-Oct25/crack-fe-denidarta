@@ -12,37 +12,22 @@ import {
 } from '@carbon/react';
 import { ArrowRight, UserAvatar } from '@carbon/icons-react';
 import styles from './page.module.scss';
+import {useForm} from 'react-hook-form';
 
 // In a real app this would come from session/auth context.
 // Using mock student data for demonstration.
-const REGISTERED_EMAIL = 'alice@student.lms.dev';
 
 export default function LoginPage() {
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [passwordMismatch, setPasswordMismatch] = useState(false);
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setPasswordMismatch(false);
-
-    if (!password) {
-      setError('Password is required.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setPasswordMismatch(true);
-      setError('Passwords do not match. Please try again.');
-      return;
-    }
-
-    // TODO: wire to login API
-    console.log('Signing in as', REGISTERED_EMAIL);
-  }
-
+  const [email, setEmail] = useState('');
+  const { register, handleSubmit, watch, formState: { errors }} = useForm();
+  
+  const onSubmit = () => {
+    console.log("Signing in as", );
+  };
+  
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -69,15 +54,14 @@ export default function LoginPage() {
             />
           )}
 
-          <Form onSubmit={handleSubmit} noValidate>
+          <Form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Stack gap={6}>
               <TextInput
                 id="email"
                 type="email"
                 labelText="Email address"
-                value={REGISTERED_EMAIL}
-                readOnly
-                helperText="This is your registered account email."
+                placeholder={"Registered email address"}
+                value={email}
               />
 
               <PasswordInput
@@ -88,16 +72,6 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 invalid={passwordMismatch}
                 invalidText=" "
-              />
-
-              <PasswordInput
-                id="confirm-password"
-                labelText="Confirm password"
-                placeholder="Re-enter your password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                invalid={passwordMismatch}
-                invalidText="Passwords do not match."
               />
 
               <Button

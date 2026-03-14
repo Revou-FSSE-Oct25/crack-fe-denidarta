@@ -57,15 +57,12 @@
   margin-bottom: 1.25rem;
 }
 
-// Make the read-only email field visually distinct
-:global {
-  #email[readonly] {
+  #email {
     background-color: var(--cds-layer-accent);
     color: var(--cds-text-secondary);
     cursor: default;
     border-bottom-color: var(--cds-border-subtle);
   }
-}
 
 .submitButton {
   width: 100%;
