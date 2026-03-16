@@ -2293,6 +2293,7 @@
       "x": 1540,
       "y": 0,
       "name": "Sign Up Page",
+      "context": "This link will direct user to sign in page.",
       "width": 1440,
       "height": 900,
       "fill": "#161616",
@@ -2404,6 +2405,7 @@
                       "content": "Email address",
                       "fontFamily": "Inter",
                       "fontSize": 11,
+                      "fontWeight": "normal",
                       "letterSpacing": 0.32
                     },
                     {
@@ -2477,6 +2479,7 @@
                       "content": "Password",
                       "fontFamily": "Inter",
                       "fontSize": 11,
+                      "fontWeight": "normal",
                       "letterSpacing": 0.32
                     },
                     {
@@ -2536,6 +2539,7 @@
                       "content": "Confirm password",
                       "fontFamily": "Inter",
                       "fontSize": 11,
+                      "fontWeight": "normal",
                       "letterSpacing": 0.32
                     },
                     {
@@ -2600,7 +2604,8 @@
                       "fill": "#ffffff",
                       "content": "Create account",
                       "fontFamily": "Inter",
-                      "fontSize": 14
+                      "fontSize": 14,
+                      "fontWeight": "normal"
                     },
                     {
                       "type": "icon_font",
@@ -4402,7 +4407,8 @@
                               "fill": "#ffffff",
                               "content": "Save & continue",
                               "fontFamily": "Inter",
-                              "fontSize": 14
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             },
                             {
                               "type": "icon_font",
@@ -4440,7 +4446,83 @@
         {
           "id": "KLB5Z",
           "type": "ref",
-          "ref": "DgTJs"
+          "ref": "DgTJs",
+          "x": 0,
+          "y": 0,
+          "descendants": {
+            "tMtly": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 32
+            },
+            "HsWhP": {
+              "width": "fit_content",
+              "height": "fill_container"
+            },
+            "wvBX3": {
+              "y": 16
+            },
+            "5O99G": {
+              "x": 24,
+              "y": 16
+            },
+            "l7EUl": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 126
+            },
+            "GZOjx": {
+              "width": "fit_content",
+              "height": "fill_container"
+            },
+            "21wdW": {
+              "x": 16,
+              "y": 16
+            },
+            "grJJ0": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 100
+            },
+            "talvB": {
+              "x": 16,
+              "y": 16
+            },
+            "alImJ": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 184
+            },
+            "OOAFU": {
+              "x": 16,
+              "y": 16
+            },
+            "JZqcB": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 296
+            },
+            "JLcB8": {
+              "x": 16,
+              "y": 16
+            },
+            "3jDdy": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 1288
+            },
+            "dA8EQ": {
+              "y": 15
+            },
+            "4jhQM": {
+              "x": 34,
+              "y": 10
+            },
+            "dluBm": {
+              "x": 78,
+              "y": 16.5
+            }
+          }
         },
         {
           "type": "frame",
@@ -6069,21 +6151,85 @@
           "type": "ref",
           "ref": "DgTJs",
           "name": "adminNav",
+          "x": 0,
+          "y": 0,
           "descendants": {
+            "tMtly": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 32
+            },
+            "HsWhP": {
+              "width": "fit_content",
+              "height": "fill_container"
+            },
+            "wvBX3": {
+              "y": 16
+            },
+            "5O99G": {
+              "x": 24,
+              "y": 16
+            },
+            "l7EUl": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 126
+            },
+            "GZOjx": {
+              "width": "fit_content",
+              "height": "fill_container"
+            },
             "21wdW": {
-              "content": "Students"
+              "content": "Students",
+              "x": 16,
+              "y": 16
+            },
+            "grJJ0": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 87
             },
             "talvB": {
-              "content": "Courses"
+              "content": "Courses",
+              "x": 16,
+              "y": 16
+            },
+            "alImJ": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 171
             },
             "OOAFU": {
-              "content": "Reports"
+              "content": "Reports",
+              "x": 16,
+              "y": 16
+            },
+            "JZqcB": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 251
             },
             "JLcB8": {
-              "content": "Settings"
+              "content": "Settings",
+              "x": 16,
+              "y": 16
+            },
+            "3jDdy": {
+              "width": "fit_content",
+              "height": "fill_container",
+              "x": 1293
+            },
+            "dA8EQ": {
+              "y": 15
+            },
+            "4jhQM": {
+              "x": 34,
+              "y": 10
             },
             "dluBm": {
-              "content": "Admin"
+              "content": "Admin",
+              "x": 78,
+              "y": 16.5
             }
           }
         },
@@ -6895,7 +7041,8 @@
                                   "fill": "#f4f4f4",
                                   "content": "Alice Johnson",
                                   "fontFamily": "IBM Plex Sans",
-                                  "fontSize": 14
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
                                 },
                                 {
                                   "type": "text",
@@ -6956,7 +7103,8 @@
                                       "fill": "#198038",
                                       "content": "Active",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 12
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -7001,7 +7149,8 @@
                                       "fill": "#78a9ff",
                                       "content": "Web Dev",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 },
@@ -7024,7 +7173,8 @@
                                       "fill": "#78a9ff",
                                       "content": "UX Design",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -7187,7 +7337,8 @@
                                   "fill": "#f4f4f4",
                                   "content": "Marcus Chen",
                                   "fontFamily": "IBM Plex Sans",
-                                  "fontSize": 14
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
                                 },
                                 {
                                   "type": "text",
@@ -7248,7 +7399,8 @@
                                       "fill": "#da1e28",
                                       "content": "Inactive",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 12
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -7293,7 +7445,8 @@
                                       "fill": "#78a9ff",
                                       "content": "Data Science",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 },
@@ -7316,7 +7469,8 @@
                                       "fill": "#78a9ff",
                                       "content": "Python Basics",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -7479,7 +7633,8 @@
                                   "fill": "#f4f4f4",
                                   "content": "Sofia Ramirez",
                                   "fontFamily": "IBM Plex Sans",
-                                  "fontSize": 14
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
                                 },
                                 {
                                   "type": "text",
@@ -7540,7 +7695,8 @@
                                       "fill": "#f1c21b",
                                       "content": "On leave",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 12
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -7585,7 +7741,8 @@
                                       "fill": "#78a9ff",
                                       "content": "UX Design",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 },
@@ -7608,7 +7765,8 @@
                                       "fill": "#78a9ff",
                                       "content": "Figma Pro",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -7771,7 +7929,8 @@
                                   "fill": "#f4f4f4",
                                   "content": "David Park",
                                   "fontFamily": "IBM Plex Sans",
-                                  "fontSize": 14
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
                                 },
                                 {
                                   "type": "text",
@@ -7832,7 +7991,8 @@
                                       "fill": "#198038",
                                       "content": "Active",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 12
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -7877,7 +8037,8 @@
                                       "fill": "#78a9ff",
                                       "content": "Web Dev",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 },
@@ -7900,7 +8061,8 @@
                                       "fill": "#78a9ff",
                                       "content": "Node.js",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -8063,7 +8225,8 @@
                                   "fill": "#f4f4f4",
                                   "content": "Emma Wilson",
                                   "fontFamily": "IBM Plex Sans",
-                                  "fontSize": 14
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
                                 },
                                 {
                                   "type": "text",
@@ -8124,7 +8287,8 @@
                                       "fill": "#198038",
                                       "content": "Active",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 12
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -8169,7 +8333,8 @@
                                       "fill": "#78a9ff",
                                       "content": "Python Basics",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 },
@@ -8192,7 +8357,8 @@
                                       "fill": "#78a9ff",
                                       "content": "Data Science",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -8355,7 +8521,8 @@
                                   "fill": "#f4f4f4",
                                   "content": "James Okafor",
                                   "fontFamily": "IBM Plex Sans",
-                                  "fontSize": 14
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
                                 },
                                 {
                                   "type": "text",
@@ -8416,7 +8583,8 @@
                                       "fill": "#da1e28",
                                       "content": "Inactive",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 12
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -8461,7 +8629,8 @@
                                       "fill": "#78a9ff",
                                       "content": "Figma Pro",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 },
@@ -8484,7 +8653,8 @@
                                       "fill": "#78a9ff",
                                       "content": "UX Design",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -8647,7 +8817,8 @@
                                   "fill": "#f4f4f4",
                                   "content": "Priya Sharma",
                                   "fontFamily": "IBM Plex Sans",
-                                  "fontSize": 14
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
                                 },
                                 {
                                   "type": "text",
@@ -8708,7 +8879,8 @@
                                       "fill": "#198038",
                                       "content": "Active",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 12
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -8753,7 +8925,8 @@
                                       "fill": "#78a9ff",
                                       "content": "Node.js",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 },
@@ -8776,7 +8949,8 @@
                                       "fill": "#78a9ff",
                                       "content": "Web Dev",
                                       "fontFamily": "IBM Plex Sans",
-                                      "fontSize": 11
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
