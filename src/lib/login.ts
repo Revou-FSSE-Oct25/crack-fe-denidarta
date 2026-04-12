@@ -1,18 +1,11 @@
 interface LoginPayload {
-  username: string;
+  email: string;
   password: string;
 }
 
 interface LoginResponse {
-  user: {
-    id: number;
-    username: string;
-    email: string;
-    role: 'student' | 'instructor' | 'admin';
-    created_at: string;
-    updated_at: string;
-  };
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export async function login(payload: LoginPayload): Promise<LoginResponse> {
@@ -24,7 +17,7 @@ export async function login(payload: LoginPayload): Promise<LoginResponse> {
 
   if (!res.ok) {
     const err = await res.json();
-    throw new Error(err.error ?? 'Login failed');
+    throw new Error(err.message ?? 'Login failed');
   }
 
   return res.json();

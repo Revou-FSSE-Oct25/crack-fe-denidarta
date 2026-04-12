@@ -12,22 +12,34 @@ import {
 } from '@carbon/react';
 import { ArrowRight, UserAvatar } from '@carbon/icons-react';
 import styles from './page.module.scss';
-import {useForm} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { login } from '@/src/lib/login';
 
-// In a real app this would come from session/auth context.
-// Using mock student data for demonstration.
+interface LoginFormValues {
+  email: string;
+  password: string;
+}
 
 export default function LoginPage() {
-  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [passwordMismatch, setPasswordMismatch] = useState(false);
-  const [email, setEmail] = useState('');
-  const { register, handleSubmit, watch, formState: { errors }} = useForm();
-  
-  const onSubmit = () => {
-    console.log("Signing in as", );
+  const [loading, setLoading] = useState(false);
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>();
+
+  const onSubmit = async (data: LoginFormValues) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await login(data);
+      localStorage.setItem('accessToken', res.accessToken);
+      localStorage.setItem('refreshToken', res.refreshToken);
+      window.location.href = '/dashboard';
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
+    } finally {
+      setLoading(false);
+    }
   };
-  
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -60,18 +72,19 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 labelText="Email address"
-                placeholder={"Registered email address"}
-                value={email}
+                placeholder="Registered email address"
+                invalid={!!errors.email}
+                invalidText={errors.email?.message}
+                {...register('email', { required: 'Email is required' })}
               />
 
               <PasswordInput
                 id="password"
                 labelText="Password"
                 placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                invalid={passwordMismatch}
-                invalidText=" "
+                invalid={!!errors.password}
+                invalidText={errors.password?.message}
+                {...register('password', { required: 'Password is required' })}
               />
 
               <Button
@@ -80,8 +93,9 @@ export default function LoginPage() {
                 size="lg"
                 renderIcon={ArrowRight}
                 className={styles.submitButton}
+                disabled={loading}
               >
-                Sign in
+                {loading ? 'Signing in…' : 'Sign in'}
               </Button>
             </Stack>
           </Form>
