@@ -1,9 +1,167 @@
-'use client'
-import MockDashboard from '@/src/components/MockDashboard';
+"use client";
 
+import { useEffect, useState } from "react";
+import {
+	Button,
+	DataTable,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableHeader,
+	TableRow,
+	Tag,
+	DataTableSkeleton,
+	InlineNotification,
+} from "@carbon/react";
+import { Add } from "@carbon/icons-react";
+import { apiFetch } from "@/lib/helper";
 
-export default function studentsPage() {
+interface User {
+	id: number;
+	username: string;
+	email: string;
+	role: string;
+	status: string;
+	createdAt: string;
+}
+
+const headers = [
+	{ key: "id", header: "ID" },
+	{ key: "username", header: "Username" },
+	{ key: "email", header: "Email" },
+	{ key: "status", header: "Status" },
+	{ key: "createdAt", header: "Joined" },
+];
+
+function statusTagType(status: string) {
+	switch (status) {
+		case "ACTIVE":
+			return "green";
+		case "INVITED":
+			return "blue";
+		case "INACTIVE":
+			return "gray";
+		default:
+			return "gray";
+	}
+}
+
+export default function StudentsPage() {
+	const [users, setUsers] = useState<User[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		apiFetch("/users?role=STUDENT")
+			.then((res) => {
+				if (!res.ok) throw new Error("Failed to fetch students");
+				return res.json() as Promise<User[]>;
+			})
+			.then(setUsers)
+			.catch((err: Error) => setError(err.message))
+			.finally(() => setLoading(false));
+	}, []);
+
+	const rows = users.map((u) => ({
+		id: String(u.id),
+		username: u.username,
+		email: u.email,
+		status: u.status,
+		createdAt: new Date(u.createdAt).toLocaleDateString("id-ID"),
+	}));
+
 	return (
-		<MockDashboard />
-	)
+		<div style={{ padding: "1.5rem" }}>
+			<div
+				style={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "flex-start",
+					marginBottom: "1.5rem",
+				}}
+			>
+				<div>
+					<h1 style={{ margin: 0, fontSize: "1.75rem" }}>Students</h1>
+					<p
+						style={{
+							margin: "0.25rem 0 0",
+							color: "var(--cds-text-secondary)",
+						}}
+					>
+						{loading ? "..." : `${users.length} students total`}
+					</p>
+				</div>
+				<Button kind="primary" size="md" renderIcon={Add}>
+					Add Student
+				</Button>
+			</div>
+
+			{error && (
+				<InlineNotification
+					kind="error"
+					title="Error"
+					subtitle={error}
+					lowContrast
+					style={{ marginBottom: "1rem" }}
+				/>
+			)}
+
+			{loading ? (
+				<DataTableSkeleton headers={headers} rowCount={10} />
+			) : (
+				<DataTable rows={rows} headers={headers} isSortable>
+					{({
+						rows,
+						headers,
+						getTableProps,
+						getHeaderProps,
+						getRowProps,
+						getTableContainerProps,
+					}) => (
+						<TableContainer {...getTableContainerProps()}>
+							<Table {...getTableProps()}>
+								<TableHead>
+									<TableRow>
+										{headers.map((header) => (
+											<TableHeader
+												{...getHeaderProps({ header })}
+												key={header.key}
+											>
+												{header.header}
+											</TableHeader>
+										))}
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{rows.map((row) => (
+										<TableRow {...getRowProps({ row })} key={row.id}>
+											{row.cells.map((cell) => {
+												if (cell.info.header === "status") {
+													return (
+														<TableCell key={cell.id}>
+															<Tag
+																type={statusTagType(String(cell.value))}
+																size="sm"
+															>
+																{String(cell.value)}
+															</Tag>
+														</TableCell>
+													);
+												}
+												return (
+													<TableCell key={cell.id}>{cell.value}</TableCell>
+												);
+											})}
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</TableContainer>
+					)}
+				</DataTable>
+			)}
+		</div>
+	);
 }
