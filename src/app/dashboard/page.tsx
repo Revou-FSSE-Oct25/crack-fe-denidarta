@@ -1,22 +1,92 @@
 'use client';
 import {
   Breadcrumb, BreadcrumbItem, Button, Column, DataTable, Grid,
-  OverflowMenu, OverflowMenuItem, Search, Table, TableBody, TableCell,
+  OverflowMenu, OverflowMenuItem, Table, TableBody, TableCell,
   TableContainer, TableHead, TableHeader, TableRow, Tag, Tile,
+  DataTableSkeleton,
 } from '@carbon/react';
-import { Add, Download, Filter } from '@carbon/icons-react';
-import React from 'react';
-import { kpis, headerData, rowData, statusTagType } from './MockData';
+import { Add, Download } from '@carbon/icons-react';
+import React, { useEffect, useState } from 'react';
 import styles from './page.module.scss';
+import { apiFetch } from '@/lib/helper';
+
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  status: string;
+  createdAt: string;
+}
+
+const activityHeaders = [
+  { key: 'username', header: 'Username' },
+  { key: 'email', header: 'Email' },
+  { key: 'role', header: 'Role' },
+  { key: 'status', header: 'Status' },
+  { key: 'createdAt', header: 'Joined' },
+];
+
+function statusTagType(status: string) {
+  switch (status) {
+    case 'ACTIVE': return 'green';
+    case 'INVITED': return 'blue';
+    case 'INACTIVE': return 'gray';
+    default: return 'gray';
+  }
+}
+
+function roleTagType(role: string) {
+  switch (role) {
+    case 'ADMIN': return 'purple';
+    case 'INSTRUCTOR': return 'teal';
+    case 'STUDENT': return 'blue';
+    default: return 'gray';
+  }
+}
 
 export default function DashboardPage() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    apiFetch('/users')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: User[]) => setUsers(data))
+      .catch(() => setUsers([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const students = users.filter((u) => u.role === 'STUDENT');
+  const instructors = users.filter((u) => u.role === 'INSTRUCTOR');
+  const activeUsers = users.filter((u) => u.status === 'ACTIVE');
+
+  const kpis = [
+    { label: 'Total Users', value: loading ? '—' : String(users.length) },
+    { label: 'Students', value: loading ? '—' : String(students.length) },
+    { label: 'Instructors', value: loading ? '—' : String(instructors.length) },
+    { label: 'Active', value: loading ? '—' : String(activeUsers.length) },
+  ];
+
+  const recentUsers = [...users]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 10);
+
+  const rows = recentUsers.map((u) => ({
+    id: String(u.id),
+    username: u.username,
+    email: u.email,
+    role: u.role,
+    status: u.status,
+    createdAt: new Date(u.createdAt).toLocaleDateString('id-ID'),
+  }));
+
   return (
     <div className={styles.wrapper}>
       <Grid fullWidth>
         <Column sm={4} md={8} lg={16}>
           <Breadcrumb noTrailingSlash>
             <BreadcrumbItem href="#">Home</BreadcrumbItem>
-            <BreadcrumbItem href="#">Operations</BreadcrumbItem>
             <BreadcrumbItem isCurrentPage>Dashboard</BreadcrumbItem>
           </Breadcrumb>
         </Column>
@@ -24,8 +94,8 @@ export default function DashboardPage() {
         <Column sm={4} md={8} lg={16}>
           <div className={styles.pageHeader}>
             <div>
-              <h1>Operations dashboard</h1>
-              <p>Quick overview of activity, revenue, and support.</p>
+              <h1>Dashboard</h1>
+              <p>Overview of users and activity.</p>
             </div>
             <div className={styles.pageActions}>
               <Button kind="secondary" size="md" renderIcon={Download}>Export</Button>
@@ -42,74 +112,77 @@ export default function DashboardPage() {
                   <div className={styles.kpiLabel}>{kpi.label}</div>
                   <div className={styles.kpiValue}>{kpi.value}</div>
                 </div>
-                <Tag type={kpi.delta.startsWith('-') ? 'red' : 'green'} size="sm">{kpi.delta}</Tag>
               </div>
             </Tile>
           </Column>
         ))}
 
-        <Column sm={4} md={8} lg={10} className={styles.activityColumn}>
+        <Column sm={4} md={8} lg={16} className={styles.activityColumn}>
           <Tile>
             <div className={styles.activityHeader}>
               <div>
-                <h2>Recent activity</h2>
-                <p>Latest tickets and requests.</p>
-              </div>
-              <div className={styles.activitySearch}>
-                <Search size="md" labelText="Search" placeholder="Search" />
-                <Button kind="ghost" size="md" hasIconOnly iconDescription="Filter" renderIcon={Filter} />
+                <h2>Recent users</h2>
+                <p>Last 10 registered users.</p>
               </div>
             </div>
 
             <div className={styles.tableWrapper}>
-              <DataTable rows={rowData} headers={headerData} isSortable>
-                {({ rows, headers, getTableProps, getHeaderProps, getRowProps, getTableContainerProps }) => (
-                  <TableContainer title="adc" description="asdffasdf" {...getTableContainerProps()}>
-                    <Table {...getTableProps()}>
-                      <TableHead>
-                        <TableRow>
-                          {headers.map((header) => (
-                            <TableHeader {...getHeaderProps({ header })}>{header.header}</TableHeader>
-                          ))}
-                          <TableHeader />
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {rows.map((row) => (
-                          <TableRow {...getRowProps({ row })}>
-                            {row.cells.map((cell) => {
-                              if (cell.info.header === 'status') {
-                                return (
-                                  <TableCell key={cell.id}>
-                                    <Tag type={statusTagType(String(cell.value))} size="sm">{String(cell.value)}</Tag>
-                                  </TableCell>
-                                );
-                              }
-                              return <TableCell key={cell.id}>{cell.value}</TableCell>;
-                            })}
-                            <TableCell>
-                              <OverflowMenu size="sm" aria-label="Row actions">
-                                <OverflowMenuItem itemText="View" />
-                                <OverflowMenuItem itemText="Assign" />
-                                <OverflowMenuItem itemText="Close" />
-                              </OverflowMenu>
-                            </TableCell>
+              {loading ? (
+                <DataTableSkeleton headers={activityHeaders} rowCount={5} />
+              ) : (
+                <DataTable rows={rows} headers={activityHeaders} isSortable>
+                  {({ rows, headers, getTableProps, getHeaderProps, getRowProps, getTableContainerProps }) => (
+                    <TableContainer {...getTableContainerProps()}>
+                      <Table {...getTableProps()}>
+                        <TableHead>
+                          <TableRow>
+                            {headers.map((header) => (
+                              <TableHeader {...getHeaderProps({ header })} key={header.key}>
+                                {header.header}
+                              </TableHeader>
+                            ))}
+                            <TableHeader />
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                )}
-              </DataTable>
+                        </TableHead>
+                        <TableBody>
+                          {rows.map((row) => (
+                            <TableRow {...getRowProps({ row })} key={row.id}>
+                              {row.cells.map((cell) => {
+                                if (cell.info.header === 'status') {
+                                  return (
+                                    <TableCell key={cell.id}>
+                                      <Tag type={statusTagType(String(cell.value))} size="sm">
+                                        {String(cell.value)}
+                                      </Tag>
+                                    </TableCell>
+                                  );
+                                }
+                                if (cell.info.header === 'role') {
+                                  return (
+                                    <TableCell key={cell.id}>
+                                      <Tag type={roleTagType(String(cell.value))} size="sm">
+                                        {String(cell.value)}
+                                      </Tag>
+                                    </TableCell>
+                                  );
+                                }
+                                return <TableCell key={cell.id}>{cell.value}</TableCell>;
+                              })}
+                              <TableCell>
+                                <OverflowMenu size="sm" aria-label="Row actions">
+                                  <OverflowMenuItem itemText="View" />
+                                  <OverflowMenuItem itemText="Edit" />
+                                </OverflowMenu>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  )}
+                </DataTable>
+              )}
             </div>
-          </Tile>
-        </Column>
-
-        <Column sm={4} md={8} lg={6} className={styles.glanceColumn}>
-          <Tile>
-            <h2>At a glance</h2>
-            <p>Placeholder panel for charts.</p>
-            <div className={styles.chartPlaceholder}>Chart goes here</div>
           </Tile>
         </Column>
       </Grid>
