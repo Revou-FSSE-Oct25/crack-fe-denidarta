@@ -1,111 +1,113 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
-  Button,
-  Form,
-  PasswordInput,
-  TextInput,
-  Tile,
-  InlineNotification,
-  Stack,
-} from '@carbon/react';
-import { ArrowRight, UserAvatar } from '@carbon/icons-react';
-import styles from './page.module.scss';
-import { useForm } from 'react-hook-form';
-import { login } from '@/src/lib/login';
+	Button,
+	Form,
+	PasswordInput,
+	TextInput,
+	Tile,
+	InlineNotification,
+	Stack,
+} from "@carbon/react";
+import { ArrowRight, UserAvatar } from "@carbon/icons-react";
+import styles from "./page.module.scss";
+import { useForm } from "react-hook-form";
+import { login } from "@/lib/login";
 
 interface LoginFormValues {
-  email: string;
-  password: string;
+	email: string;
+	password: string;
 }
 
 export default function LoginPage() {
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>();
+	const [error, setError] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<LoginFormValues>();
 
-  const onSubmit = async (data: LoginFormValues) => {
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await login(data);
-      localStorage.setItem('accessToken', res.accessToken);
-      localStorage.setItem('refreshToken', res.refreshToken);
-      window.location.href = '/dashboard';
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+	const onSubmit = async (data: LoginFormValues) => {
+		setError(null);
+		setLoading(true);
+		try {
+			const res = await login(data);
+			localStorage.setItem("accessToken", res.accessToken);
+			localStorage.setItem("refreshToken", res.refreshToken);
+			window.location.href = "/dashboard";
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Login failed");
+		} finally {
+			setLoading(false);
+		}
+	};
 
-  return (
-    <div className={styles.wrapper}>
-      <div className={styles.container}>
+	return (
+		<div className={styles.wrapper}>
+			<div className={styles.container}>
+				<div className={styles.brand}>
+					<UserAvatar size={32} />
+					<span>LMS Portal</span>
+				</div>
 
-        <div className={styles.brand}>
-          <UserAvatar size={32} />
-          <span>LMS Portal</span>
-        </div>
+				<Tile className={styles.tile}>
+					<div className={styles.header}>
+						<h1>Sign in</h1>
+						<p>Welcome back. Enter your credentials to continue.</p>
+					</div>
 
-        <Tile className={styles.tile}>
-          <div className={styles.header}>
-            <h1>Sign in</h1>
-            <p>Welcome back. Enter your credentials to continue.</p>
-          </div>
+					{error && (
+						<InlineNotification
+							kind="error"
+							title="Error"
+							subtitle={error}
+							lowContrast
+							className={styles.notification}
+							onCloseButtonClick={() => setError(null)}
+						/>
+					)}
 
-          {error && (
-            <InlineNotification
-              kind="error"
-              title="Error"
-              subtitle={error}
-              lowContrast
-              className={styles.notification}
-              onCloseButtonClick={() => setError(null)}
-            />
-          )}
+					<Form onSubmit={handleSubmit(onSubmit)} noValidate>
+						<Stack gap={6}>
+							<TextInput
+								id="email"
+								type="email"
+								labelText="Email address"
+								placeholder="Registered email address"
+								invalid={!!errors.email}
+								invalidText={errors.email?.message}
+								{...register("email", { required: "Email is required" })}
+							/>
 
-          <Form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <Stack gap={6}>
-              <TextInput
-                id="email"
-                type="email"
-                labelText="Email address"
-                placeholder="Registered email address"
-                invalid={!!errors.email}
-                invalidText={errors.email?.message}
-                {...register('email', { required: 'Email is required' })}
-              />
+							<PasswordInput
+								id="password"
+								labelText="Password"
+								placeholder="Enter your password"
+								invalid={!!errors.password}
+								invalidText={errors.password?.message}
+								{...register("password", { required: "Password is required" })}
+							/>
 
-              <PasswordInput
-                id="password"
-                labelText="Password"
-                placeholder="Enter your password"
-                invalid={!!errors.password}
-                invalidText={errors.password?.message}
-                {...register('password', { required: 'Password is required' })}
-              />
+							<Button
+								type="submit"
+								kind="primary"
+								size="lg"
+								renderIcon={ArrowRight}
+								className={styles.submitButton}
+								disabled={loading}
+							>
+								{loading ? "Signing in…" : "Sign in"}
+							</Button>
+						</Stack>
+					</Form>
+				</Tile>
 
-              <Button
-                type="submit"
-                kind="primary"
-                size="lg"
-                renderIcon={ArrowRight}
-                className={styles.submitButton}
-                disabled={loading}
-              >
-                {loading ? 'Signing in…' : 'Sign in'}
-              </Button>
-            </Stack>
-          </Form>
-        </Tile>
-
-        <p className={styles.footer}>
-          Having trouble?{' '}
-          <a href="mailto:support@lms.dev">Contact support</a>
-        </p>
-      </div>
-    </div>
-  );
+				<p className={styles.footer}>
+					Having trouble? <a href="mailto:support@lms.dev">Contact support</a>
+				</p>
+			</div>
+		</div>
+	);
 }
