@@ -1,157 +1,551 @@
 // Mock data based on LMS database schema
 
-export type UserRole = 'student' | 'instructor' | 'admin';
+export type UserRole = "student" | "instructor" | "admin";
 
 export interface User {
-  id: number;
-  username: string;
-  email: string;
-  password: string; // plaintext for mock only
-  role: UserRole;
-  created_at: string;
-  updated_at: string;
+	id: number;
+	username: string;
+	email: string;
+	password: string; // plaintext for mock only
+	role: UserRole;
+	created_at: string;
+	updated_at: string;
 }
 
 export interface Course {
-  id: number;
-  name: string;
-  description: string;
-  instructor_id: number;
-  status: 'draft' | 'active' | 'archived' | 'completed';
-  created_at: string;
-  updated_at: string;
+	id: number;
+	name: string;
+	description: string;
+	instructor_id: number;
+	status: "draft" | "active" | "archived" | "completed";
+	created_at: string;
+	updated_at: string;
 }
 
 export interface CourseEnrollment {
-  id: number;
-  course_id: number;
-  user_id: number;
-  status: 'enrolled' | 'completed' | 'dropped' | 'pending';
-  created_at: string;
-  updated_at: string;
+	id: number;
+	course_id: number;
+	user_id: number;
+	status: "enrolled" | "completed" | "dropped" | "pending";
+	created_at: string;
+	updated_at: string;
 }
 
 export interface LearningMaterial {
-  id: number;
-  course_id: number;
-  title: string;
-  content: string | null;
-  file_url: string | null;
-  material_type: 'video' | 'pdf' | 'article' | 'slides' | 'other';
-  order_index: number;
-  created_at: string;
-  updated_at: string;
+	id: number;
+	course_id: number;
+	title: string;
+	content: string | null;
+	file_url: string | null;
+	material_type: "video" | "pdf" | "article" | "slides" | "other";
+	order_index: number;
+	created_at: string;
+	updated_at: string;
 }
 
 export interface ClassSession {
-  id: number;
-  course_id: number;
-  title: string;
-  session_date: string;
-  start_time: string;
-  end_time: string;
-  location: string | null;
-  meeting_url: string | null;
-  created_at: string;
-  updated_at: string;
+	id: number;
+	course_id: number;
+	title: string;
+	session_date: string;
+	start_time: string;
+	end_time: string;
+	location: string | null;
+	meeting_url: string | null;
+	created_at: string;
+	updated_at: string;
 }
 
 export interface ClassAttendance {
-  id: number;
-  class_session_id: number;
-  user_id: number;
-  status: 'present' | 'absent' | 'late' | 'excused';
-  created_at: string;
-  updated_at: string;
+	id: number;
+	class_session_id: number;
+	user_id: number;
+	status: "present" | "absent" | "late" | "excused";
+	created_at: string;
+	updated_at: string;
 }
 
 export interface Assignment {
-  id: number;
-  course_id: number;
-  title: string;
-  description: string | null;
-  due_date: string;
-  max_points: number;
-  status: 'draft' | 'published' | 'closed';
-  created_at: string;
-  updated_at: string;
+	id: number;
+	course_id: number;
+	title: string;
+	description: string | null;
+	due_date: string;
+	max_points: number;
+	status: "draft" | "published" | "closed";
+	created_at: string;
+	updated_at: string;
 }
 
 export interface AssignmentSubmission {
-  id: number;
-  assignment_id: number;
-  user_id: number;
-  submission_text: string | null;
-  file_url: string | null;
-  submitted_at: string | null;
-  grade: number | null;
-  passed: boolean;
-  feedback: string | null;
-  status: 'draft' | 'submitted' | 'graded' | 'returned';
-  created_at: string;
-  updated_at: string;
+	id: number;
+	assignment_id: number;
+	user_id: number;
+	submission_text: string | null;
+	file_url: string | null;
+	submitted_at: string | null;
+	grade: number | null;
+	passed: boolean;
+	feedback: string | null;
+	status: "draft" | "submitted" | "graded" | "returned";
+	created_at: string;
+	updated_at: string;
 }
 
 export const users: User[] = [
-  { id: 1, username: 'admin', email: 'admin@lms.dev', password: 'admin123', role: 'admin', created_at: '2025-01-01T00:00:00Z', updated_at: '2025-01-01T00:00:00Z' },
-  { id: 2, username: 'dr_sarah', email: 'sarah.jones@lms.dev', password: 'instructor123', role: 'instructor', created_at: '2025-01-02T00:00:00Z', updated_at: '2025-01-02T00:00:00Z' },
-  { id: 3, username: 'prof_budi', email: 'budi.santoso@lms.dev', password: 'instructor123', role: 'instructor', created_at: '2025-01-02T00:00:00Z', updated_at: '2025-01-02T00:00:00Z' },
-  { id: 4, username: 'alice_student', email: 'alice@student.lms.dev', password: 'student123', role: 'student', created_at: '2025-01-05T00:00:00Z', updated_at: '2025-01-05T00:00:00Z' },
-  { id: 5, username: 'budi_student', email: 'budi@student.lms.dev', password: 'student123', role: 'student', created_at: '2025-01-06T00:00:00Z', updated_at: '2025-01-06T00:00:00Z' },
-  { id: 6, username: 'charlie', email: 'charlie@student.lms.dev', password: 'student123', role: 'student', created_at: '2025-01-07T00:00:00Z', updated_at: '2025-01-07T00:00:00Z' },
-  { id: 7, username: 'diana', email: 'diana@student.lms.dev', password: 'student123', role: 'student', created_at: '2025-01-08T00:00:00Z', updated_at: '2025-01-08T00:00:00Z' },
-  { id: 8, username: 'evan', email: 'evan@student.lms.dev', password: 'student123', role: 'student', created_at: '2025-01-09T00:00:00Z', updated_at: '2025-01-09T00:00:00Z' },
+	{
+		id: 1,
+		username: "admin",
+		email: "admin@lms.dev",
+		password: "admin123",
+		role: "admin",
+		created_at: "2025-01-01T00:00:00Z",
+		updated_at: "2025-01-01T00:00:00Z",
+	},
+	{
+		id: 2,
+		username: "dr_sarah",
+		email: "sarah.jones@lms.dev",
+		password: "instructor123",
+		role: "instructor",
+		created_at: "2025-01-02T00:00:00Z",
+		updated_at: "2025-01-02T00:00:00Z",
+	},
+	{
+		id: 3,
+		username: "prof_budi",
+		email: "budi.santoso@lms.dev",
+		password: "instructor123",
+		role: "instructor",
+		created_at: "2025-01-02T00:00:00Z",
+		updated_at: "2025-01-02T00:00:00Z",
+	},
+	{
+		id: 4,
+		username: "alice_student",
+		email: "alice@student.lms.dev",
+		password: "student123",
+		role: "student",
+		created_at: "2025-01-05T00:00:00Z",
+		updated_at: "2025-01-05T00:00:00Z",
+	},
+	{
+		id: 5,
+		username: "budi_student",
+		email: "budi@student.lms.dev",
+		password: "student123",
+		role: "student",
+		created_at: "2025-01-06T00:00:00Z",
+		updated_at: "2025-01-06T00:00:00Z",
+	},
+	{
+		id: 6,
+		username: "charlie",
+		email: "charlie@student.lms.dev",
+		password: "student123",
+		role: "student",
+		created_at: "2025-01-07T00:00:00Z",
+		updated_at: "2025-01-07T00:00:00Z",
+	},
+	{
+		id: 7,
+		username: "diana",
+		email: "diana@student.lms.dev",
+		password: "student123",
+		role: "student",
+		created_at: "2025-01-08T00:00:00Z",
+		updated_at: "2025-01-08T00:00:00Z",
+	},
+	{
+		id: 8,
+		username: "evan",
+		email: "evan@student.lms.dev",
+		password: "student123",
+		role: "student",
+		created_at: "2025-01-09T00:00:00Z",
+		updated_at: "2025-01-09T00:00:00Z",
+	},
 ];
 
 export const courses: Course[] = [
-  { id: 1, name: 'Introduction to Web Development', description: 'Fundamentals of HTML, CSS, and JavaScript for beginners.', instructor_id: 2, status: 'active', created_at: '2025-01-10T00:00:00Z', updated_at: '2025-02-01T00:00:00Z' },
-  { id: 2, name: 'React & Next.js Bootcamp', description: 'Full-stack development with React 19 and Next.js App Router.', instructor_id: 2, status: 'active', created_at: '2025-01-12T00:00:00Z', updated_at: '2025-02-05T00:00:00Z' },
-  { id: 3, name: 'Database Design Fundamentals', description: 'Relational database design, SQL, and normalization principles.', instructor_id: 3, status: 'active', created_at: '2025-01-15T00:00:00Z', updated_at: '2025-02-10T00:00:00Z' },
-  { id: 4, name: 'UI/UX Design Principles', description: 'Design thinking, wireframing, and user-centered design.', instructor_id: 3, status: 'draft', created_at: '2025-02-01T00:00:00Z', updated_at: '2025-02-01T00:00:00Z' },
-  { id: 5, name: 'Python for Data Science', description: 'Data analysis with Python, Pandas, and visualization libraries.', instructor_id: 2, status: 'completed', created_at: '2024-10-01T00:00:00Z', updated_at: '2025-01-01T00:00:00Z' },
+	{
+		id: 1,
+		name: "Introduction to Web Development",
+		description: "Fundamentals of HTML, CSS, and JavaScript for beginners.",
+		instructor_id: 2,
+		status: "active",
+		created_at: "2025-01-10T00:00:00Z",
+		updated_at: "2025-02-01T00:00:00Z",
+	},
+	{
+		id: 2,
+		name: "React & Next.js Bootcamp",
+		description: "Full-stack development with React 19 and Next.js App Router.",
+		instructor_id: 2,
+		status: "active",
+		created_at: "2025-01-12T00:00:00Z",
+		updated_at: "2025-02-05T00:00:00Z",
+	},
+	{
+		id: 3,
+		name: "Database Design Fundamentals",
+		description:
+			"Relational database design, SQL, and normalization principles.",
+		instructor_id: 3,
+		status: "active",
+		created_at: "2025-01-15T00:00:00Z",
+		updated_at: "2025-02-10T00:00:00Z",
+	},
+	{
+		id: 4,
+		name: "UI/UX Design Principles",
+		description: "Design thinking, wireframing, and user-centered design.",
+		instructor_id: 3,
+		status: "draft",
+		created_at: "2025-02-01T00:00:00Z",
+		updated_at: "2025-02-01T00:00:00Z",
+	},
+	{
+		id: 5,
+		name: "Python for Data Science",
+		description:
+			"Data analysis with Python, Pandas, and visualization libraries.",
+		instructor_id: 2,
+		status: "completed",
+		created_at: "2024-10-01T00:00:00Z",
+		updated_at: "2025-01-01T00:00:00Z",
+	},
 ];
 
 export const enrollments: CourseEnrollment[] = [
-  { id: 1, course_id: 1, user_id: 4, status: 'enrolled', created_at: '2025-01-20T00:00:00Z', updated_at: '2025-01-20T00:00:00Z' },
-  { id: 2, course_id: 1, user_id: 5, status: 'enrolled', created_at: '2025-01-20T00:00:00Z', updated_at: '2025-01-20T00:00:00Z' },
-  { id: 3, course_id: 1, user_id: 6, status: 'enrolled', created_at: '2025-01-21T00:00:00Z', updated_at: '2025-01-21T00:00:00Z' },
-  { id: 4, course_id: 2, user_id: 4, status: 'enrolled', created_at: '2025-01-22T00:00:00Z', updated_at: '2025-01-22T00:00:00Z' },
-  { id: 5, course_id: 2, user_id: 7, status: 'enrolled', created_at: '2025-01-22T00:00:00Z', updated_at: '2025-01-22T00:00:00Z' },
-  { id: 6, course_id: 3, user_id: 5, status: 'enrolled', created_at: '2025-01-23T00:00:00Z', updated_at: '2025-01-23T00:00:00Z' },
-  { id: 7, course_id: 3, user_id: 6, status: 'enrolled', created_at: '2025-01-23T00:00:00Z', updated_at: '2025-01-23T00:00:00Z' },
-  { id: 8, course_id: 3, user_id: 8, status: 'completed', created_at: '2025-01-24T00:00:00Z', updated_at: '2025-03-01T00:00:00Z' },
-  { id: 9, course_id: 5, user_id: 4, status: 'completed', created_at: '2024-10-05T00:00:00Z', updated_at: '2025-01-01T00:00:00Z' },
-  { id: 10, course_id: 5, user_id: 8, status: 'completed', created_at: '2024-10-05T00:00:00Z', updated_at: '2025-01-01T00:00:00Z' },
+	{
+		id: 1,
+		course_id: 1,
+		user_id: 4,
+		status: "enrolled",
+		created_at: "2025-01-20T00:00:00Z",
+		updated_at: "2025-01-20T00:00:00Z",
+	},
+	{
+		id: 2,
+		course_id: 1,
+		user_id: 5,
+		status: "enrolled",
+		created_at: "2025-01-20T00:00:00Z",
+		updated_at: "2025-01-20T00:00:00Z",
+	},
+	{
+		id: 3,
+		course_id: 1,
+		user_id: 6,
+		status: "enrolled",
+		created_at: "2025-01-21T00:00:00Z",
+		updated_at: "2025-01-21T00:00:00Z",
+	},
+	{
+		id: 4,
+		course_id: 2,
+		user_id: 4,
+		status: "enrolled",
+		created_at: "2025-01-22T00:00:00Z",
+		updated_at: "2025-01-22T00:00:00Z",
+	},
+	{
+		id: 5,
+		course_id: 2,
+		user_id: 7,
+		status: "enrolled",
+		created_at: "2025-01-22T00:00:00Z",
+		updated_at: "2025-01-22T00:00:00Z",
+	},
+	{
+		id: 6,
+		course_id: 3,
+		user_id: 5,
+		status: "enrolled",
+		created_at: "2025-01-23T00:00:00Z",
+		updated_at: "2025-01-23T00:00:00Z",
+	},
+	{
+		id: 7,
+		course_id: 3,
+		user_id: 6,
+		status: "enrolled",
+		created_at: "2025-01-23T00:00:00Z",
+		updated_at: "2025-01-23T00:00:00Z",
+	},
+	{
+		id: 8,
+		course_id: 3,
+		user_id: 8,
+		status: "completed",
+		created_at: "2025-01-24T00:00:00Z",
+		updated_at: "2025-03-01T00:00:00Z",
+	},
+	{
+		id: 9,
+		course_id: 5,
+		user_id: 4,
+		status: "completed",
+		created_at: "2024-10-05T00:00:00Z",
+		updated_at: "2025-01-01T00:00:00Z",
+	},
+	{
+		id: 10,
+		course_id: 5,
+		user_id: 8,
+		status: "completed",
+		created_at: "2024-10-05T00:00:00Z",
+		updated_at: "2025-01-01T00:00:00Z",
+	},
 ];
 
 export const learningMaterials: LearningMaterial[] = [
-  { id: 1, course_id: 1, title: 'HTML Basics', content: 'Introduction to HTML tags and structure.', file_url: null, material_type: 'article', order_index: 1, created_at: '2025-01-10T00:00:00Z', updated_at: '2025-01-10T00:00:00Z' },
-  { id: 2, course_id: 1, title: 'CSS Fundamentals Video', content: null, file_url: '/materials/css-fundamentals.mp4', material_type: 'video', order_index: 2, created_at: '2025-01-11T00:00:00Z', updated_at: '2025-01-11T00:00:00Z' },
-  { id: 3, course_id: 1, title: 'JavaScript Intro Slides', content: null, file_url: '/materials/js-intro.pdf', material_type: 'slides', order_index: 3, created_at: '2025-01-12T00:00:00Z', updated_at: '2025-01-12T00:00:00Z' },
-  { id: 4, course_id: 2, title: 'React Components & Props', content: 'Deep dive into React component model.', file_url: null, material_type: 'article', order_index: 1, created_at: '2025-01-13T00:00:00Z', updated_at: '2025-01-13T00:00:00Z' },
-  { id: 5, course_id: 2, title: 'Next.js App Router Guide', content: null, file_url: '/materials/nextjs-app-router.pdf', material_type: 'pdf', order_index: 2, created_at: '2025-01-14T00:00:00Z', updated_at: '2025-01-14T00:00:00Z' },
-  { id: 6, course_id: 3, title: 'ER Diagram Basics', content: 'Entity-relationship modeling and notation.', file_url: null, material_type: 'article', order_index: 1, created_at: '2025-01-16T00:00:00Z', updated_at: '2025-01-16T00:00:00Z' },
+	{
+		id: 1,
+		course_id: 1,
+		title: "HTML Basics",
+		content: "Introduction to HTML tags and structure.",
+		file_url: null,
+		material_type: "article",
+		order_index: 1,
+		created_at: "2025-01-10T00:00:00Z",
+		updated_at: "2025-01-10T00:00:00Z",
+	},
+	{
+		id: 2,
+		course_id: 1,
+		title: "CSS Fundamentals Video",
+		content: null,
+		file_url: "/materials/css-fundamentals.mp4",
+		material_type: "video",
+		order_index: 2,
+		created_at: "2025-01-11T00:00:00Z",
+		updated_at: "2025-01-11T00:00:00Z",
+	},
+	{
+		id: 3,
+		course_id: 1,
+		title: "JavaScript Intro Slides",
+		content: null,
+		file_url: "/materials/js-intro.pdf",
+		material_type: "slides",
+		order_index: 3,
+		created_at: "2025-01-12T00:00:00Z",
+		updated_at: "2025-01-12T00:00:00Z",
+	},
+	{
+		id: 4,
+		course_id: 2,
+		title: "React Components & Props",
+		content: "Deep dive into React component model.",
+		file_url: null,
+		material_type: "article",
+		order_index: 1,
+		created_at: "2025-01-13T00:00:00Z",
+		updated_at: "2025-01-13T00:00:00Z",
+	},
+	{
+		id: 5,
+		course_id: 2,
+		title: "Next.js App Router Guide",
+		content: null,
+		file_url: "/materials/nextjs-app-router.pdf",
+		material_type: "pdf",
+		order_index: 2,
+		created_at: "2025-01-14T00:00:00Z",
+		updated_at: "2025-01-14T00:00:00Z",
+	},
+	{
+		id: 6,
+		course_id: 3,
+		title: "ER Diagram Basics",
+		content: "Entity-relationship modeling and notation.",
+		file_url: null,
+		material_type: "article",
+		order_index: 1,
+		created_at: "2025-01-16T00:00:00Z",
+		updated_at: "2025-01-16T00:00:00Z",
+	},
 ];
 
 export const classSessions: ClassSession[] = [
-  { id: 1, course_id: 1, title: 'HTML & CSS Workshop', session_date: '2026-03-10', start_time: '09:00', end_time: '11:00', location: 'Room A1', meeting_url: null, created_at: '2025-01-20T00:00:00Z', updated_at: '2025-01-20T00:00:00Z' },
-  { id: 2, course_id: 1, title: 'JavaScript Basics Live Coding', session_date: '2026-03-17', start_time: '09:00', end_time: '11:00', location: 'Room A1', meeting_url: null, created_at: '2025-01-20T00:00:00Z', updated_at: '2025-01-20T00:00:00Z' },
-  { id: 3, course_id: 2, title: 'React Hooks Deep Dive', session_date: '2026-03-11', start_time: '13:00', end_time: '15:00', location: null, meeting_url: 'https://meet.example.com/react-hooks', created_at: '2025-01-25T00:00:00Z', updated_at: '2025-01-25T00:00:00Z' },
-  { id: 4, course_id: 2, title: 'Server Components & Routing', session_date: '2026-03-18', start_time: '13:00', end_time: '15:00', location: null, meeting_url: 'https://meet.example.com/server-components', created_at: '2025-01-25T00:00:00Z', updated_at: '2025-01-25T00:00:00Z' },
-  { id: 5, course_id: 3, title: 'SQL Joins & Aggregates', session_date: '2026-03-12', start_time: '10:00', end_time: '12:00', location: 'Lab B2', meeting_url: null, created_at: '2025-01-28T00:00:00Z', updated_at: '2025-01-28T00:00:00Z' },
+	{
+		id: 1,
+		course_id: 1,
+		title: "HTML & CSS Workshop",
+		session_date: "2026-03-10",
+		start_time: "09:00",
+		end_time: "11:00",
+		location: "Room A1",
+		meeting_url: null,
+		created_at: "2025-01-20T00:00:00Z",
+		updated_at: "2025-01-20T00:00:00Z",
+	},
+	{
+		id: 2,
+		course_id: 1,
+		title: "JavaScript Basics Live Coding",
+		session_date: "2026-03-17",
+		start_time: "09:00",
+		end_time: "11:00",
+		location: "Room A1",
+		meeting_url: null,
+		created_at: "2025-01-20T00:00:00Z",
+		updated_at: "2025-01-20T00:00:00Z",
+	},
+	{
+		id: 3,
+		course_id: 2,
+		title: "React Hooks Deep Dive",
+		session_date: "2026-03-11",
+		start_time: "13:00",
+		end_time: "15:00",
+		location: null,
+		meeting_url: "https://meet.example.com/react-hooks",
+		created_at: "2025-01-25T00:00:00Z",
+		updated_at: "2025-01-25T00:00:00Z",
+	},
+	{
+		id: 4,
+		course_id: 2,
+		title: "Server Components & Routing",
+		session_date: "2026-03-18",
+		start_time: "13:00",
+		end_time: "15:00",
+		location: null,
+		meeting_url: "https://meet.example.com/server-components",
+		created_at: "2025-01-25T00:00:00Z",
+		updated_at: "2025-01-25T00:00:00Z",
+	},
+	{
+		id: 5,
+		course_id: 3,
+		title: "SQL Joins & Aggregates",
+		session_date: "2026-03-12",
+		start_time: "10:00",
+		end_time: "12:00",
+		location: "Lab B2",
+		meeting_url: null,
+		created_at: "2025-01-28T00:00:00Z",
+		updated_at: "2025-01-28T00:00:00Z",
+	},
 ];
 
 export const assignments: Assignment[] = [
-  { id: 1, course_id: 1, title: 'Build a Personal Portfolio Page', description: 'Create a static HTML/CSS personal portfolio.', due_date: '2026-03-20T23:59:00Z', max_points: 100, status: 'published', created_at: '2025-02-01T00:00:00Z', updated_at: '2025-02-01T00:00:00Z' },
-  { id: 2, course_id: 1, title: 'JavaScript Quiz App', description: 'Build a simple quiz using vanilla JS.', due_date: '2026-04-05T23:59:00Z', max_points: 100, status: 'published', created_at: '2025-02-10T00:00:00Z', updated_at: '2025-02-10T00:00:00Z' },
-  { id: 3, course_id: 2, title: 'Todo App with React', description: 'Implement a todo list using React hooks and state management.', due_date: '2026-03-25T23:59:00Z', max_points: 100, status: 'published', created_at: '2025-02-05T00:00:00Z', updated_at: '2025-02-05T00:00:00Z' },
-  { id: 4, course_id: 2, title: 'Full-stack LMS Feature', description: 'Add a new feature to the LMS using Next.js App Router.', due_date: '2026-04-15T23:59:00Z', max_points: 150, status: 'draft', created_at: '2025-02-15T00:00:00Z', updated_at: '2025-02-15T00:00:00Z' },
-  { id: 5, course_id: 3, title: 'Design an ER Diagram', description: 'Design the database schema for an e-commerce platform.', due_date: '2026-03-22T23:59:00Z', max_points: 100, status: 'published', created_at: '2025-02-08T00:00:00Z', updated_at: '2025-02-08T00:00:00Z' },
+	{
+		id: 1,
+		course_id: 1,
+		title: "Build a Personal Portfolio Page",
+		description: "Create a static HTML/CSS personal portfolio.",
+		due_date: "2026-03-20T23:59:00Z",
+		max_points: 100,
+		status: "published",
+		created_at: "2025-02-01T00:00:00Z",
+		updated_at: "2025-02-01T00:00:00Z",
+	},
+	{
+		id: 2,
+		course_id: 1,
+		title: "JavaScript Quiz App",
+		description: "Build a simple quiz using vanilla JS.",
+		due_date: "2026-04-05T23:59:00Z",
+		max_points: 100,
+		status: "published",
+		created_at: "2025-02-10T00:00:00Z",
+		updated_at: "2025-02-10T00:00:00Z",
+	},
+	{
+		id: 3,
+		course_id: 2,
+		title: "Todo App with React",
+		description:
+			"Implement a todo list using React hooks and state management.",
+		due_date: "2026-03-25T23:59:00Z",
+		max_points: 100,
+		status: "published",
+		created_at: "2025-02-05T00:00:00Z",
+		updated_at: "2025-02-05T00:00:00Z",
+	},
+	{
+		id: 4,
+		course_id: 2,
+		title: "Full-stack LMS Feature",
+		description: "Add a new feature to the LMS using Next.js App Router.",
+		due_date: "2026-04-15T23:59:00Z",
+		max_points: 150,
+		status: "draft",
+		created_at: "2025-02-15T00:00:00Z",
+		updated_at: "2025-02-15T00:00:00Z",
+	},
+	{
+		id: 5,
+		course_id: 3,
+		title: "Design an ER Diagram",
+		description: "Design the database schema for an e-commerce platform.",
+		due_date: "2026-03-22T23:59:00Z",
+		max_points: 100,
+		status: "published",
+		created_at: "2025-02-08T00:00:00Z",
+		updated_at: "2025-02-08T00:00:00Z",
+	},
 ];
 
 export const submissions: AssignmentSubmission[] = [
-  { id: 1, assignment_id: 1, user_id: 4, submission_text: 'My portfolio is at /portfolio/alice', file_url: null, submitted_at: '2026-03-19T18:00:00Z', grade: 88, passed: true, feedback: 'Great layout, minor accessibility issues.', status: 'graded', created_at: '2026-03-19T00:00:00Z', updated_at: '2026-03-19T18:00:00Z' },
-  { id: 2, assignment_id: 1, user_id: 5, submission_text: null, file_url: '/submissions/budi-portfolio.zip', submitted_at: '2026-03-20T10:00:00Z', grade: null, passed: true, feedback: null, status: 'submitted', created_at: '2026-03-20T00:00:00Z', updated_at: '2026-03-20T10:00:00Z' },
-  { id: 3, assignment_id: 3, user_id: 4, submission_text: 'GitHub: github.com/alice/todo-app', file_url: null, submitted_at: '2026-03-24T20:00:00Z', grade: 95, passed: true, feedback: 'Excellent use of hooks!', status: 'graded', created_at: '2026-03-24T00:00:00Z', updated_at: '2026-03-24T20:00:00Z' },
-  { id: 4, assignment_id: 5, user_id: 6, submission_text: null, file_url: '/submissions/charlie-er.pdf', submitted_at: '2026-03-21T15:30:00Z', grade: null, passed: true, feedback: null, status: 'submitted', created_at: '2026-03-21T00:00:00Z', updated_at: '2026-03-21T15:30:00Z' },
+	{
+		id: 1,
+		assignment_id: 1,
+		user_id: 4,
+		submission_text: "My portfolio is at /portfolio/alice",
+		file_url: null,
+		submitted_at: "2026-03-19T18:00:00Z",
+		grade: 88,
+		passed: true,
+		feedback: "Great layout, minor accessibility issues.",
+		status: "graded",
+		created_at: "2026-03-19T00:00:00Z",
+		updated_at: "2026-03-19T18:00:00Z",
+	},
+	{
+		id: 2,
+		assignment_id: 1,
+		user_id: 5,
+		submission_text: null,
+		file_url: "/submissions/budi-portfolio.zip",
+		submitted_at: "2026-03-20T10:00:00Z",
+		grade: null,
+		passed: true,
+		feedback: null,
+		status: "submitted",
+		created_at: "2026-03-20T00:00:00Z",
+		updated_at: "2026-03-20T10:00:00Z",
+	},
+	{
+		id: 3,
+		assignment_id: 3,
+		user_id: 4,
+		submission_text: "GitHub: github.com/alice/todo-app",
+		file_url: null,
+		submitted_at: "2026-03-24T20:00:00Z",
+		grade: 95,
+		passed: true,
+		feedback: "Excellent use of hooks!",
+		status: "graded",
+		created_at: "2026-03-24T00:00:00Z",
+		updated_at: "2026-03-24T20:00:00Z",
+	},
+	{
+		id: 4,
+		assignment_id: 5,
+		user_id: 6,
+		submission_text: null,
+		file_url: "/submissions/charlie-er.pdf",
+		submitted_at: "2026-03-21T15:30:00Z",
+		grade: null,
+		passed: true,
+		feedback: null,
+		status: "submitted",
+		created_at: "2026-03-21T00:00:00Z",
+		updated_at: "2026-03-21T15:30:00Z",
+	},
 ];

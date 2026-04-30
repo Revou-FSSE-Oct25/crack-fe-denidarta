@@ -1,0 +1,10 @@
+.next
+coverage
+docs
+node_modules
+storybook-static
+.claude
+next-env.d.ts
+tsconfig.tsbuildinfo
+bun.lock
+package-lock.json

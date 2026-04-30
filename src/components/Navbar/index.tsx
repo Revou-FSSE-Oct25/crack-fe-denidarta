@@ -5,19 +5,19 @@ import { NavbarLinks } from "./NavbarLinks";
 import { NavbarActions } from "./NavbarActions";
 
 interface NavbarProps {
-  children: ReactNode;
+	children: ReactNode;
 }
 
 function NavbarRoot({ children }: NavbarProps) {
-  return (
-    <nav className={styles.nav}>
-      <div className={styles.navInner}>{children}</div>
-    </nav>
-  );
+	return (
+		<nav className={styles.nav}>
+			<div className={styles.navInner}>{children}</div>
+		</nav>
+	);
 }
 
 export const Navbar = Object.assign(NavbarRoot, {
-  Logo: NavbarLogo,
-  Links: NavbarLinks,
-  Actions: NavbarActions,
+	Logo: NavbarLogo,
+	Links: NavbarLinks,
+	Actions: NavbarActions,
 });

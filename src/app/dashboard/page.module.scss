@@ -1,108 +1,108 @@
 .wrapper {
-  padding: 1.5rem;
-  min-height: 100vh;
+	padding: 1.5rem;
+	min-height: 100vh;
 }
 
 .pageHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 0.75rem;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-top: 0.75rem;
 
-  h1 {
-    margin: 0;
-    font-size: 1.75rem;
-    line-height: 1.2;
-  }
+	h1 {
+		margin: 0;
+		font-size: 1.75rem;
+		line-height: 1.2;
+	}
 
-  p {
-    margin: 0.25rem 0 0;
-    color: var(--cds-text-secondary);
-  }
+	p {
+		margin: 0.25rem 0 0;
+		color: var(--cds-text-secondary);
+	}
 }
 
 .pageActions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	justify-content: flex-end;
 }
 
 .kpiColumn {
-  margin-top: 1rem;
+	margin-top: 1rem;
 }
 
 .kpiTile {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
 }
 
 .kpiLabel {
-  color: var(--cds-text-secondary);
-  font-size: 0.875rem;
+	color: var(--cds-text-secondary);
+	font-size: 0.875rem;
 }
 
 .kpiValue {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-top: 0.25rem;
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin-top: 0.25rem;
 }
 
 .activityColumn {
-  margin-top: 1rem;
+	margin-top: 1rem;
 }
 
 .activityHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
 
-  h2 {
-    margin: 0;
-    font-size: 1.125rem;
-  }
+	h2 {
+		margin: 0;
+		font-size: 1.125rem;
+	}
 
-  p {
-    margin: 0.25rem 0 0;
-    color: var(--cds-text-secondary);
-  }
+	p {
+		margin: 0.25rem 0 0;
+		color: var(--cds-text-secondary);
+	}
 }
 
 .activitySearch {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
 }
 
 .tableWrapper {
-  margin-top: 1rem;
+	margin-top: 1rem;
 }
 
 .glanceColumn {
-  margin-top: 1rem;
+	margin-top: 1rem;
 
-  h2 {
-    margin: 0;
-    font-size: 1.125rem;
-  }
+	h2 {
+		margin: 0;
+		font-size: 1.125rem;
+	}
 
-  p {
-    margin: 0.25rem 0 0;
-    color: var(--cds-text-secondary);
-  }
+	p {
+		margin: 0.25rem 0 0;
+		color: var(--cds-text-secondary);
+	}
 }
 
 .chartPlaceholder {
-  margin-top: 1rem;
-  height: 220px;
-  border-radius: 6px;
-  border: 1px dashed var(--cds-border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--cds-text-secondary);
+	margin-top: 1rem;
+	height: 220px;
+	border-radius: 6px;
+	border: 1px dashed var(--cds-border-subtle);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--cds-text-secondary);
 }
