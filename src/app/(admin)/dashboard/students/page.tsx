@@ -17,23 +17,8 @@ import {
 } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/helper";
-
-interface User {
-	id: string;
-	username: string;
-	email: string;
-	role: string;
-	status: string;
-	createdAt: string;
-}
-
-const headers = [
-	{ key: "id", header: "ID" },
-	{ key: "username", header: "Username" },
-	{ key: "email", header: "Email" },
-	{ key: "status", header: "Status" },
-	{ key: "createdAt", header: "Joined" },
-];
+import { User } from "@/types/index.type";
+import { studentTableHeaders } from "@/constants/students";
 
 function statusTagType(status: string) {
 	switch (status) {
@@ -56,7 +41,8 @@ export default function StudentsPage() {
 	useEffect(() => {
 		apiFetch("/users?role=student")
 			.then((res) => {
-				if (!res.ok) throw new Error(`Failed to fetch students (${res.status})`);
+				if (!res.ok)
+					throw new Error(`Failed to fetch students (${res.status})`);
 				return res.json() as Promise<{ data: User[] }>;
 			})
 			.then(({ data }) => setUsers(data))
@@ -109,9 +95,9 @@ export default function StudentsPage() {
 			)}
 
 			{loading ? (
-				<DataTableSkeleton headers={headers} rowCount={10} />
+				<DataTableSkeleton headers={studentTableHeaders} rowCount={10} />
 			) : (
-				<DataTable rows={rows} headers={headers} isSortable>
+				<DataTable rows={rows} headers={studentTableHeaders} isSortable>
 					{({
 						rows,
 						headers,

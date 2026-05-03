@@ -10853,6 +10853,166 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "XwdgP",
+      "x": 9160,
+      "y": -548,
+      "name": "SidebarMenuItem",
+      "reusable": true,
+      "width": 220,
+      "height": 40,
+      "cornerRadius": 4,
+      "gap": 10,
+      "padding": [
+        0,
+        12
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "icon_font",
+          "id": "teEzO",
+          "name": "icon",
+          "width": 18,
+          "height": 18,
+          "iconFontName": "grid_view",
+          "iconFontFamily": "Material Symbols Outlined",
+          "fill": "$--sidebar-foreground"
+        },
+        {
+          "type": "text",
+          "id": "W3rggH",
+          "name": "label",
+          "fill": "$--sidebar-foreground",
+          "content": "Menu Item",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "S9iT8",
+      "x": 9420,
+      "y": -548,
+      "name": "Sidebar",
+      "reusable": true,
+      "width": 260,
+      "fill": "$--sidebar",
+      "layout": "vertical",
+      "padding": [
+        24,
+        20
+      ],
+      "children": [
+        {
+          "type": "text",
+          "id": "IBP8i",
+          "fill": "$--muted-foreground",
+          "content": "NAVIGATION",
+          "fontFamily": "Inter",
+          "fontSize": 10,
+          "fontWeight": "600",
+          "letterSpacing": 1.5
+        },
+        {
+          "type": "frame",
+          "id": "BGkaI",
+          "width": "fill_container",
+          "height": 8
+        },
+        {
+          "type": "frame",
+          "id": "NLZ6I",
+          "name": "nav",
+          "slot": [
+            "#menuItem"
+          ],
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 4,
+          "children": [
+            {
+              "id": "A3s9L",
+              "type": "ref",
+              "ref": "XwdgP",
+              "name": "item1",
+              "descendants": {
+                "teEzO": {
+                  "iconFontName": "grid_view"
+                },
+                "W3rggH": {
+                  "content": "Dashboard"
+                }
+              }
+            },
+            {
+              "id": "Tuva0",
+              "type": "ref",
+              "ref": "XwdgP",
+              "fill": "$--sidebar-primary",
+              "cornerRadius": 4,
+              "name": "item2",
+              "descendants": {
+                "teEzO": {
+                  "iconFontName": "group",
+                  "fill": "$--sidebar-primary-foreground"
+                },
+                "W3rggH": {
+                  "content": "Students",
+                  "fill": "$--sidebar-primary-foreground",
+                  "fontWeight": "600"
+                }
+              }
+            },
+            {
+              "id": "EdnXr",
+              "type": "ref",
+              "ref": "XwdgP",
+              "name": "item3",
+              "descendants": {
+                "teEzO": {
+                  "iconFontName": "menu_book"
+                },
+                "W3rggH": {
+                  "content": "Courses"
+                }
+              }
+            },
+            {
+              "id": "IieJS",
+              "type": "ref",
+              "ref": "XwdgP",
+              "name": "item4",
+              "descendants": {
+                "teEzO": {
+                  "iconFontName": "quiz"
+                },
+                "W3rggH": {
+                  "content": "Assessments"
+                }
+              }
+            },
+            {
+              "id": "yZTE7",
+              "type": "ref",
+              "ref": "XwdgP",
+              "name": "item5",
+              "descendants": {
+                "teEzO": {
+                  "iconFontName": "bar_chart"
+                },
+                "W3rggH": {
+                  "content": "Analytics"
+                }
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "themes": {

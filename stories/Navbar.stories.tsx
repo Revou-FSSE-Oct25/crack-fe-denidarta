@@ -25,7 +25,16 @@ export const Default: Story = {
 			<Navbar.Logo />
 			<Navbar.Links links={defaultLinks} />
 			<Navbar.Actions>
-				<a href="/login" style={{ padding: "0 1rem", fontFamily: "IBM Plex Mono, monospace", fontSize: "0.875rem", color: "var(--cds-text-secondary)", textDecoration: "none" }}>
+				<a
+					href="/login"
+					style={{
+						padding: "0 1rem",
+						fontFamily: "IBM Plex Mono, monospace",
+						fontSize: "0.875rem",
+						color: "var(--cds-text-secondary)",
+						textDecoration: "none",
+					}}
+				>
 					Log in
 				</a>
 			</Navbar.Actions>
@@ -74,7 +83,16 @@ export const ManyLinks: Story = {
 				]}
 			/>
 			<Navbar.Actions>
-				<a href="/logout" style={{ padding: "0 1rem", fontFamily: "IBM Plex Mono, monospace", fontSize: "0.875rem", color: "var(--cds-text-secondary)", textDecoration: "none" }}>
+				<a
+					href="/logout"
+					style={{
+						padding: "0 1rem",
+						fontFamily: "IBM Plex Mono, monospace",
+						fontSize: "0.875rem",
+						color: "var(--cds-text-secondary)",
+						textDecoration: "none",
+					}}
+				>
 					Log out
 				</a>
 			</Navbar.Actions>

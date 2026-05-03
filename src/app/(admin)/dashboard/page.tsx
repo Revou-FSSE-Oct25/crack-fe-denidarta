@@ -5,6 +5,7 @@ import {
 	Button,
 	Column,
 	DataTable,
+	DataTableSkeleton,
 	Grid,
 	OverflowMenu,
 	OverflowMenuItem,
@@ -17,29 +18,13 @@ import {
 	TableRow,
 	Tag,
 	Tile,
-	DataTableSkeleton,
 } from "@carbon/react";
 import { Add, Download } from "@carbon/icons-react";
 import React, { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 import { apiFetch } from "@/lib/helper";
-
-interface User {
-	id: string;
-	username: string;
-	email: string;
-	role: string;
-	status: string;
-	createdAt: string;
-}
-
-const activityHeaders = [
-	{ key: "username", header: "Username" },
-	{ key: "email", header: "Email" },
-	{ key: "role", header: "Role" },
-	{ key: "status", header: "Status" },
-	{ key: "createdAt", header: "Joined" },
-];
+import { User } from "@/types/index.type";
+import { activityTableHeaders } from "@/constants/dashboard";
 
 function statusTagType(status: string) {
 	switch (status) {
@@ -73,7 +58,11 @@ export default function DashboardPage() {
 
 	useEffect(() => {
 		apiFetch("/users")
-			.then((res) => (res.ok ? (res.json() as Promise<{ data: { data: User[] } }>) : Promise.resolve({ data: { data: [] } })))
+			.then((res) =>
+				res.ok
+					? (res.json() as Promise<{ data: { data: User[] } }>)
+					: Promise.resolve({ data: { data: [] } }),
+			)
 			.then(({ data }) => setUsers(data.data))
 			.catch(() => setUsers([]))
 			.finally(() => setLoading(false));
@@ -163,9 +152,16 @@ export default function DashboardPage() {
 
 						<div className={styles.tableWrapper}>
 							{loading ? (
-								<DataTableSkeleton headers={activityHeaders} rowCount={5} />
+								<DataTableSkeleton
+									headers={activityTableHeaders}
+									rowCount={5}
+								/>
 							) : (
-								<DataTable rows={rows} headers={activityHeaders} isSortable>
+								<DataTable
+									rows={rows}
+									headers={activityTableHeaders}
+									isSortable
+								>
 									{({
 										rows,
 										headers,

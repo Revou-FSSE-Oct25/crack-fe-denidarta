@@ -14,11 +14,7 @@ import { ArrowRight, UserAvatar } from "@carbon/icons-react";
 import styles from "./page.module.scss";
 import { useForm } from "react-hook-form";
 import { login } from "@/lib/login";
-
-interface LoginFormValues {
-	email: string;
-	password: string;
-}
+import { LoginFormValues } from "@/types/index.type";
 
 export default function LoginPage() {
 	const [error, setError] = useState<string | null>(null);
