@@ -25,7 +25,7 @@ import styles from "./page.module.scss";
 import { apiFetch } from "@/lib/helper";
 
 interface User {
-	id: number;
+	id: string;
 	username: string;
 	email: string;
 	role: string;
@@ -43,11 +43,11 @@ const activityHeaders = [
 
 function statusTagType(status: string) {
 	switch (status) {
-		case "ACTIVE":
+		case "active":
 			return "green";
-		case "INVITED":
+		case "invited":
 			return "blue";
-		case "INACTIVE":
+		case "inactive":
 			return "gray";
 		default:
 			return "gray";
@@ -56,11 +56,11 @@ function statusTagType(status: string) {
 
 function roleTagType(role: string) {
 	switch (role) {
-		case "ADMIN":
+		case "admin":
 			return "purple";
-		case "INSTRUCTOR":
+		case "instructor":
 			return "teal";
-		case "STUDENT":
+		case "student":
 			return "blue";
 		default:
 			return "gray";
@@ -73,15 +73,15 @@ export default function DashboardPage() {
 
 	useEffect(() => {
 		apiFetch("/users")
-			.then((res) => (res.ok ? res.json() : []))
-			.then((data: User[]) => setUsers(data))
+			.then((res) => (res.ok ? (res.json() as Promise<{ data: { data: User[] } }>) : Promise.resolve({ data: { data: [] } })))
+			.then(({ data }) => setUsers(data.data))
 			.catch(() => setUsers([]))
 			.finally(() => setLoading(false));
 	}, []);
 
-	const students = users.filter((u) => u.role === "STUDENT");
-	const instructors = users.filter((u) => u.role === "INSTRUCTOR");
-	const activeUsers = users.filter((u) => u.status === "ACTIVE");
+	const students = users.filter((u) => u.role === "student");
+	const instructors = users.filter((u) => u.role === "instructor");
+	const activeUsers = users.filter((u) => u.status === "active");
 
 	const kpis = [
 		{ label: "Total Users", value: loading ? "—" : String(users.length) },

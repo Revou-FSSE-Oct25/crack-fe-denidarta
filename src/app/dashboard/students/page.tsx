@@ -19,7 +19,7 @@ import { Add } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/helper";
 
 interface User {
-	id: number;
+	id: string;
 	username: string;
 	email: string;
 	role: string;
@@ -37,11 +37,11 @@ const headers = [
 
 function statusTagType(status: string) {
 	switch (status) {
-		case "ACTIVE":
+		case "active":
 			return "green";
-		case "INVITED":
+		case "invited":
 			return "blue";
-		case "INACTIVE":
+		case "inactive":
 			return "gray";
 		default:
 			return "gray";
@@ -54,12 +54,12 @@ export default function StudentsPage() {
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-		apiFetch("/users?role=STUDENT")
+		apiFetch("/users?role=student")
 			.then((res) => {
-				if (!res.ok) throw new Error("Failed to fetch students");
-				return res.json() as Promise<User[]>;
+				if (!res.ok) throw new Error(`Failed to fetch students (${res.status})`);
+				return res.json() as Promise<{ data: User[] }>;
 			})
-			.then(setUsers)
+			.then(({ data }) => setUsers(data))
 			.catch((err: Error) => setError(err.message))
 			.finally(() => setLoading(false));
 	}, []);

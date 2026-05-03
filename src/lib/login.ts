@@ -19,9 +19,10 @@ export async function login(payload: LoginPayload): Promise<LoginResponse> {
 	});
 
 	if (!res.ok) {
-		const err = await res.json();
+		const err = await res.json() as { message?: string };
 		throw new Error(err.message ?? "Login failed");
 	}
 
-	return res.json();
+	const json = await res.json() as { data: LoginResponse };
+	return json.data;
 }
