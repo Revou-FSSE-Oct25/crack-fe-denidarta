@@ -9,6 +9,7 @@ import {
 	Tile,
 	InlineNotification,
 	Stack,
+	Link,
 } from "@carbon/react";
 import { ArrowRight, UserAvatar } from "@carbon/icons-react";
 import styles from "./page.module.scss";
@@ -96,6 +97,12 @@ export default function LoginPage() {
 							>
 								{loading ? "Signing in…" : "Sign in"}
 							</Button>
+							<div className={styles.invitation}>
+								<p>Have invitation link?</p>
+								<Link href="/create-account" className={styles.link}>
+									Activate Your Account
+								</Link>
+							</div>
 						</Stack>
 					</Form>
 				</Tile>

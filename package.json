@@ -11,9 +11,7 @@
 		"test": "vitest",
 		"test:run": "vitest run",
 		"test:ui": "vitest --ui",
-		"test:watch": "vitest",
-		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build"
+		"test:watch": "vitest"
 	},
 	"dependencies": {
 		"@carbon/icons-react": "^11.75.0",
@@ -25,7 +23,6 @@
 		"react-hook-form": "^7.71.1"
 	},
 	"devDependencies": {
-		"@storybook/nextjs-vite": "^10.2.8",
 		"@tailwindcss/postcss": "^4",
 		"@types/node": "^25.2.3",
 		"@types/react": "^19",
@@ -33,11 +30,9 @@
 		"@vitest/ui": "^4.0.18",
 		"eslint": "^9",
 		"eslint-config-next": "16.0.10",
-		"eslint-plugin-storybook": "^10.2.8",
 		"jsdom": "^28.0.0",
 		"prettier": "3.8.3",
 		"sass": "^1.97.3",
-		"storybook": "^10.2.8",
 		"tailwindcss": "^4",
 		"typescript": "^5",
 		"vite": "^7.3.1",
