@@ -13,7 +13,7 @@ import {
 import { ArrowRight, UserAvatar } from "@carbon/icons-react";
 import styles from "./page.module.scss";
 import { useForm } from "react-hook-form";
-import { login } from "@/lib/login";
+import { login } from "@/services/auth.service";
 import { LoginFormValues } from "@/types/index.type";
 
 export default function LoginPage() {

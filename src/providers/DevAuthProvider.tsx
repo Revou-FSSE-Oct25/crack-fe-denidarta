@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { login } from "@/lib/login";
+import { login } from "@/services/auth.service";
 
 export default function DevAuthProvider({
 	children,

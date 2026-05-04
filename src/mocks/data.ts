@@ -1,8 +1,16 @@
+import type { UserRole } from "@/types/user";
+import type {
+	Course,
+	CourseEnrollment,
+	LearningMaterial,
+	ClassSession,
+	ClassAttendance,
+} from "@/types/course";
+import type { Assignment, AssignmentSubmission } from "@/types/assignment";
+
 // Mock data based on LMS database schema
 
-export type UserRole = "student" | "instructor" | "admin";
-
-export interface User {
+interface MockUser {
 	id: number;
 	username: string;
 	email: string;
@@ -12,87 +20,7 @@ export interface User {
 	updated_at: string;
 }
 
-export interface Course {
-	id: number;
-	name: string;
-	description: string;
-	instructor_id: number;
-	status: "draft" | "active" | "archived" | "completed";
-	created_at: string;
-	updated_at: string;
-}
-
-export interface CourseEnrollment {
-	id: number;
-	course_id: number;
-	user_id: number;
-	status: "enrolled" | "completed" | "dropped" | "pending";
-	created_at: string;
-	updated_at: string;
-}
-
-export interface LearningMaterial {
-	id: number;
-	course_id: number;
-	title: string;
-	content: string | null;
-	file_url: string | null;
-	material_type: "video" | "pdf" | "article" | "slides" | "other";
-	order_index: number;
-	created_at: string;
-	updated_at: string;
-}
-
-export interface ClassSession {
-	id: number;
-	course_id: number;
-	title: string;
-	session_date: string;
-	start_time: string;
-	end_time: string;
-	location: string | null;
-	meeting_url: string | null;
-	created_at: string;
-	updated_at: string;
-}
-
-export interface ClassAttendance {
-	id: number;
-	class_session_id: number;
-	user_id: number;
-	status: "present" | "absent" | "late" | "excused";
-	created_at: string;
-	updated_at: string;
-}
-
-export interface Assignment {
-	id: number;
-	course_id: number;
-	title: string;
-	description: string | null;
-	due_date: string;
-	max_points: number;
-	status: "draft" | "published" | "closed";
-	created_at: string;
-	updated_at: string;
-}
-
-export interface AssignmentSubmission {
-	id: number;
-	assignment_id: number;
-	user_id: number;
-	submission_text: string | null;
-	file_url: string | null;
-	submitted_at: string | null;
-	grade: number | null;
-	passed: boolean;
-	feedback: string | null;
-	status: "draft" | "submitted" | "graded" | "returned";
-	created_at: string;
-	updated_at: string;
-}
-
-export const users: User[] = [
+export const users: MockUser[] = [
 	{
 		id: 1,
 		username: "admin",
@@ -431,6 +359,8 @@ export const classSessions: ClassSession[] = [
 		updated_at: "2025-01-28T00:00:00Z",
 	},
 ];
+
+export const classAttendances: ClassAttendance[] = [];
 
 export const assignments: Assignment[] = [
 	{

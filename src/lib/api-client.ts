@@ -1,7 +1,3 @@
-export const truncateText = (text: string, length: number): string => {
-	return text.length > length ? `${text.slice(0, length)}...` : text;
-};
-
 const BACKEND_URL =
 	process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3001";
 

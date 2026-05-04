@@ -22,7 +22,7 @@ import {
 import { Add, Download } from "@carbon/icons-react";
 import React, { useEffect, useState } from "react";
 import styles from "./page.module.scss";
-import { apiFetch } from "@/lib/helper";
+import { apiFetch } from "@/lib/api-client";
 import { User } from "@/types/index.type";
 import { activityTableHeaders } from "@/constants/dashboard";
 

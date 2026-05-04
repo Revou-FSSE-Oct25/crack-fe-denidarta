@@ -1,13 +1,10 @@
-export interface User {
-	id: string;
-	username: string;
-	email: string;
-	role: string;
-	status: string;
-	createdAt: string;
-}
-
-export interface LoginFormValues {
-	email: string;
-	password: string;
-}
+export type { User, UserRole } from "./user";
+export type { LoginFormValues } from "./auth";
+export type {
+	Course,
+	CourseEnrollment,
+	LearningMaterial,
+	ClassSession,
+	ClassAttendance,
+} from "./course";
+export type { Assignment, AssignmentSubmission } from "./assignment";

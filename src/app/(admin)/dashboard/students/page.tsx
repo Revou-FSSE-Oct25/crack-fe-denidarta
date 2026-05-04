@@ -16,7 +16,7 @@ import {
 	InlineNotification,
 } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
-import { apiFetch } from "@/lib/helper";
+import { apiFetch } from "@/lib/api-client";
 import { User } from "@/types/index.type";
 import { studentTableHeaders } from "@/constants/students";
 
