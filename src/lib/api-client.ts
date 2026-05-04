@@ -23,12 +23,8 @@ async function tryRefresh(): Promise<string | null> {
 			return null;
 		}
 
-		const { accessToken, refreshToken: newRefresh } = (await res.json()) as {
-			accessToken: string;
-			refreshToken: string;
-		};
+		const { accessToken } = (await res.json()) as { accessToken: string };
 		localStorage.setItem("accessToken", accessToken);
-		localStorage.setItem("refreshToken", newRefresh);
 		return accessToken;
 	})().finally(() => {
 		refreshPromise = null;

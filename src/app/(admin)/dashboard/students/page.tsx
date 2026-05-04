@@ -19,6 +19,7 @@ import { Add } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/api-client";
 import { User } from "@/types/index.type";
 import { studentTableHeaders } from "@/constants/students";
+import AddNewUserModal from "@/components/Modals/AddNewUserModal";
 
 function statusTagType(status: string) {
 	switch (status) {
@@ -37,6 +38,7 @@ export default function StudentsPage() {
 	const [users, setUsers] = useState<User[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [modalOpen, setModalOpen] = useState(false);
 
 	useEffect(() => {
 		apiFetch("/users?role=student")
@@ -79,7 +81,7 @@ export default function StudentsPage() {
 						{loading ? "..." : `${users.length} students total`}
 					</p>
 				</div>
-				<Button kind="primary" size="md" renderIcon={Add}>
+				<Button kind="primary" size="md" renderIcon={Add} onClick={() => setModalOpen(true)}>
 					Add Student
 				</Button>
 			</div>
@@ -148,6 +150,21 @@ export default function StudentsPage() {
 					)}
 				</DataTable>
 			)}
+
+			<AddNewUserModal
+				open={modalOpen}
+				onRequestClose={() => setModalOpen(false)}
+				onRequestSubmit={async (userId) => {
+					const inviteRes = await apiFetch(`/auth/invite/${userId}`, {
+						method: "POST",
+					});
+					const { inviteToken } = (await inviteRes.json()) as {
+						inviteToken: string;
+					};
+
+					return `${window.location.origin}/create-account/${inviteToken}`;
+				}}
+			/>
 		</div>
 	);
 }
