@@ -18,6 +18,7 @@ import {
 	TableRow,
 	Tag,
 	Tile,
+	Pagination,
 } from "@carbon/react";
 import { Add, Download } from "@carbon/icons-react";
 import React, { useEffect, useState } from "react";

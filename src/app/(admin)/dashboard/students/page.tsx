@@ -14,12 +14,15 @@ import {
 	Tag,
 	DataTableSkeleton,
 	InlineNotification,
+	Pagination,
+	Search,
 } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/api-client";
 import { User } from "@/types/index.type";
 import { studentTableHeaders } from "@/constants/students";
 import AddNewUserModal from "@/components/Modals/AddNewUserModal";
+import styles from "./students.module.scss";
 
 function statusTagType(status: string) {
 	switch (status) {
@@ -36,21 +39,38 @@ function statusTagType(status: string) {
 
 export default function StudentsPage() {
 	const [users, setUsers] = useState<User[]>([]);
+	const [total, setTotal] = useState(0);
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(10);
+	const [search, setSearch] = useState("");
+	const [inputValue, setInputValue] = useState("");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [modalOpen, setModalOpen] = useState(false);
 
 	useEffect(() => {
-		apiFetch("/users?role=student")
+		setLoading(true);
+		const params = new URLSearchParams({
+			role: "student",
+			page: String(page),
+			limit: String(pageSize),
+			...(search && { search }),
+		});
+		apiFetch(`/users?${params.toString()}`)
 			.then((res) => {
 				if (!res.ok)
 					throw new Error(`Failed to fetch students (${res.status})`);
-				return res.json() as Promise<{ data: User[] }>;
+				return res.json() as Promise<{
+					data: { data: User[]; meta: { total: number } };
+				}>;
 			})
-			.then(({ data }) => setUsers(data))
+			.then(({ data }) => {
+				setUsers(data.data);
+				setTotal(data.meta.total);
+			})
 			.catch((err: Error) => setError(err.message))
 			.finally(() => setLoading(false));
-	}, []);
+	}, [page, pageSize, search]);
 
 	const rows = users.map((u) => ({
 		id: String(u.id),
@@ -78,10 +98,15 @@ export default function StudentsPage() {
 							color: "var(--cds-text-secondary)",
 						}}
 					>
-						{loading ? "..." : `${users.length} students total`}
+						{loading ? "..." : `${total} students total`}
 					</p>
 				</div>
-				<Button kind="primary" size="md" renderIcon={Add} onClick={() => setModalOpen(true)}>
+				<Button
+					kind="primary"
+					size="md"
+					renderIcon={Add}
+					onClick={() => setModalOpen(true)}
+				>
 					Add Student
 				</Button>
 			</div>
@@ -95,7 +120,33 @@ export default function StudentsPage() {
 					style={{ marginBottom: "1rem" }}
 				/>
 			)}
-
+			<div className={styles.searchBar}>
+				<div className={styles.searchWrapper}>
+					<Search
+						closeButtonLabelText="Clear search input"
+						id="search-default-1"
+						labelText="Search"
+						placeholder="Search students by name or email"
+						size="md"
+						type="search"
+						value={inputValue}
+						onChange={(e) => {
+							setInputValue(e.currentTarget.value);
+						}}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								setSearch(inputValue);
+								setPage(1);
+							}
+						}}
+						onClear={() => {
+							setInputValue("");
+							setSearch("");
+							setPage(1);
+						}}
+					/>
+				</div>
+			</div>
 			{loading ? (
 				<DataTableSkeleton headers={studentTableHeaders} rowCount={10} />
 			) : (
@@ -150,6 +201,21 @@ export default function StudentsPage() {
 					)}
 				</DataTable>
 			)}
+			<Pagination
+				backwardText="Previous"
+				forwardText="Next"
+				itemsPerPageText="Items per page:"
+				page={page}
+				pageNumberText="Page Number"
+				pageSize={pageSize}
+				pageSizes={[10, 20, 30, 40, 50]}
+				size="md"
+				totalItems={total}
+				onChange={({ page, pageSize }) => {
+					setPage(page);
+					setPageSize(pageSize);
+				}}
+			/>
 
 			<AddNewUserModal
 				open={modalOpen}
