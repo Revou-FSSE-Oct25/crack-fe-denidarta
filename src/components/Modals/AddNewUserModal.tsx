@@ -24,6 +24,14 @@ export default function AddNewUserModal({
 	const handleSubmit = async () => {
 		setEmailError("");
 
+		const emailInput = document.createElement("input");
+		emailInput.type = "email";
+		emailInput.value = email;
+		if (!emailInput.checkValidity()) {
+			setEmailError("Please enter a valid email address");
+			return;
+		}
+
 		const res = await apiFetch("/users", {
 			method: "POST",
 			body: JSON.stringify({ username: fullName, email, role }),
@@ -86,38 +94,38 @@ export default function AddNewUserModal({
 			onRequestSubmit={handleSubmit}
 			onSecondarySubmit={handleClose}
 		>
-			<TextInput
-				data-modal-primary-focus
-				id="add-user-email"
-				labelText="Email"
-				placeholder="user@example.com"
-				value={email}
-				onChange={(e) => {
-					setEmail(e.target.value);
-					setEmailError("");
-				}}
-				invalid={!!emailError}
-				invalidText={emailError}
-				style={{ marginBottom: "24px" }}
-			/>
-			<TextInput
-				id="add-user-full-name"
-				labelText="Full Name"
-				placeholder="John Doe"
-				value={fullName}
-				onChange={(e) => setFullName(e.target.value)}
-				style={{ marginBottom: "24px" }}
-			/>
-			<Select
-				id="add-user-role"
-				labelText="Role"
-				value={role}
-				onChange={(e) => setRole(e.target.value)}
-			>
-				<SelectItem text="Student" value="student" />
-				<SelectItem text="Instructor" value="instructor" />
-				<SelectItem text="Admin" value="admin" />
-			</Select>
+			<div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+				<TextInput
+					data-modal-primary-focus
+					id="add-user-email"
+					labelText="Email"
+					placeholder="user@example.com"
+					value={email}
+					onChange={(e) => {
+						setEmail(e.target.value);
+						setEmailError("");
+					}}
+					invalid={!!emailError}
+					invalidText={emailError}
+				/>
+				<TextInput
+					id="add-user-full-name"
+					labelText="Full Name"
+					placeholder="John Doe"
+					value={fullName}
+					onChange={(e) => setFullName(e.target.value)}
+				/>
+				<Select
+					id="add-user-role"
+					labelText="Role"
+					value={role}
+					onChange={(e) => setRole(e.target.value)}
+				>
+					<SelectItem text="Student" value="student" />
+					<SelectItem text="Instructor" value="instructor" />
+					<SelectItem text="Admin" value="admin" />
+				</Select>
+			</div>
 		</Modal>
 	);
 }

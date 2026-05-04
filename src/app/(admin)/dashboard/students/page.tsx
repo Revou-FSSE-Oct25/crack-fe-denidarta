@@ -158,11 +158,11 @@ export default function StudentsPage() {
 					const inviteRes = await apiFetch(`/auth/invite/${userId}`, {
 						method: "POST",
 					});
-					const { inviteToken } = (await inviteRes.json()) as {
-						inviteToken: string;
+					const { data } = (await inviteRes.json()) as {
+						data: { inviteToken: string };
 					};
 
-					return `${window.location.origin}/create-account/${inviteToken}`;
+					return `${window.location.origin}/create-account/${data.inviteToken}`;
 				}}
 			/>
 		</div>
