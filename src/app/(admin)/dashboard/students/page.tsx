@@ -22,20 +22,8 @@ import { apiFetch } from "@/lib/api-client";
 import { User } from "@/types/index.type";
 import { studentTableHeaders } from "@/constants/students";
 import AddNewUserModal from "@/components/Modals/AddNewUserModal";
+import { statusTagType } from "@/utils/tag-type";
 import styles from "./students.module.scss";
-
-function statusTagType(status: string) {
-	switch (status) {
-		case "active":
-			return "green";
-		case "invited":
-			return "blue";
-		case "inactive":
-			return "gray";
-		default:
-			return "gray";
-	}
-}
 
 export default function StudentsPage() {
 	const [users, setUsers] = useState<User[]>([]);
