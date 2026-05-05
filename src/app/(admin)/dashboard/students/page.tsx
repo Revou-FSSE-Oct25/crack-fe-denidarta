@@ -49,55 +49,57 @@ export default function StudentsPage() {
 	const [modalOpen, setModalOpen] = useState(false);
 
 	useEffect(() => {
-		setLoading(true);
+		let mounted = true;
+		const controller = new AbortController();
+
 		const params = new URLSearchParams({
 			role: "student",
 			page: String(page),
 			limit: String(pageSize),
 			...(search && { search }),
 		});
-		apiFetch(`/users?${params.toString()}`)
-			.then((res) => {
-				if (!res.ok)
-					throw new Error(`Failed to fetch students (${res.status})`);
-				return res.json() as Promise<{
+		(async () => {
+			try {
+				const res = await apiFetch(`/users?${params.toString()}`, {
+					signal: controller.signal,
+				});
+				if (!res.ok) throw new Error(`Failed to fetch students (${res.status})`);
+				const { data } = (await res.json()) as {
 					data: { data: User[]; meta: { total: number } };
-				}>;
-			})
-			.then(({ data }) => {
+				};
+				if (!mounted) return;
 				setUsers(data.data);
 				setTotal(data.meta.total);
-			})
-			.catch((err: Error) => setError(err.message))
-			.finally(() => setLoading(false));
+			} catch (err) {
+				if (!mounted || (err as Error).name === "AbortError") return;
+				setError((err as Error).message);
+			} finally {
+				if (mounted) setLoading(false);
+			}
+		})();
+
+		return () => {
+			mounted = false;
+			controller.abort();
+		};
 	}, [page, pageSize, search]);
 
-	const rows = users.map((u) => ({
-		id: String(u.id),
-		username: u.username,
-		email: u.email,
-		status: u.status,
-		createdAt: new Date(u.createdAt).toLocaleDateString("id-ID"),
+	const DATE_LOCALE = "id-ID";
+
+	const rows = users.map((user) => ({
+		id: String(user.id),
+		username: user.username,
+		email: user.email,
+		status: user.status,
+		createdAt: new Date(user.createdAt).toLocaleDateString(DATE_LOCALE),
 	}));
 
 	return (
-		<div style={{ padding: "1.5rem" }}>
-			<div
-				style={{
-					display: "flex",
-					justifyContent: "space-between",
-					alignItems: "flex-start",
-					marginBottom: "1.5rem",
-				}}
-			>
-				<div>
-					<h1 style={{ margin: 0, fontSize: "1.75rem" }}>Students</h1>
-					<p
-						style={{
-							margin: "0.25rem 0 0",
-							color: "var(--cds-text-secondary)",
-						}}
-					>
+		<div className={styles.container}>
+			<div className={styles.header}>
+				<div className={styles.headerContent}>
+					<h1 className={styles.title}>Students</h1>
+					<p className={styles.subtitle}>
 						{loading ? "..." : `${total} students total`}
 					</p>
 				</div>
@@ -134,7 +136,7 @@ export default function StudentsPage() {
 							setInputValue(e.currentTarget.value);
 						}}
 						onKeyDown={(e) => {
-							if (e.key === 'Enter') {
+							if (e.key === "Enter") {
 								setSearch(inputValue);
 								setPage(1);
 							}

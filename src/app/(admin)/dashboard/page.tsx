@@ -18,10 +18,9 @@ import {
 	TableRow,
 	Tag,
 	Tile,
-	Pagination,
 } from "@carbon/react";
 import { Add, Download } from "@carbon/icons-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 import { apiFetch } from "@/lib/api-client";
 import { User } from "@/types/index.type";
@@ -58,15 +57,29 @@ export default function DashboardPage() {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		apiFetch("/users")
+		let mounted = true;
+		const controller = new AbortController();
+
+		apiFetch("/users", { signal: controller.signal })
 			.then((res) =>
 				res.ok
 					? (res.json() as Promise<{ data: { data: User[] } }>)
 					: Promise.resolve({ data: { data: [] } }),
 			)
-			.then(({ data }) => setUsers(data.data))
-			.catch(() => setUsers([]))
-			.finally(() => setLoading(false));
+			.then(({ data }) => {
+				if (mounted) setUsers(data.data);
+			})
+			.catch((err: Error) => {
+				if (mounted && err.name !== "AbortError") setUsers([]);
+			})
+			.finally(() => {
+				if (mounted) setLoading(false);
+			});
+
+		return () => {
+			mounted = false;
+			controller.abort();
+		};
 	}, []);
 
 	const students = users.filter((u) => u.role === "student");

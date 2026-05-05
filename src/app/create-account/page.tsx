@@ -117,13 +117,8 @@ export default function CreateAccountPage() {
 
 				{/* Sign In Link */}
 				<div className={styles.signInRow}>
-					<span className={styles.signInLabel}>Already have an account?</span>
-					<Link inline href={"/login"}>
-						Sign In
-					</Link>
-					<a href="/login" className={styles.signInLink}>
-						Sign in
-					</a>
+					<p className={styles.signInLabel}>Already have an account?</p>
+					<Link href={"/login"}>Sign In</Link>
 				</div>
 			</div>
 

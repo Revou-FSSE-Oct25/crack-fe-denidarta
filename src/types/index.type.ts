@@ -8,3 +8,9 @@ export type {
 	ClassAttendance,
 } from "./course";
 export type { Assignment, AssignmentSubmission } from "./assignment";
+export type {
+	Profile,
+	ProfileFormValues,
+	Gender,
+	EducationLevel,
+} from "./profile";
