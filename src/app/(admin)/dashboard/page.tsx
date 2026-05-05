@@ -25,20 +25,7 @@ import styles from "./page.module.scss";
 import { apiFetch } from "@/lib/api-client";
 import { User } from "@/types/index.type";
 import { activityTableHeaders } from "@/constants/dashboard";
-import { statusTagType } from "@/utils/tag-type";
-
-function roleTagType(role: string) {
-	switch (role) {
-		case "admin":
-			return "purple";
-		case "instructor":
-			return "teal";
-		case "student":
-			return "blue";
-		default:
-			return "gray";
-	}
-}
+import { roleTagType, statusTagType } from "@/utils/tag-type";
 
 export default function DashboardPage() {
 	const [users, setUsers] = useState<User[]>([]);
