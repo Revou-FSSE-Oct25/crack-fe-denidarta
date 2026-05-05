@@ -25,19 +25,7 @@ import styles from "./page.module.scss";
 import { apiFetch } from "@/lib/api-client";
 import { User } from "@/types/index.type";
 import { activityTableHeaders } from "@/constants/dashboard";
-
-function statusTagType(status: string) {
-	switch (status) {
-		case "active":
-			return "green";
-		case "invited":
-			return "blue";
-		case "inactive":
-			return "gray";
-		default:
-			return "gray";
-	}
-}
+import { statusTagType } from "@/utils/tag-type";
 
 function roleTagType(role: string) {
 	switch (role) {
