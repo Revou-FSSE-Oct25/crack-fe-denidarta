@@ -9,7 +9,7 @@ import {
 	SideNavItems,
 	SideNavLink,
 } from "@carbon/react";
-import { Home, UserMultiple } from "@carbon/icons-react";
+import { Home, UserMultiple, Course, Education } from "@carbon/icons-react";
 import { usePathname } from "next/navigation";
 import styles from "./DashboardShell.module.scss";
 
@@ -19,6 +19,18 @@ const navItems = [
 		href: "/dashboard/students",
 		label: "Students",
 		icon: UserMultiple,
+		exact: false,
+	},
+	{
+		href: "/dashboard/courses",
+		label: "Courses",
+		icon: Course,
+		exact: false,
+	},
+	{
+		href: "/dashboard/programs",
+		label: "Programs",
+		icon: Education,
 		exact: false,
 	},
 ];
