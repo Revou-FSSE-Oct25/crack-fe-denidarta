@@ -23,9 +23,9 @@ async function tryRefresh(): Promise<string | null> {
 			return null;
 		}
 
-		const { accessToken } = (await res.json()) as { accessToken: string };
-		localStorage.setItem("accessToken", accessToken);
-		return accessToken;
+		const { data } = (await res.json()) as { data: { accessToken: string } };
+		localStorage.setItem("accessToken", data.accessToken);
+		return data.accessToken;
 	})().finally(() => {
 		refreshPromise = null;
 	});
