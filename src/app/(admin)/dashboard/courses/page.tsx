@@ -54,14 +54,19 @@ export default function CoursesPage() {
 					signal: controller.signal,
 				});
 				if (!res.ok) throw new HttpError(res.status);
-				const { data: responseBody } = (await res.json()) as {
-					data: { data: Course[]; meta: { total: number } };
+				const { data: courseList } = (await res.json()) as {
+					data: Course[];
 				};
 				if (!mounted) return;
-				setCourses(responseBody.data);
-				setTotal(responseBody.meta.total);
+				const list = courseList ?? [];
+				setCourses(list);
+				setTotal(list.length);
 			} catch (err) {
-				if (!mounted || (err instanceof DOMException && err.name === "AbortError")) return;
+				if (
+					!mounted ||
+					(err instanceof DOMException && err.name === "AbortError")
+				)
+					return;
 				if (err instanceof HttpError) {
 					setError(err.message);
 				} else if (err instanceof SyntaxError) {
@@ -88,7 +93,7 @@ export default function CoursesPage() {
 	const rows = courses.map((course) => ({
 		id: String(course.id),
 		courseName: course.name,
-		instructor: course.instructor_id,
+		instructor: course.instructor.profile?.fullName ?? course.instructor.username,
 		status: course.status,
 		createdAt: new Date(course.created_at).toLocaleDateString(DATE_LOCALE),
 		description: course.description,
@@ -118,91 +123,91 @@ export default function CoursesPage() {
 					style={{ marginBottom: "1rem" }}
 				/>
 			)}
-
-			<div className={styles.searchBar}>
-				<div className={styles.searchWrapper}>
-					<Search
-						closeButtonLabelText="Clear search input"
-						id="search-courses"
-						labelText="Search"
-						placeholder="Search courses (coming soon)"
-						size="md"
-						type="search"
-						disabled
-					/>
+			<div className={styles.tableWrapper}>
+				<div className={styles.searchBar}>
+					<div className={styles.searchWrapper}>
+						<Search
+							closeButtonLabelText="Clear search input"
+							id="search-courses"
+							labelText="Search"
+							placeholder="Search courses (coming soon)"
+							size="md"
+							type="search"
+							disabled
+						/>
+					</div>
 				</div>
-			</div>
-
-			{loading ? (
-				<DataTableSkeleton headers={courseTableHeaders} rowCount={10} />
-			) : (
-				<DataTable rows={rows} headers={courseTableHeaders} isSortable>
-					{({
-						rows,
-						headers,
-						getTableProps,
-						getHeaderProps,
-						getRowProps,
-						getTableContainerProps,
-					}) => (
-						<TableContainer {...getTableContainerProps()}>
-							<Table {...getTableProps()}>
-								<TableHead>
-									<TableRow>
-										{headers.map((header) => (
-											<TableHeader
-												{...getHeaderProps({ header })}
-												key={header.key}
-											>
-												{header.header}
-											</TableHeader>
-										))}
-									</TableRow>
-								</TableHead>
-								<TableBody>
-									{rows.map((row) => (
-										<TableRow {...getRowProps({ row })} key={row.id}>
-											{row.cells.map((cell) => {
-												if (cell.info.header === "status") {
-													return (
-														<TableCell key={cell.id}>
-															<Tag
-																type={statusTagType(String(cell.value))}
-																size="sm"
-															>
-																{String(cell.value)}
-															</Tag>
-														</TableCell>
-													);
-												}
-												return (
-													<TableCell key={cell.id}>{cell.value}</TableCell>
-												);
-											})}
+				{loading ? (
+					<DataTableSkeleton headers={courseTableHeaders} rowCount={10} />
+				) : (
+					<DataTable rows={rows} headers={courseTableHeaders} isSortable>
+						{({
+							rows,
+							headers,
+							getTableProps,
+							getHeaderProps,
+							getRowProps,
+							getTableContainerProps,
+						}) => (
+							<TableContainer {...getTableContainerProps()}>
+								<Table {...getTableProps()}>
+									<TableHead>
+										<TableRow>
+											{headers.map((header) => (
+												<TableHeader
+													{...getHeaderProps({ header })}
+													key={header.key}
+												>
+													{header.header}
+												</TableHeader>
+											))}
 										</TableRow>
-									))}
-								</TableBody>
-							</Table>
-						</TableContainer>
-					)}
-				</DataTable>
-			)}
+									</TableHead>
+									<TableBody>
+										{rows.map((row) => (
+											<TableRow {...getRowProps({ row })} key={row.id}>
+												{row.cells.map((cell) => {
+													if (cell.info.header === "status") {
+														return (
+															<TableCell key={cell.id}>
+																<Tag
+																	type={statusTagType(String(cell.value))}
+																	size="sm"
+																>
+																	{String(cell.value)}
+																</Tag>
+															</TableCell>
+														);
+													}
+													return (
+														<TableCell key={cell.id}>{cell.value}</TableCell>
+													);
+												})}
+											</TableRow>
+										))}
+									</TableBody>
+								</Table>
+							</TableContainer>
+						)}
+					</DataTable>
+				)}
 
-			<Pagination
-				backwardText="Previous"
-				forwardText="Next"
-				itemsPerPageText="Items per page:"
-				page={page}
-				pageNumberText="Page Number"
-				pageSize={pageSize}
-				pageSizes={[10, 20, 30, 40, 50]}
-				size="md"
-				totalItems={total}
-				onChange={({ page, pageSize }) => {
-					setPage(page);
-					setPageSize(pageSize);
-				}}
-			/>
+				<Pagination
+					backwardText="Previous"
+					forwardText="Next"
+					itemsPerPageText="Items per page:"
+					page={page}
+					pageNumberText="Page Number"
+					pageSize={pageSize}
+					pageSizes={[10, 20, 30, 40, 50]}
+					size="md"
+					totalItems={total}
+					onChange={({ page, pageSize }) => {
+						setPage(page);
+						setPageSize(pageSize);
+					}}
+				/>
+			</div>
 		</div>
 	);
 }

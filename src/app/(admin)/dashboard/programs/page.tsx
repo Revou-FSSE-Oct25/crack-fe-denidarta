@@ -52,13 +52,13 @@ export default function ProgramsPage() {
 					signal: controller.signal,
 				});
 				if (!res.ok) throw new HttpError(res.status);
-				const { data: programList } = (await res.json()) as {
-					data: Program[];
+				const { data: paginated } = (await res.json()) as {
+					data: { data: Program[]; meta: { total: number } };
 				};
 				if (!mounted) return;
-				const list = programList ?? [];
+				const list = paginated?.data ?? [];
 				setPrograms(list);
-				setTotal(list.length);
+				setTotal(paginated?.meta?.total ?? list.length);
 			} catch (err) {
 				if (
 					!mounted ||
