@@ -28,3 +28,13 @@ const STATUS_TAG_TYPE: Record<string, TagType> = {
 export function statusTagType(status: string): TagType {
 	return STATUS_TAG_TYPE[status.toLowerCase()] ?? "gray";
 }
+
+const ROLE_TAG_TYPE: Record<string, TagType> = {
+	admin: "purple",
+	instructor: "teal",
+	student: "blue",
+};
+
+export function roleTagType(role: string): TagType {
+	return ROLE_TAG_TYPE[role.toLowerCase()] ?? "gray";
+}

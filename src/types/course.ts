@@ -1,8 +1,13 @@
 export interface Course {
-	id: number;
+	id: string;
 	name: string;
 	description: string;
-	instructor_id: number;
+	instructor_id: string;
+	instructor: {
+		id: string;
+		username: string;
+		profile: { fullName: string | null } | null;
+	};
 	status: "draft" | "active" | "archived" | "completed";
 	created_at: string;
 	updated_at: string;

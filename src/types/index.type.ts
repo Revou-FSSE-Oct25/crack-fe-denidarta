@@ -8,6 +8,7 @@ export type {
 	ClassAttendance,
 } from "./course";
 export type { Assignment, AssignmentSubmission } from "./assignment";
+export type { Program } from "./program";
 export type {
 	Profile,
 	ProfileFormValues,
