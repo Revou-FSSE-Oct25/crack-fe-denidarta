@@ -97,7 +97,7 @@ export default function CoursesPage() {
 		status: course.status,
 		createdAt: new Date(course.created_at).toLocaleDateString(DATE_LOCALE),
 		description: course.description,
-		enrolledStudents: "0",
+		enrolledStudents: String(course.enrollments?.length ?? 0),
 	}));
 
 	return (

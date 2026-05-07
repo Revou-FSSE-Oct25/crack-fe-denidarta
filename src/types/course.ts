@@ -8,6 +8,7 @@ export interface Course {
 		username: string;
 		profile: { fullName: string | null } | null;
 	};
+	enrollments: CourseEnrollment[];
 	status: "draft" | "active" | "archived" | "completed";
 	created_at: string;
 	updated_at: string;
@@ -23,15 +24,19 @@ export interface CourseEnrollment {
 }
 
 export interface LearningMaterial {
-	id: number;
-	course_id: number;
+	id: string;
 	title: string;
 	content: string | null;
-	file_url: string | null;
-	material_type: "video" | "pdf" | "article" | "slides" | "other";
-	order_index: number;
-	created_at: string;
-	updated_at: string;
+	fileUrl: string | null;
+	materialType: "video" | "pdf" | "article" | "slides" | "other";
+	orderIndex: number;
+	createdAt: string;
+	updatedAt: string;
+	uploader: {
+		id: string;
+		username: string;
+		profile: { fullName?: string } | null;
+	};
 }
 
 export interface ClassSession {

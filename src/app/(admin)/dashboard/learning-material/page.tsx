@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import {
 	Button,
 	DataTable,
@@ -12,6 +11,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
+	Tag,
 	DataTableSkeleton,
 	InlineNotification,
 	Pagination,
@@ -19,20 +19,36 @@ import {
 } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/api-client";
-import { Program } from "@/types/index.type";
-import { programTableHeaders } from "@/constants/programs";
-import styles from "./programs.module.scss";
+import { LearningMaterial } from "@/types/index.type";
+import { learningMaterialTableHeaders } from "@/constants/learning-material";
+import styles from "./learning-material.module.scss";
 
-class HttpError extends Error {
-	constructor(public status: number) {
-		super(`Failed to fetch programs (${status})`);
-		this.name = "HttpError";
-	}
-}
+type TagType =
+	| "purple"
+	| "red"
+	| "teal"
+	| "blue"
+	| "gray"
+	| "green"
+	| "magenta"
+	| "cyan"
+	| "warm-gray"
+	| "cool-gray"
+	| "high-contrast"
+	| "outline";
 
-export default function ProgramsPage() {
-	const router = useRouter();
-	const [programs, setPrograms] = useState<Program[]>([]);
+const materialTypeTag: Record<LearningMaterial["materialType"], TagType> = {
+	video: "purple",
+	pdf: "red",
+	article: "teal",
+	slides: "blue",
+	other: "gray",
+};
+
+const DATE_LOCALE = "id-ID";
+
+export default function LearningMaterialPage() {
+	const [materials, setMaterials] = useState<LearningMaterial[]>([]);
 	const [total, setTotal] = useState(0);
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
@@ -48,39 +64,25 @@ export default function ProgramsPage() {
 			limit: String(pageSize),
 		});
 
-		async function fetchPrograms() {
+		(async () => {
 			try {
-				const res = await apiFetch(`/programs?${params}`, {
+				const res = await apiFetch(`/learning-materials?${params.toString()}`, {
 					signal: controller.signal,
 				});
-				if (!res.ok) throw new HttpError(res.status);
-				const { data: paginated } = (await res.json()) as {
-					data: { data: Program[]; meta: { total: number } };
+				if (!res.ok) throw new Error(`Failed to fetch learning materials (${res.status})`);
+				const { data } = (await res.json()) as {
+					data: { data: LearningMaterial[]; total: number };
 				};
 				if (!mounted) return;
-				const list = paginated?.data ?? [];
-				setPrograms(list);
-				setTotal(paginated?.meta?.total ?? list.length);
+				setMaterials(data.data);
+				setTotal(data.total);
 			} catch (err) {
-				if (
-					!mounted ||
-					(err instanceof DOMException && err.name === "AbortError")
-				)
-					return;
-				if (err instanceof HttpError) {
-					setError(err.message);
-				} else if (err instanceof SyntaxError) {
-					setError("Invalid response format from server");
-				} else if (err instanceof Error) {
-					setError(err.message);
-				} else {
-					setError("An unexpected error occurred");
-				}
+				if (!mounted || (err as Error).name === "AbortError") return;
+				setError((err as Error).message);
 			} finally {
 				if (mounted) setLoading(false);
 			}
-		}
-		void fetchPrograms();
+		})();
 
 		return () => {
 			mounted = false;
@@ -88,33 +90,26 @@ export default function ProgramsPage() {
 		};
 	}, [page, pageSize]);
 
-	const DATE_LOCALE = "id-ID";
-
-	const rows = programs.map((program) => ({
-		id: String(program.id),
-		name: program.name,
-		creator:
-			program.creator.profile?.fullName ?? program.creator.username,
-		courseCount: String(program.courses?.length ?? 0),
-		createdAt: new Date(program.created_at).toLocaleDateString(DATE_LOCALE),
+	const rows = materials.map((MATERIAL) => ({
+		id: MATERIAL.id,
+		title: MATERIAL.title,
+		materialType: MATERIAL.materialType.toUpperCase(),
+		orderIndex: String(MATERIAL.orderIndex),
+		uploadedBy: MATERIAL.uploader.profile?.fullName ?? MATERIAL.uploader.username,
+		createdAt: new Date(MATERIAL.createdAt).toLocaleDateString(DATE_LOCALE),
 	}));
 
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
 				<div className={styles.headerContent}>
-					<h1 className={styles.title}>Programs</h1>
+					<h1 className={styles.title}>Learning Materials</h1>
 					<p className={styles.subtitle}>
-						{loading ? "..." : `${total} programs total`}
+						{loading ? "..." : `${total} materials total`}
 					</p>
 				</div>
-				<Button
-					kind="primary"
-					size="md"
-					renderIcon={Add}
-					onClick={() => router.push("/create-program")}
-				>
-					Create Program
+				<Button kind="primary" size="md" renderIcon={Add} disabled>
+					Add Material
 				</Button>
 			</div>
 
@@ -133,19 +128,23 @@ export default function ProgramsPage() {
 					<div className={styles.searchWrapper}>
 						<Search
 							closeButtonLabelText="Clear search input"
-							id="search-programs"
+							id="search-learning-materials"
 							labelText="Search"
-							placeholder="Search programs (coming soon)"
+							placeholder="Search materials (coming soon)"
 							size="md"
 							type="search"
 							disabled
 						/>
 					</div>
 				</div>
+
 				{loading ? (
-					<DataTableSkeleton headers={programTableHeaders} rowCount={10} />
+					<DataTableSkeleton
+						headers={learningMaterialTableHeaders}
+						rowCount={10}
+					/>
 				) : (
-					<DataTable rows={rows} headers={programTableHeaders} isSortable>
+					<DataTable rows={rows} headers={learningMaterialTableHeaders} isSortable>
 						{({
 							rows,
 							headers,
@@ -171,9 +170,22 @@ export default function ProgramsPage() {
 									<TableBody>
 										{rows.map((row) => (
 											<TableRow {...getRowProps({ row })} key={row.id}>
-												{row.cells.map((cell) => (
-													<TableCell key={cell.id}>{cell.value}</TableCell>
-												))}
+												{row.cells.map((cell) => {
+													if (cell.info.header === "materialType") {
+														const type =
+															(cell.value as string).toLowerCase() as LearningMaterial["materialType"];
+														return (
+															<TableCell key={cell.id}>
+																<Tag type={materialTypeTag[type]} size="sm">
+																	{String(cell.value)}
+																</Tag>
+															</TableCell>
+														);
+													}
+													return (
+														<TableCell key={cell.id}>{cell.value}</TableCell>
+													);
+												})}
 											</TableRow>
 										))}
 									</TableBody>

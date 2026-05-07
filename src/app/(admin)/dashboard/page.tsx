@@ -208,7 +208,7 @@ export default function DashboardPage() {
 																	</TableCell>
 																);
 															})}
-															<TableCell>
+															<TableCell key={`${row.id}-actions`}>
 																<OverflowMenu
 																	size="sm"
 																	aria-label="Row actions"
