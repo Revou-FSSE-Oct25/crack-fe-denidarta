@@ -7,4 +7,7 @@ export interface User {
 	role: UserRole;
 	status: string;
 	createdAt: string;
+	profile?: {
+		fullName: string | null;
+	} | null;
 }

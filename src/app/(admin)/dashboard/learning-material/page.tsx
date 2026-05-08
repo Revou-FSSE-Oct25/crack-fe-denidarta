@@ -16,6 +16,7 @@ import {
 	InlineNotification,
 	Pagination,
 	Search,
+	Heading,
 } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/api-client";
@@ -69,7 +70,8 @@ export default function LearningMaterialPage() {
 				const res = await apiFetch(`/learning-materials?${params.toString()}`, {
 					signal: controller.signal,
 				});
-				if (!res.ok) throw new Error(`Failed to fetch learning materials (${res.status})`);
+				if (!res.ok)
+					throw new Error(`Failed to fetch learning materials (${res.status})`);
 				const { data } = (await res.json()) as {
 					data: { data: LearningMaterial[]; total: number };
 				};
@@ -95,7 +97,8 @@ export default function LearningMaterialPage() {
 		title: MATERIAL.title,
 		materialType: MATERIAL.materialType.toUpperCase(),
 		orderIndex: String(MATERIAL.orderIndex),
-		uploadedBy: MATERIAL.uploader.profile?.fullName ?? MATERIAL.uploader.username,
+		uploadedBy:
+			MATERIAL.uploader.profile?.fullName ?? MATERIAL.uploader.username,
 		createdAt: new Date(MATERIAL.createdAt).toLocaleDateString(DATE_LOCALE),
 	}));
 
@@ -103,7 +106,7 @@ export default function LearningMaterialPage() {
 		<div className={styles.container}>
 			<div className={styles.header}>
 				<div className={styles.headerContent}>
-					<h1 className={styles.title}>Learning Materials</h1>
+					<Heading className={styles.title}>Learning Materials</Heading>
 					<p className={styles.subtitle}>
 						{loading ? "..." : `${total} materials total`}
 					</p>
@@ -144,7 +147,11 @@ export default function LearningMaterialPage() {
 						rowCount={10}
 					/>
 				) : (
-					<DataTable rows={rows} headers={learningMaterialTableHeaders} isSortable>
+					<DataTable
+						rows={rows}
+						headers={learningMaterialTableHeaders}
+						isSortable
+					>
 						{({
 							rows,
 							headers,
@@ -172,8 +179,9 @@ export default function LearningMaterialPage() {
 											<TableRow {...getRowProps({ row })} key={row.id}>
 												{row.cells.map((cell) => {
 													if (cell.info.header === "materialType") {
-														const type =
-															(cell.value as string).toLowerCase() as LearningMaterial["materialType"];
+														const type = (
+															cell.value as string
+														).toLowerCase() as LearningMaterial["materialType"];
 														return (
 															<TableCell key={cell.id}>
 																<Tag type={materialTypeTag[type]} size="sm">

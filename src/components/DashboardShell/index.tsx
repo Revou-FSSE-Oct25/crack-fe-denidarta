@@ -9,7 +9,14 @@ import {
 	SideNavItems,
 	SideNavLink,
 } from "@carbon/react";
-import { Home, UserMultiple, Course, Education, Book } from "@carbon/icons-react";
+import {
+	Home,
+	UserMultiple,
+	Course,
+	Education,
+	Book,
+	IbmKnowledgeCatalog,
+} from "@carbon/icons-react";
 import { usePathname } from "next/navigation";
 import styles from "./DashboardShell.module.scss";
 
@@ -22,21 +29,28 @@ const navItems = [
 		exact: false,
 	},
 	{
-		href: "/dashboard/courses",
-		label: "Courses",
-		icon: Course,
-		exact: false,
-	},
-	{
 		href: "/dashboard/programs",
 		label: "Programs",
 		icon: Education,
 		exact: false,
 	},
 	{
+		href: "/dashboard/courses",
+		label: "Courses",
+		icon: Course,
+		exact: false,
+	},
+
+	{
 		href: "/dashboard/learning-material",
 		label: "Learning Material",
 		icon: Book,
+		exact: false,
+	},
+	{
+		href: "",
+		icon: IbmKnowledgeCatalog,
+		label: "Assignmenets",
 		exact: false,
 	},
 ];
@@ -72,6 +86,7 @@ export default function DashboardShell({
 							<SideNavItems>
 								{navItems.map(({ href, label, icon: Icon, exact }) => (
 									<SideNavLink
+										large
 										key={href}
 										href={href}
 										renderIcon={Icon}

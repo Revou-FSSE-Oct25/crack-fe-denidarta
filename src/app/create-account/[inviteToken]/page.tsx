@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
 	Button,
 	Form,
@@ -9,27 +10,76 @@ import {
 	FluidPasswordInput,
 	FluidTextInput,
 	Link,
+	Modal,
 } from "@carbon/react";
 import { ArrowRight } from "@carbon/icons-react";
+import { apiFetch } from "@/lib/api-client";
 import styles from "./page.module.scss";
 
-export default function CreateAccountPage() {
+interface PageProps {
+	params: Promise<{ inviteToken: string }>;
+}
+
+export default function CreateAccountPage({ params }: PageProps) {
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false);
+	const [showSuccess, setShowSuccess] = useState(false);
+	const router = useRouter();
+	const searchParams = useSearchParams();
 
-	const email = "alice@student.lms.dev";
+	const email = searchParams.get("email") || "";
+	const inviteTokenPromise = params;
 
-	const onSubmit = (e: React.SubmitEvent) => {
+	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		setError(null);
+
+		// Validation
 		if (password.length < 8) {
 			setError("Password must be at least 8 characters long");
+			return;
 		}
+
 		if (password !== confirmPassword) {
 			setError("Passwords do not match");
 			return;
 		}
-		console.log("Creating account with:", { email, password });
+
+		try {
+			setLoading(true);
+			const { inviteToken } = await inviteTokenPromise;
+
+			const res = await apiFetch("/auth/set-password", {
+				method: "POST",
+				body: JSON.stringify({
+					inviteToken,
+					password,
+				}),
+			});
+
+			if (!res.ok) {
+				const errorData = (await res.json()) as { message?: string };
+				setError(
+					errorData.message ||
+						"Failed to create account. Please try again.",
+				);
+				return;
+			}
+
+			setShowSuccess(true);
+		} catch (err) {
+			setError(
+				err instanceof Error ? err.message : "An error occurred",
+			);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleSuccessModalClose = () => {
+		router.push("/login");
 	};
 
 	return (
@@ -87,8 +137,15 @@ export default function CreateAccountPage() {
 								id={"confirm-password"}
 								labelText={"Confirm Password"}
 								placeholder={"Confirm Password"}
-								invalid={false}
-								invalidText={"invalid text"}
+								invalid={
+									confirmPassword.length > 0 &&
+									password !== confirmPassword
+								}
+								invalidText={
+									password !== confirmPassword
+										? "Passwords do not match"
+										: ""
+								}
 								value={confirmPassword}
 								onChange={(e) => setConfirmPassword(e.target.value)}
 								disabled={password === ""}
@@ -103,8 +160,9 @@ export default function CreateAccountPage() {
 							size="lg"
 							renderIcon={ArrowRight}
 							className={styles.submitButton}
+							disabled={loading || password.length === 0}
 						>
-							Create account
+							{loading ? "Creating account..." : "Create account"}
 						</Button>
 
 						{/* Terms Text */}
@@ -157,6 +215,21 @@ export default function CreateAccountPage() {
 					</div>
 				</div>
 			</div>
+
+			{/* Success Modal */}
+			<Modal
+				isOpen={showSuccess}
+				modalHeading="Account Created Successfully"
+				primaryButtonText="Go to Login"
+				onRequestClose={handleSuccessModalClose}
+				onRequestSubmit={handleSuccessModalClose}
+				shouldSubmitOnEnter
+			>
+				<p>
+					Your account has been created successfully! You can now log in with your
+					credentials.
+				</p>
+			</Modal>
 		</div>
 	);
 }

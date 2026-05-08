@@ -1,5 +1,5 @@
 export const studentTableHeaders = [
-	{ key: "username", header: "Username" },
+	{ key: "fullName", header: "Full Name" },
 	{ key: "email", header: "Email" },
 	{ key: "status", header: "Status" },
 	{ key: "createdAt", header: "Joined" },

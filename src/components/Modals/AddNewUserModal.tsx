@@ -7,7 +7,7 @@ import { apiFetch } from "@/lib/api-client";
 interface AddNewUserModalProps {
 	open: boolean;
 	onRequestClose: () => void;
-	onRequestSubmit: (userId: string) => Promise<string>;
+	onRequestSubmit: (userId: string, email: string) => Promise<string>;
 }
 
 export default function AddNewUserModal({
@@ -45,7 +45,7 @@ export default function AddNewUserModal({
 		if (!res.ok) return;
 
 		const { data: user } = (await res.json()) as { data: { id: string } };
-		const link = await onRequestSubmit(user.id);
+		const link = await onRequestSubmit(user.id, email);
 		setInvitationLink(link);
 	};
 

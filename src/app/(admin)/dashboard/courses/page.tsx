@@ -93,8 +93,11 @@ export default function CoursesPage() {
 	const rows = courses.map((course) => ({
 		id: String(course.id),
 		courseName: course.name,
-		instructor: course.instructor.profile?.fullName ?? course.instructor.username,
+		instructor:
+			course.instructor.profile?.fullName ?? course.instructor.username,
 		status: course.status,
+		startedAt: new Date(course.startedAt).toLocaleDateString(DATE_LOCALE),
+		endedAt: new Date(course.endedAt).toLocaleDateString(DATE_LOCALE),
 		createdAt: new Date(course.created_at).toLocaleDateString(DATE_LOCALE),
 		description: course.description,
 		enrolledStudents: String(course.enrollments?.length ?? 0),

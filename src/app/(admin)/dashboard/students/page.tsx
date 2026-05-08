@@ -16,6 +16,7 @@ import {
 	InlineNotification,
 	Pagination,
 	Search,
+	Heading,
 } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/api-client";
@@ -51,13 +52,14 @@ export default function StudentsPage() {
 				const res = await apiFetch(`/users?${params.toString()}`, {
 					signal: controller.signal,
 				});
-				if (!res.ok) throw new Error(`Failed to fetch students (${res.status})`);
+				if (!res.ok)
+					throw new Error(`Failed to fetch students (${res.status})`);
 				const { data } = (await res.json()) as {
-					data: { data: User[]; meta: { total: number } };
+					data: { items: User[]; meta: { total: number } };
 				};
 				if (!mounted) return;
-				setUsers(data.data);
-				setTotal(data.meta.total);
+				setUsers(data.items ?? []);
+				setTotal(data.meta?.total ?? 0);
 			} catch (err) {
 				if (!mounted || (err as Error).name === "AbortError") return;
 				setError((err as Error).message);
@@ -76,7 +78,7 @@ export default function StudentsPage() {
 
 	const rows = users.map((user) => ({
 		id: String(user.id),
-		username: user.username,
+		fullName: user.profile?.fullName ?? user.username,
 		email: user.email,
 		status: user.status,
 		createdAt: new Date(user.createdAt).toLocaleDateString(DATE_LOCALE),
@@ -86,7 +88,7 @@ export default function StudentsPage() {
 		<div className={styles.container}>
 			<div className={styles.header}>
 				<div className={styles.headerContent}>
-					<h1 className={styles.title}>Students</h1>
+					<Heading>Students</Heading>
 					<p className={styles.subtitle}>
 						{loading ? "..." : `${total} students total`}
 					</p>
@@ -210,7 +212,7 @@ export default function StudentsPage() {
 			<AddNewUserModal
 				open={modalOpen}
 				onRequestClose={() => setModalOpen(false)}
-				onRequestSubmit={async (userId) => {
+				onRequestSubmit={async (userId, email) => {
 					const inviteRes = await apiFetch(`/auth/invite/${userId}`, {
 						method: "POST",
 					});
@@ -218,7 +220,8 @@ export default function StudentsPage() {
 						data: { inviteToken: string };
 					};
 
-					return `${window.location.origin}/create-account/${data.inviteToken}`;
+					const params = new URLSearchParams({ email });
+					return `${window.location.origin}/create-account/${data.inviteToken}?${params}`;
 				}}
 			/>
 		</div>

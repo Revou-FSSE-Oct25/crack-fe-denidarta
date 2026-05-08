@@ -9,6 +9,7 @@ import {
 	Grid,
 	OverflowMenu,
 	OverflowMenuItem,
+	Heading,
 	Table,
 	TableBody,
 	TableCell,
@@ -38,11 +39,11 @@ export default function DashboardPage() {
 		apiFetch("/users", { signal: controller.signal })
 			.then((res) =>
 				res.ok
-					? (res.json() as Promise<{ data: { data: User[] } }>)
-					: Promise.resolve({ data: { data: [] } }),
+					? (res.json() as Promise<{ data: { items: User[] } }>)
+					: Promise.resolve({ data: { items: [] } }),
 			)
 			.then(({ data }) => {
-				if (mounted) setUsers(data.data);
+				if (mounted) setUsers(data.items ?? []);
 			})
 			.catch((err: Error) => {
 				if (mounted && err.name !== "AbortError") setUsers([]);
@@ -97,7 +98,7 @@ export default function DashboardPage() {
 				<Column sm={4} md={8} lg={16}>
 					<div className={styles.pageHeader}>
 						<div>
-							<h1>Dashboard</h1>
+							<Heading>Dashboard</Heading>
 							<p>Overview of users and activity.</p>
 						</div>
 						<div className={styles.pageActions}>

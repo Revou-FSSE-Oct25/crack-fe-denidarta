@@ -55,10 +55,10 @@ export default function ProgramsPage() {
 				});
 				if (!res.ok) throw new HttpError(res.status);
 				const { data: paginated } = (await res.json()) as {
-					data: { data: Program[]; meta: { total: number } };
+					data: { items: Program[]; meta: { total: number } };
 				};
 				if (!mounted) return;
-				const list = paginated?.data ?? [];
+				const list = paginated?.items ?? [];
 				setPrograms(list);
 				setTotal(paginated?.meta?.total ?? list.length);
 			} catch (err) {
@@ -96,7 +96,8 @@ export default function ProgramsPage() {
 		creator:
 			program.creator.profile?.fullName ?? program.creator.username,
 		courseCount: String(program.courses?.length ?? 0),
-		createdAt: new Date(program.created_at).toLocaleDateString(DATE_LOCALE),
+		enrolledStudents: String(program.enrolledStudents?.length ?? 0),
+		createdAt: new Date(program.createdAt).toLocaleDateString(DATE_LOCALE),
 	}));
 
 	return (

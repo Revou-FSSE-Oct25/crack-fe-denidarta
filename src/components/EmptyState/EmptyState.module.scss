@@ -1,0 +1,67 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	margin: 0;
+}
+
+.sm {
+	gap: 0.5rem;
+	max-width: 20rem;
+
+	.illustration {
+		margin-bottom: 0.25rem;
+	}
+
+	.title {
+		font-size: 0.875rem;
+		font-weight: 600;
+		line-height: 1.29;
+		letter-spacing: 0.16px;
+	}
+}
+
+.lg {
+	gap: 0.75rem;
+	max-width: 40rem;
+	padding-block: 3rem;
+
+	.illustration {
+		margin-bottom: 0.5rem;
+	}
+
+	.title {
+		font-size: 1.25rem;
+		font-weight: 600;
+		line-height: 1.4;
+		letter-spacing: 0;
+	}
+}
+
+.illustration {
+	color: var(--cds-icon-secondary, #8d8d8d);
+	line-height: 0;
+	display: flex;
+}
+
+.title {
+	color: var(--cds-text-primary, #f4f4f4);
+	margin: 0;
+	font-family: inherit;
+}
+
+.description {
+	font-size: 0.875rem;
+	line-height: 1.42857;
+	letter-spacing: 0.16px;
+	color: var(--cds-text-secondary, #c6c6c6);
+	margin: 0;
+}
+
+.actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-top: 0.25rem;
+}
