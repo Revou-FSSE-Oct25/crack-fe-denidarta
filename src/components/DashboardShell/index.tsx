@@ -48,7 +48,7 @@ const navItems = [
 		exact: false,
 	},
 	{
-		href: "",
+		href: "/dashboard/assignments",
 		icon: IbmKnowledgeCatalog,
 		label: "Assignmenets",
 		exact: false,

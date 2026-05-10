@@ -23,6 +23,8 @@ const STATUS_TAG_TYPE: Record<string, TagType> = {
 	archived: "gray",
 	completed: "gray",
 	inactive: "gray",
+	published: "green",
+	closed: "gray",
 };
 
 export function statusTagType(status: string): TagType {

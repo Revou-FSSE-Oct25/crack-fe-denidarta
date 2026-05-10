@@ -1,13 +1,15 @@
 export interface Assignment {
-	id: number;
-	course_id: number;
+	id: string;
+	courseId: string;
+	course: { name: string };
 	title: string;
 	description: string | null;
-	due_date: string;
-	max_points: number;
+	dueDate: string;
+	maxPoints: string;
 	status: "draft" | "published" | "closed";
-	created_at: string;
-	updated_at: string;
+	createdAt: string;
+	updatedAt: string;
+	deletedAt: string | null;
 }
 
 export interface AssignmentSubmission {
