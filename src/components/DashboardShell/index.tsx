@@ -16,6 +16,7 @@ import {
 	Education,
 	Book,
 	IbmKnowledgeCatalog,
+	EventSchedule,
 } from "@carbon/icons-react";
 import { usePathname } from "next/navigation";
 import styles from "./DashboardShell.module.scss";
@@ -40,6 +41,12 @@ const navItems = [
 		icon: Course,
 		exact: false,
 	},
+	{
+		href: "/dashboard/class-sessions",
+		label: "Class Sessions",
+		icon: EventSchedule,
+		exact: false,
+	},
 
 	{
 		href: "/dashboard/learning-material",
@@ -50,7 +57,7 @@ const navItems = [
 	{
 		href: "/dashboard/assignments",
 		icon: IbmKnowledgeCatalog,
-		label: "Assignmenets",
+		label: "Assignments",
 		exact: false,
 	},
 ];

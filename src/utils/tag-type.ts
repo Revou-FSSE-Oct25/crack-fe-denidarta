@@ -25,6 +25,9 @@ const STATUS_TAG_TYPE: Record<string, TagType> = {
 	inactive: "gray",
 	published: "green",
 	closed: "gray",
+	scheduled: "blue",
+	ongoing: "teal",
+	cancelled: "red",
 };
 
 export function statusTagType(status: string): TagType {

@@ -40,16 +40,22 @@ export interface LearningMaterial {
 }
 
 export interface ClassSession {
-	id: number;
-	course_id: number;
+	id: string;
+	courseId: string;
 	title: string;
-	session_date: string;
-	start_time: string;
-	end_time: string;
+	sessionDate: string;
+	startTime: string;
+	endTime: string;
 	location: string | null;
-	meeting_url: string | null;
-	created_at: string;
-	updated_at: string;
+	meetingUrl: string | null;
+	createdAt: string;
+	updatedAt: string;
+	deletedAt: string | null;
+	status: "scheduled" | "ongoing" | "completed" | "cancelled";
+	course?: {
+		id: string;
+		name: string;
+	};
 }
 
 export interface ClassAttendance {

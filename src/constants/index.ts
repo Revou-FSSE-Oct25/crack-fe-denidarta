@@ -12,3 +12,6 @@ export { programTableHeaders } from "./programs";
 
 // Assignments page constants
 export { assignmentTableHeaders } from "./assignments";
+
+// Class Sessions page constants
+export { classSessionTableHeaders } from "./class-sessions";
