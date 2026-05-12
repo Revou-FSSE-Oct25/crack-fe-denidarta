@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import {
 	Button,
 	DataTable,
@@ -12,6 +11,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
+	Tag,
 	DataTableSkeleton,
 	InlineNotification,
 	Pagination,
@@ -19,20 +19,20 @@ import {
 } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/api-client";
-import { Program } from "@/types/index.type";
-import { programTableHeaders } from "@/constants/programs";
-import styles from "./programs.module.scss";
+import { Course } from "@/types/index.type";
+import { courseTableHeaders } from "@/constants/courses";
+import { statusTagType } from "@/utils/tag-type";
+import styles from "./courses.module.scss";
 
 class HttpError extends Error {
 	constructor(public status: number) {
-		super(`Failed to fetch programs (${status})`);
+		super(`Failed to fetch courses (${status})`);
 		this.name = "HttpError";
 	}
 }
 
-export default function ProgramsPage() {
-	const router = useRouter();
-	const [programs, setPrograms] = useState<Program[]>([]);
+export default function CoursesPage() {
+	const [courses, setCourses] = useState<Course[]>([]);
 	const [total, setTotal] = useState(0);
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
@@ -48,19 +48,19 @@ export default function ProgramsPage() {
 			limit: String(pageSize),
 		});
 
-		async function fetchPrograms() {
+		async function fetchCourses() {
 			try {
-				const res = await apiFetch(`/programs?${params}`, {
+				const res = await apiFetch(`/courses?${params}`, {
 					signal: controller.signal,
 				});
 				if (!res.ok) throw new HttpError(res.status);
-				const { data: paginated } = (await res.json()) as {
-					data: { items: Program[]; meta: { total: number } };
+				const { data: courseList } = (await res.json()) as {
+					data: Course[];
 				};
 				if (!mounted) return;
-				const list = paginated?.items ?? [];
-				setPrograms(list);
-				setTotal(paginated?.meta?.total ?? list.length);
+				const list = courseList ?? [];
+				setCourses(list);
+				setTotal(list.length);
 			} catch (err) {
 				if (
 					!mounted ||
@@ -80,7 +80,7 @@ export default function ProgramsPage() {
 				if (mounted) setLoading(false);
 			}
 		}
-		void fetchPrograms();
+		void fetchCourses();
 
 		return () => {
 			mounted = false;
@@ -90,32 +90,28 @@ export default function ProgramsPage() {
 
 	const DATE_LOCALE = "id-ID";
 
-	const rows = programs.map((program) => ({
-		id: String(program.id),
-		name: program.name,
-		creator:
-			program.creator.profile?.fullName ?? program.creator.username,
-		courseCount: String(program.courses?.length ?? 0),
-		enrolledStudents: String(program.enrolledStudents?.length ?? 0),
-		createdAt: new Date(program.createdAt).toLocaleDateString(DATE_LOCALE),
+	const rows = courses.map((course) => ({
+		id: String(course.id),
+		courseName: course.name,
+		instructor:
+			course.instructor.profile?.fullName ?? course.instructor.username,
+		status: course.status,
+		createdAt: new Date(course.created_at).toLocaleDateString(DATE_LOCALE),
+		description: course.description,
+		enrolledStudents: String(course.enrollments?.length ?? 0),
 	}));
 
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
 				<div className={styles.headerContent}>
-					<h1 className={styles.title}>Programs</h1>
+					<h1 className={styles.title}>Courses</h1>
 					<p className={styles.subtitle}>
-						{loading ? "..." : `${total} programs total`}
+						{loading ? "..." : `${total} courses total`}
 					</p>
 				</div>
-				<Button
-					kind="primary"
-					size="md"
-					renderIcon={Add}
-					onClick={() => router.push("/create-program")}
-				>
-					Create Program
+				<Button kind="primary" size="md" renderIcon={Add} disabled>
+					Create Course
 				</Button>
 			</div>
 
@@ -128,15 +124,14 @@ export default function ProgramsPage() {
 					style={{ marginBottom: "1rem" }}
 				/>
 			)}
-
 			<div className={styles.tableWrapper}>
 				<div className={styles.searchBar}>
 					<div className={styles.searchWrapper}>
 						<Search
 							closeButtonLabelText="Clear search input"
-							id="search-programs"
+							id="search-courses"
 							labelText="Search"
-							placeholder="Search programs (coming soon)"
+							placeholder="Search courses (coming soon)"
 							size="md"
 							type="search"
 							disabled
@@ -144,9 +139,9 @@ export default function ProgramsPage() {
 					</div>
 				</div>
 				{loading ? (
-					<DataTableSkeleton headers={programTableHeaders} rowCount={10} />
+					<DataTableSkeleton headers={courseTableHeaders} rowCount={10} />
 				) : (
-					<DataTable rows={rows} headers={programTableHeaders} isSortable>
+					<DataTable rows={rows} headers={courseTableHeaders} isSortable>
 						{({
 							rows,
 							headers,
@@ -172,9 +167,23 @@ export default function ProgramsPage() {
 									<TableBody>
 										{rows.map((row) => (
 											<TableRow {...getRowProps({ row })} key={row.id}>
-												{row.cells.map((cell) => (
-													<TableCell key={cell.id}>{cell.value}</TableCell>
-												))}
+												{row.cells.map((cell) => {
+													if (cell.info.header === "status") {
+														return (
+															<TableCell key={cell.id}>
+																<Tag
+																	type={statusTagType(String(cell.value))}
+																	size="sm"
+																>
+																	{String(cell.value)}
+																</Tag>
+															</TableCell>
+														);
+													}
+													return (
+														<TableCell key={cell.id}>{cell.value}</TableCell>
+													);
+												})}
 											</TableRow>
 										))}
 									</TableBody>

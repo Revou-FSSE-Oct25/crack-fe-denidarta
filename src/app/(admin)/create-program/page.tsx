@@ -136,7 +136,6 @@ export default function CreateProgramPage() {
 									id="head-of-program"
 									labelText="Head of Program"
 									disabled={headLoading || loading}
-									value={headOfProgram}
 									onChange={(e) => setHeadOfProgram(e.target.value)}
 								>
 									<SelectItem
@@ -154,26 +153,18 @@ export default function CreateProgramPage() {
 							<p className={styles.sectionLabel}>Schedule</p>
 							<FluidForm>
 								<div className={styles.dateGrid}>
-									<FluidDatePicker
-										datePickerType="single"
-										onChange={([date]) => setStartDate(date?.toISOString() ?? "")}
-									>
-										<FluidDatePickerInput
-											id="pick-start-date"
-											labelText="Start Date"
-											placeholder="mm/dd/yyyy"
-										/>
-									</FluidDatePicker>
-									<FluidDatePicker
-										datePickerType="single"
-										onChange={([date]) => setEndDate(date?.toISOString() ?? "")}
-									>
-										<FluidDatePickerInput
-											id="pick-end-date"
-											labelText="End Date"
-											placeholder="mm/dd/yyyy"
-										/>
-									</FluidDatePicker>
+									<FluidDatePickerInput
+										id="pick-start-date"
+										labelText="Start Date"
+										placeholder="mm/dd/yyyy"
+										onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStartDate(e.target.value)}
+									/>
+									<FluidDatePickerInput
+										id="pick-end-date"
+										labelText="End Date"
+										placeholder="mm/dd/yyyy"
+										onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEndDate(e.target.value)}
+									/>
 								</div>
 							</FluidForm>
 						</div>

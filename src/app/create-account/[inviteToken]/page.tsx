@@ -218,7 +218,7 @@ export default function CreateAccountPage({ params }: PageProps) {
 
 			{/* Success Modal */}
 			<Modal
-				isOpen={showSuccess}
+				open={showSuccess}
 				modalHeading="Account Created Successfully"
 				primaryButtonText="Go to Login"
 				onRequestClose={handleSuccessModalClose}
