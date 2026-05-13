@@ -1,10 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import {
 	Header,
 	HeaderContainer,
+	HeaderGlobalAction,
+	HeaderGlobalBar,
 	HeaderMenuButton,
 	HeaderName,
+	HeaderPanel,
 	SideNav,
 	SideNavItems,
 	SideNavLink,
@@ -17,8 +21,11 @@ import {
 	Book,
 	IbmKnowledgeCatalog,
 	EventSchedule,
+	Notification,
+	Search,
+	Logout,
 } from "@carbon/icons-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import styles from "./DashboardShell.module.scss";
 
 const navItems = [
@@ -47,7 +54,6 @@ const navItems = [
 		icon: EventSchedule,
 		exact: false,
 	},
-
 	{
 		href: "/dashboard/learning-material",
 		label: "Learning Material",
@@ -68,6 +74,14 @@ export default function DashboardShell({
 	children: React.ReactNode;
 }) {
 	const pathname = usePathname();
+	const router = useRouter();
+	const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
+
+	const handleLogout = () => {
+		localStorage.removeItem("accessToken");
+		localStorage.removeItem("refreshToken");
+		router.push("/login");
+	};
 
 	return (
 		<div className={styles.shell}>
@@ -83,7 +97,38 @@ export default function DashboardShell({
 							<HeaderName href="/dashboard" prefix="">
 								CRACK
 							</HeaderName>
+
+							<HeaderGlobalBar>
+								<HeaderGlobalAction
+									aria-label="Search"
+									tooltipAlignment="center"
+								>
+									<Search size={20} />
+								</HeaderGlobalAction>
+
+								<HeaderGlobalAction
+									aria-label="Notifications"
+									tooltipAlignment="center"
+									isActive={isNotificationPanelOpen}
+									onClick={() => setIsNotificationPanelOpen((prev) => !prev)}
+								>
+									<Notification size={20} />
+								</HeaderGlobalAction>
+
+								<HeaderGlobalAction
+									aria-label="Logout"
+									tooltipAlignment="end"
+									onClick={handleLogout}
+								>
+									<Logout size={20} />
+								</HeaderGlobalAction>
+							</HeaderGlobalBar>
+
+							<HeaderPanel expanded={isNotificationPanelOpen}>
+								<p className={styles.panelEmpty}>No new notifications</p>
+							</HeaderPanel>
 						</Header>
+
 						<SideNav
 							aria-label="Side navigation"
 							expanded={isSideNavExpanded}

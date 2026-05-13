@@ -33,7 +33,17 @@ export default function LoginPage() {
 			const res = await login(data);
 			localStorage.setItem("accessToken", res.accessToken);
 			localStorage.setItem("refreshToken", res.refreshToken);
-			window.location.href = "/dashboard";
+
+			// Decode JWT payload to determine user role
+			const payloadBase64 = res.accessToken.split(".")[1];
+			const payload = JSON.parse(atob(payloadBase64)) as { role?: string };
+			const role = payload.role;
+
+			if (role === "admin" || role === "instructor") {
+				window.location.href = "/dashboard-admin";
+			} else {
+				window.location.href = "/dashboard-student";
+			}
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Login failed");
 		} finally {

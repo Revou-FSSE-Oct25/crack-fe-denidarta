@@ -9,7 +9,6 @@ import {
 	FluidForm,
 	FluidSelect,
 	SelectItem,
-	FluidDatePicker,
 	FluidDatePickerInput,
 } from "@carbon/react";
 import { ArrowLeft, ChevronRight } from "@carbon/icons-react";
@@ -22,17 +21,20 @@ export default function CreateProgramPage() {
 	const router = useRouter();
 	const [programName, setProgramName] = useState("");
 	const [headOfProgram, setHeadOfProgram] = useState("");
-	const [startDate, setStartDate] = useState("");
-	const [endDate, setEndDate] = useState("");
+
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [headItems, setHeadItems] = useState<Array<{ id: string; text: string }>>([]);
+	const [headItems, setHeadItems] = useState<
+		Array<{ id: string; text: string }>
+	>([]);
 	const [headLoading, setHeadLoading] = useState(true);
 
 	useEffect(() => {
 		fetchAdminsAndInstructors()
 			.then((users) => {
-				setHeadItems(users.map((user) => ({ id: user.id, text: user.username })));
+				setHeadItems(
+					users.map((user) => ({ id: user.id, text: user.username })),
+				);
 			})
 			.catch((err) => console.error("Failed to load users:", err))
 			.finally(() => setHeadLoading(false));
@@ -68,7 +70,10 @@ export default function CreateProgramPage() {
 					onClick={() => router.back()}
 				/>
 				<nav className={styles.breadcrumb}>
-					<span style={{ color: "#525252", cursor: "pointer" }} onClick={() => router.push("/dashboard/programs")}>
+					<span
+						style={{ color: "#525252", cursor: "pointer" }}
+						onClick={() => router.push("/dashboard/programs")}
+					>
 						Programs
 					</span>
 					<ChevronRight size={14} />
@@ -80,7 +85,8 @@ export default function CreateProgramPage() {
 				<aside className={styles.sidebar}>
 					<h1 className={styles.sidebarTitle}>Create a New Program</h1>
 					<p className={styles.sidebarDesc}>
-						Fill in the details below to set up a new learning program. You can add courses and enroll students after creation.
+						Fill in the details below to set up a new learning program. You can
+						add courses and enroll students after creation.
 					</p>
 					<div className={styles.steps}>
 						<div className={styles.step}>
@@ -140,10 +146,18 @@ export default function CreateProgramPage() {
 								>
 									<SelectItem
 										value=""
-										text={headLoading ? "Loading users..." : "Select a head of program"}
+										text={
+											headLoading
+												? "Loading users..."
+												: "Select a head of program"
+										}
 									/>
 									{headItems.map((item) => (
-										<SelectItem key={item.id} value={item.id} text={item.text} />
+										<SelectItem
+											key={item.id}
+											value={item.id}
+											text={item.text}
+										/>
 									))}
 								</FluidSelect>
 							</FluidForm>
@@ -157,13 +171,11 @@ export default function CreateProgramPage() {
 										id="pick-start-date"
 										labelText="Start Date"
 										placeholder="mm/dd/yyyy"
-										onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStartDate(e.target.value)}
 									/>
 									<FluidDatePickerInput
 										id="pick-end-date"
 										labelText="End Date"
 										placeholder="mm/dd/yyyy"
-										onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEndDate(e.target.value)}
 									/>
 								</div>
 							</FluidForm>
