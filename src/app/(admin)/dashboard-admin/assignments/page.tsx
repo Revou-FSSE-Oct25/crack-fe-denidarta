@@ -18,9 +18,15 @@ import {
 	Search,
 } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
+import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-client";
 import { Assignment } from "@/types/index.type";
 import { assignmentTableHeaders } from "@/constants/assignments";
+
+const ASSIGNMENT_HEADERS = [
+	...assignmentTableHeaders,
+	{ key: "action", header: "" },
+];
 import { statusTagType } from "@/utils/tag-type";
 import styles from "./assignments.module.scss";
 
@@ -32,6 +38,7 @@ class HttpError extends Error {
 }
 
 export default function AssignmentsPage() {
+	const router = useRouter();
 	const [assignments, setAssignments] = useState<Assignment[]>([]);
 	const [total, setTotal] = useState(0);
 	const [page, setPage] = useState(1);
@@ -92,11 +99,13 @@ export default function AssignmentsPage() {
 	const rows = assignments.map((assignment) => ({
 		id: assignment.id,
 		title: assignment.title,
-		courseName: assignment.course.name,
+		courseName: assignment.course?.name ?? "-",
 		status: assignment.status,
 		dueDate: new Date(assignment.dueDate).toLocaleDateString(DATE_LOCALE),
-		maxPoints: assignment.maxPoints,
+		submitted: `${assignment.submitted ?? 0} / ${assignment.toSubmit ?? 0}`,
+		minPoints: assignment.minPoints,
 		createdAt: new Date(assignment.createdAt).toLocaleDateString(DATE_LOCALE),
+		action: assignment.id,
 	}));
 
 	return (
@@ -139,9 +148,9 @@ export default function AssignmentsPage() {
 				</div>
 
 				{loading ? (
-					<DataTableSkeleton headers={assignmentTableHeaders} rowCount={10} />
+					<DataTableSkeleton headers={ASSIGNMENT_HEADERS} rowCount={10} />
 				) : (
-					<DataTable rows={rows} headers={assignmentTableHeaders} isSortable>
+					<DataTable rows={rows} headers={ASSIGNMENT_HEADERS} isSortable>
 						{({
 							rows,
 							headers,
@@ -177,6 +186,23 @@ export default function AssignmentsPage() {
 																>
 																	{String(cell.value)}
 																</Tag>
+															</TableCell>
+														);
+													}
+													if (cell.info.header === "action") {
+														return (
+															<TableCell key={cell.id}>
+																<Button
+																	kind="ghost"
+																	size="sm"
+																	onClick={() =>
+																		router.push(
+																			`/dashboard-admin/assignments/${String(cell.value)}`,
+																		)
+																	}
+																>
+																	View
+																</Button>
 															</TableCell>
 														);
 													}

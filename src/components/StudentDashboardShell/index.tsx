@@ -15,9 +15,7 @@ import {
 } from "@carbon/react";
 import {
 	Home,
-	UserMultiple,
 	Course,
-	Education,
 	Book,
 	IbmKnowledgeCatalog,
 	EventSchedule,
@@ -26,49 +24,37 @@ import {
 	Logout,
 } from "@carbon/icons-react";
 import { usePathname, useRouter } from "next/navigation";
-import styles from "./DashboardShell.module.scss";
+import styles from "./StudentDashboardShell.module.scss";
 
 const navItems = [
-	{ href: "/dashboard-admin", label: "Dashboard", icon: Home, exact: true },
+	{ href: "/dashboard-student", label: "Dashboard", icon: Home, exact: true },
 	{
-		href: "/dashboard-admin/students",
-		label: "Students",
-		icon: UserMultiple,
-		exact: false,
-	},
-	{
-		href: "/dashboard-admin/programs",
-		label: "Programs",
-		icon: Education,
-		exact: false,
-	},
-	{
-		href: "/dashboard-admin/courses",
-		label: "Courses",
+		href: "/dashboard-student/courses",
+		label: "My Courses",
 		icon: Course,
 		exact: false,
 	},
 	{
-		href: "/dashboard-admin/class-sessions",
+		href: "/dashboard-student/assignments",
+		label: "Assignments",
+		icon: IbmKnowledgeCatalog,
+		exact: false,
+	},
+	{
+		href: "/dashboard-student/class-sessions",
 		label: "Class Sessions",
 		icon: EventSchedule,
 		exact: false,
 	},
 	{
-		href: "/dashboard-admin/learning-material",
+		href: "/dashboard-student/learning-material",
 		label: "Learning Material",
 		icon: Book,
 		exact: false,
 	},
-	{
-		href: "/dashboard-admin/assignments",
-		icon: IbmKnowledgeCatalog,
-		label: "Assignments",
-		exact: false,
-	},
 ];
 
-export default function DashboardShell({
+export default function StudentDashboardShell({
 	children,
 }: {
 	children: React.ReactNode;
@@ -94,7 +80,7 @@ export default function DashboardShell({
 								onClick={onClickSideNavExpand}
 								isActive={isSideNavExpanded}
 							/>
-							<HeaderName href="/dashboard" prefix="">
+							<HeaderName href="/dashboard-student" prefix="">
 								CRACK
 							</HeaderName>
 

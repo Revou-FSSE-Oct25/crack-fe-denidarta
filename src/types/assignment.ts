@@ -5,7 +5,9 @@ export interface Assignment {
 	title: string;
 	description: string | null;
 	dueDate: string;
-	maxPoints: string;
+	minPoints: string;
+	submitted: number;
+	toSubmit: number;
 	status: "draft" | "published" | "closed";
 	createdAt: string;
 	updatedAt: string;
