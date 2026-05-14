@@ -17,14 +17,16 @@ import {
 	Pagination,
 	Search,
 	Heading,
+	Dropdown,
 } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/api-client";
 import { User } from "@/types/index.type";
-import { studentTableHeaders } from "@/constants/students";
+import { studentTableHeaders, userStatusFilters } from "@/constants/students";
 import AddNewUserModal from "@/components/Modals/AddNewUserModal";
 import { statusTagType } from "@/utils/tag-type";
 import styles from "./students.module.scss";
+import { DATE_LOCALE } from "@/constants";
 
 export default function StudentsPage() {
 	const [users, setUsers] = useState<User[]>([]);
@@ -36,8 +38,10 @@ export default function StudentsPage() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [modalOpen, setModalOpen] = useState(false);
+	const [selectedStatus, setSelectedStatus] = useState(userStatusFilters[0]);
 
 	useEffect(() => {
+		setLoading(true);
 		let mounted = true;
 		const controller = new AbortController();
 
@@ -46,6 +50,7 @@ export default function StudentsPage() {
 			page: String(page),
 			limit: String(pageSize),
 			...(search && { search }),
+			...(selectedStatus.id !== "all" && { status: selectedStatus.id }),
 		});
 		(async () => {
 			try {
@@ -72,9 +77,7 @@ export default function StudentsPage() {
 			mounted = false;
 			controller.abort();
 		};
-	}, [page, pageSize, search]);
-
-	const DATE_LOCALE = "id-ID";
+	}, [page, pageSize, search, selectedStatus.id]);
 
 	const rows = users.map((user) => ({
 		id: String(user.id),
@@ -93,14 +96,6 @@ export default function StudentsPage() {
 						{loading ? "..." : `${total} students total`}
 					</p>
 				</div>
-				<Button
-					kind="primary"
-					size="md"
-					renderIcon={Add}
-					onClick={() => setModalOpen(true)}
-				>
-					Add Student
-				</Button>
 			</div>
 
 			{error && (
@@ -109,35 +104,58 @@ export default function StudentsPage() {
 					title="Error"
 					subtitle={error}
 					lowContrast
-					style={{ marginBottom: "1rem" }}
+					className={styles.notification}
 				/>
 			)}
 			<div className={styles.searchBar}>
-				<div className={styles.searchWrapper}>
-					<Search
-						closeButtonLabelText="Clear search input"
-						id="search-default-1"
-						labelText="Search"
-						placeholder="Search students by name or email"
-						size="md"
-						type="search"
-						value={inputValue}
-						onChange={(e) => {
-							setInputValue(e.currentTarget.value);
-						}}
-						onKeyDown={(e) => {
-							if (e.key === "Enter") {
-								setSearch(inputValue);
-								setPage(1);
-							}
-						}}
-						onClear={() => {
-							setInputValue("");
-							setSearch("");
+				<Dropdown
+					className={styles.filterStatus}
+					type="inline"
+					titleText="Status"
+					id="filter-student"
+					items={userStatusFilters}
+					label="Select a status"
+					selectedItem={selectedStatus}
+					itemToString={(item) => (item ? item.text : "")}
+					onChange={({ selectedItem }) => {
+						if (selectedItem) {
+							setSelectedStatus(selectedItem);
 							setPage(1);
-						}}
-					/>
-				</div>
+						}
+					}}
+				/>
+				<Search
+					className={styles.searchBox}
+					closeButtonLabelText="Clear search input"
+					id="search-default-1"
+					labelText="Search"
+					placeholder="Search students by name or email"
+					size="md"
+					type="search"
+					value={inputValue}
+					onChange={(e) => {
+						setInputValue(e.currentTarget.value);
+					}}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							setSearch(inputValue);
+							setPage(1);
+						}
+					}}
+					onClear={() => {
+						setInputValue("");
+						setSearch("");
+						setPage(1);
+					}}
+				/>
+				<Button
+					kind="primary"
+					size="md"
+					renderIcon={Add}
+					onClick={() => setModalOpen(true)}
+				>
+					Add Student
+				</Button>
 			</div>
 			{loading ? (
 				<DataTableSkeleton headers={studentTableHeaders} rowCount={10} />

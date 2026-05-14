@@ -1,0 +1,46 @@
+.container {
+	padding: 1.5rem;
+	max-width: 800px;
+}
+
+.header {
+	margin-bottom: 2.5rem;
+}
+
+.breadcrumb {
+	margin-bottom: 1.5rem;
+}
+
+.title {
+	margin-bottom: 0.5rem;
+	font-weight: 600;
+}
+
+.subtitle {
+	color: var(--cds-text-secondary);
+}
+
+.formContainer {
+	background-color: var(--cds-layer-01);
+	padding: 2rem;
+	border-radius: 4px;
+}
+
+.fieldGroup {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	margin-bottom: 2rem;
+}
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 1rem;
+}
+
+.loading {
+	display: flex;
+	justify-content: center;
+	padding: 3rem;
+}

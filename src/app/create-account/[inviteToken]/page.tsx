@@ -62,17 +62,14 @@ export default function CreateAccountPage({ params }: PageProps) {
 			if (!res.ok) {
 				const errorData = (await res.json()) as { message?: string };
 				setError(
-					errorData.message ||
-						"Failed to create account. Please try again.",
+					errorData.message || "Failed to create account. Please try again.",
 				);
 				return;
 			}
 
 			setShowSuccess(true);
 		} catch (err) {
-			setError(
-				err instanceof Error ? err.message : "An error occurred",
-			);
+			setError(err instanceof Error ? err.message : "An error occurred");
 		} finally {
 			setLoading(false);
 		}
@@ -138,13 +135,10 @@ export default function CreateAccountPage({ params }: PageProps) {
 								labelText={"Confirm Password"}
 								placeholder={"Confirm Password"}
 								invalid={
-									confirmPassword.length > 0 &&
-									password !== confirmPassword
+									confirmPassword.length > 0 && password !== confirmPassword
 								}
 								invalidText={
-									password !== confirmPassword
-										? "Passwords do not match"
-										: ""
+									password !== confirmPassword ? "Passwords do not match" : ""
 								}
 								value={confirmPassword}
 								onChange={(e) => setConfirmPassword(e.target.value)}
@@ -226,8 +220,8 @@ export default function CreateAccountPage({ params }: PageProps) {
 				shouldSubmitOnEnter
 			>
 				<p>
-					Your account has been created successfully! You can now log in with your
-					credentials.
+					Your account has been created successfully! You can now log in with
+					your credentials.
 				</p>
 			</Modal>
 		</div>

@@ -23,6 +23,7 @@ import { Course } from "@/types/index.type";
 import { courseTableHeaders } from "@/constants/courses";
 import { statusTagType } from "@/utils/tag-type";
 import styles from "./courses.module.scss";
+import { DATE_LOCALE } from "@/constants";
 
 class HttpError extends Error {
 	constructor(public status: number) {
@@ -87,8 +88,6 @@ export default function CoursesPage() {
 			controller.abort();
 		};
 	}, [page, pageSize]);
-
-	const DATE_LOCALE = "id-ID";
 
 	const rows = courses.map((course) => ({
 		id: String(course.id),

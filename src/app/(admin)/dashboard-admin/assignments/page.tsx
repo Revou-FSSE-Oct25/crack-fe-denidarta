@@ -29,6 +29,7 @@ const ASSIGNMENT_HEADERS = [
 ];
 import { statusTagType } from "@/utils/tag-type";
 import styles from "./assignments.module.scss";
+import { DATE_LOCALE } from "@/constants";
 
 class HttpError extends Error {
 	constructor(public status: number) {
@@ -94,8 +95,6 @@ export default function AssignmentsPage() {
 		};
 	}, [page, pageSize]);
 
-	const DATE_LOCALE = "id-ID";
-
 	const rows = assignments.map((assignment) => ({
 		id: assignment.id,
 		title: assignment.title,
@@ -117,7 +116,12 @@ export default function AssignmentsPage() {
 						{loading ? "..." : `${total} assignments total`}
 					</p>
 				</div>
-				<Button kind="primary" size="md" renderIcon={Add} disabled>
+				<Button
+					kind="primary"
+					size="md"
+					renderIcon={Add}
+					onClick={() => router.push("/create-assignment")}
+				>
 					Create Assignment
 				</Button>
 			</div>

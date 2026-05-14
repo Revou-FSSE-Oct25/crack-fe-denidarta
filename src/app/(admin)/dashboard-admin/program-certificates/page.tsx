@@ -21,6 +21,7 @@ import { apiFetch } from "@/lib/api-client";
 import { Certificate as CertificateType } from "@/types/index.type";
 import { certificateTableHeaders } from "@/constants/certificates";
 import styles from "./program-certificates.module.scss";
+import { DATE_LOCALE } from "@/constants";
 
 class HttpError extends Error {
 	constructor(public status: number) {
@@ -75,8 +76,6 @@ export default function ProgramCertificatesPage() {
 			controller.abort();
 		};
 	}, []);
-
-	const DATE_LOCALE = "id-ID";
 
 	const filtered = useMemo(() => {
 		const q = search.trim().toLowerCase();
@@ -147,10 +146,7 @@ export default function ProgramCertificatesPage() {
 				</div>
 
 				{loading ? (
-					<DataTableSkeleton
-						headers={certificateTableHeaders}
-						rowCount={8}
-					/>
+					<DataTableSkeleton headers={certificateTableHeaders} rowCount={8} />
 				) : rows.length === 0 ? (
 					<div className={styles.empty}>
 						<Certificate size={48} className={styles.emptyIcon} />
@@ -161,11 +157,7 @@ export default function ProgramCertificatesPage() {
 						</p>
 					</div>
 				) : (
-					<DataTable
-						rows={rows}
-						headers={certificateTableHeaders}
-						isSortable
-					>
+					<DataTable rows={rows} headers={certificateTableHeaders} isSortable>
 						{({
 							rows,
 							headers,
@@ -202,9 +194,7 @@ export default function ProgramCertificatesPage() {
 														);
 													}
 													return (
-														<TableCell key={cell.id}>
-															{cell.value}
-														</TableCell>
+														<TableCell key={cell.id}>{cell.value}</TableCell>
 													);
 												})}
 											</TableRow>

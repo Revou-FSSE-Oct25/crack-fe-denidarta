@@ -91,7 +91,9 @@ export default function StudentDashboardPage() {
 			<div className={styles.header}>
 				<h1 className={styles.title}>My Courses</h1>
 				<p className={styles.subtitle}>
-					{loading ? "..." : `${courses.length} course${courses.length !== 1 ? "s" : ""} enrolled`}
+					{loading
+						? "..."
+						: `${courses.length} course${courses.length !== 1 ? "s" : ""} enrolled`}
 				</p>
 			</div>
 

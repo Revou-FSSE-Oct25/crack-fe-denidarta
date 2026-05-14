@@ -23,6 +23,7 @@ import { apiFetch } from "@/lib/api-client";
 import { LearningMaterial } from "@/types/index.type";
 import { learningMaterialTableHeaders } from "@/constants/learning-material";
 import styles from "./learning-material.module.scss";
+import { DATE_LOCALE } from "@/constants";
 
 type TagType =
 	| "purple"
@@ -45,8 +46,6 @@ const materialTypeTag: Record<LearningMaterial["materialType"], TagType> = {
 	slides: "blue",
 	other: "gray",
 };
-
-const DATE_LOCALE = "id-ID";
 
 export default function LearningMaterialPage() {
 	const [materials, setMaterials] = useState<LearningMaterial[]>([]);

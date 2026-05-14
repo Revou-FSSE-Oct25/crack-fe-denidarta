@@ -22,6 +22,7 @@ import { apiFetch } from "@/lib/api-client";
 import { Program } from "@/types/index.type";
 import { programTableHeaders } from "@/constants/programs";
 import styles from "./programs.module.scss";
+import { DATE_LOCALE } from "@/constants";
 
 class HttpError extends Error {
 	constructor(public status: number) {
@@ -88,13 +89,10 @@ export default function ProgramsPage() {
 		};
 	}, [page, pageSize]);
 
-	const DATE_LOCALE = "id-ID";
-
 	const rows = programs.map((program) => ({
 		id: String(program.id),
 		name: program.name,
-		creator:
-			program.creator.profile?.fullName ?? program.creator.username,
+		creator: program.creator.profile?.fullName ?? program.creator.username,
 		courseCount: String(program.courses?.length ?? 0),
 		enrolledStudents: String(program.enrolledStudents?.length ?? 0),
 		createdAt: new Date(program.created_at).toLocaleDateString(DATE_LOCALE),

@@ -7,3 +7,12 @@ export const assignmentTableHeaders = [
 	{ key: "minPoints", header: "Min Points" },
 	{ key: "createdAt", header: "Created At" },
 ];
+
+export const submissionHeaders = [
+	{ key: "userId", header: "Student ID" },
+	{ key: "status", header: "Status" },
+	{ key: "grade", header: "Grade" },
+	{ key: "passed", header: "Passed" },
+	{ key: "submittedAt", header: "Submitted At" },
+	{ key: "feedback", header: "Feedback" },
+];

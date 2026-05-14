@@ -4,3 +4,9 @@ export const studentTableHeaders = [
 	{ key: "status", header: "Status" },
 	{ key: "createdAt", header: "Joined" },
 ];
+export const userStatusFilters = [
+	{ id: "all", text: "All Status" },
+	{ id: "active", text: "Active" },
+	{ id: "inactive", text: "Inactive" },
+	{ id: "invited", text: "Invited" },
+];

@@ -21,24 +21,18 @@ import { ArrowLeft } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/api-client";
 import { Assignment, AssignmentSubmission } from "@/types/index.type";
 import { statusTagType } from "@/utils/tag-type";
+import { DATE_LOCALE, submissionHeaders } from "@/constants";
+import styles from "./assignment-detail.module.scss";
 
 class HttpError extends Error {
-	constructor(public status: number, msg: string) {
+	constructor(
+		public status: number,
+		msg: string,
+	) {
 		super(msg);
 		this.name = "HttpError";
 	}
 }
-
-const submissionHeaders = [
-	{ key: "userId", header: "Student ID" },
-	{ key: "status", header: "Status" },
-	{ key: "grade", header: "Grade" },
-	{ key: "passed", header: "Passed" },
-	{ key: "submittedAt", header: "Submitted At" },
-	{ key: "feedback", header: "Feedback" },
-];
-
-const DATE_LOCALE = "id-ID";
 
 function submissionStatusTagType(status: string) {
 	const map: Record<string, "blue" | "teal" | "green" | "gray"> = {
@@ -72,12 +66,21 @@ export default function AssignmentDetailPage() {
 					signal: controller.signal,
 				});
 				if (!res.ok)
-					throw new HttpError(res.status, `Failed to fetch assignment (${res.status})`);
+					throw new HttpError(
+						res.status,
+						`Failed to fetch assignment (${res.status})`,
+					);
 				const { data } = (await res.json()) as { data: Assignment };
 				if (mounted) setAssignment(data);
 			} catch (err) {
-				if (!mounted || (err instanceof DOMException && err.name === "AbortError")) return;
-				setAssignmentError(err instanceof Error ? err.message : "Unexpected error");
+				if (
+					!mounted ||
+					(err instanceof DOMException && err.name === "AbortError")
+				)
+					return;
+				setAssignmentError(
+					err instanceof Error ? err.message : "Unexpected error",
+				);
 			} finally {
 				if (mounted) setLoadingAssignment(false);
 			}
@@ -101,17 +104,30 @@ export default function AssignmentDetailPage() {
 					signal: controller.signal,
 				});
 				if (!res.ok)
-					throw new HttpError(res.status, `Failed to fetch submissions (${res.status})`);
-				const json = (await res.json()) as { data: AssignmentSubmission[] | { items: AssignmentSubmission[] } };
+					throw new HttpError(
+						res.status,
+						`Failed to fetch submissions (${res.status})`,
+					);
+				const json = (await res.json()) as {
+					data: AssignmentSubmission[] | { items: AssignmentSubmission[] };
+				};
 				const list = Array.isArray(json.data)
 					? json.data
-					: Array.isArray((json.data as { items: AssignmentSubmission[] }).items)
-					? (json.data as { items: AssignmentSubmission[] }).items
-					: [];
+					: Array.isArray(
+								(json.data as { items: AssignmentSubmission[] }).items,
+						  )
+						? (json.data as { items: AssignmentSubmission[] }).items
+						: [];
 				if (mounted) setSubmissions(list);
 			} catch (err) {
-				if (!mounted || (err instanceof DOMException && err.name === "AbortError")) return;
-				setSubmissionsError(err instanceof Error ? err.message : "Unexpected error");
+				if (
+					!mounted ||
+					(err instanceof DOMException && err.name === "AbortError")
+				)
+					return;
+				setSubmissionsError(
+					err instanceof Error ? err.message : "Unexpected error",
+				);
 			} finally {
 				if (mounted) setLoadingSubmissions(false);
 			}
@@ -137,13 +153,13 @@ export default function AssignmentDetailPage() {
 	}));
 
 	return (
-		<div style={{ padding: "1.5rem" }}>
+		<div className={styles.container}>
 			<Button
 				kind="ghost"
 				size="sm"
 				renderIcon={ArrowLeft}
 				onClick={() => router.push("/dashboard-admin/assignments")}
-				style={{ marginBottom: "1rem" }}
+				className={styles.backButton}
 			>
 				Back
 			</Button>
@@ -154,24 +170,20 @@ export default function AssignmentDetailPage() {
 					title="Error"
 					subtitle={assignmentError}
 					lowContrast
-					style={{ marginBottom: "1rem" }}
+					className={styles.notification}
 				/>
 			)}
 
 			{loadingAssignment ? (
-				<SkeletonText paragraph lineCount={4} style={{ maxWidth: "480px", marginBottom: "2rem" }} />
+				<SkeletonText paragraph lineCount={4} className={styles.skeleton} />
 			) : assignment ? (
-				<div style={{ marginBottom: "2rem" }}>
-					<h1 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: "0.25rem" }}>
-						{assignment.title}
-					</h1>
-					<p style={{ color: "#6f6f6f", marginBottom: "0.75rem" }}>
-						{assignment.course?.name}
-					</p>
+				<div className={styles.assignmentInfo}>
+					<h1 className={styles.title}>{assignment.title}</h1>
+					<p className={styles.courseName}>{assignment.course?.name}</p>
 					{assignment.description && (
-						<p style={{ marginBottom: "0.75rem" }}>{assignment.description}</p>
+						<p className={styles.description}>{assignment.description}</p>
 					)}
-					<div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", fontSize: "0.875rem" }}>
+					<div className={styles.metaInfo}>
 						<span>
 							<strong>Status: </strong>
 							<Tag type={statusTagType(assignment.status)} size="sm">
@@ -183,15 +195,13 @@ export default function AssignmentDetailPage() {
 							{new Date(assignment.dueDate).toLocaleDateString(DATE_LOCALE)}
 						</span>
 						<span>
-							<strong>Max Points:</strong> {assignment.maxPoints}
+							<strong>Min Points:</strong> {assignment.minPoints}
 						</span>
 					</div>
 				</div>
 			) : null}
 
-			<h2 style={{ fontSize: "1.125rem", fontWeight: 600, marginBottom: "1rem" }}>
-				Submissions
-			</h2>
+			<h2 className={styles.sectionTitle}>Submissions</h2>
 
 			{submissionsError && (
 				<InlineNotification
@@ -199,7 +209,7 @@ export default function AssignmentDetailPage() {
 					title="Error"
 					subtitle={submissionsError}
 					lowContrast
-					style={{ marginBottom: "1rem" }}
+					className={styles.notification}
 				/>
 			)}
 
@@ -223,7 +233,10 @@ export default function AssignmentDetailPage() {
 								<TableHead>
 									<TableRow>
 										{headers.map((header) => (
-											<TableHeader {...getHeaderProps({ header })} key={header.key}>
+											<TableHeader
+												{...getHeaderProps({ header })}
+												key={header.key}
+											>
 												{header.header}
 											</TableHeader>
 										))}
@@ -244,7 +257,9 @@ export default function AssignmentDetailPage() {
 														return (
 															<TableCell key={cell.id}>
 																<Tag
-																	type={submissionStatusTagType(String(cell.value))}
+																	type={submissionStatusTagType(
+																		String(cell.value),
+																	)}
 																	size="sm"
 																>
 																	{String(cell.value)}

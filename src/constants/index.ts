@@ -11,7 +11,10 @@ export { activityTableHeaders } from "./dashboard";
 export { programTableHeaders } from "./programs";
 
 // Assignments page constants
-export { assignmentTableHeaders } from "./assignments";
+export { assignmentTableHeaders, submissionHeaders } from "./assignments";
 
 // Class Sessions page constants
 export { classSessionTableHeaders } from "./class-sessions";
+
+// Common constants
+export { DATE_LOCALE } from "./common";

@@ -25,10 +25,27 @@
 
 .searchBar {
 	display: flex;
-	justify-content: flex-end;
+	flex-direction: row;
+	align-items: center;
+	gap: 0rem;
+	margin-bottom: 1rem;
+	width: 100%;
+}
+
+.notification {
 	margin-bottom: 1rem;
 }
 
-.searchWrapper {
-	width: 20vw;
+.searchBox {
+	width: 300px;
+	margin-left: auto;
+}
+
+.filterStatus {
+	width: 160px;
+
+	:global(.cds--list-box__field) {
+		width: 100%;
+		justify-content: space-between;
+	}
 }

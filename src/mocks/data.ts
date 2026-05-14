@@ -107,9 +107,9 @@ export const courses: Course[] = [
 		instructor: {
 			id: "2",
 			username: "alice",
-			profile: { fullName: "Alice Johnson" }
+			profile: { fullName: "Alice Johnson" },
 		},
-		enrollments: []
+		enrollments: [],
 	},
 	{
 		id: "2",
@@ -122,9 +122,9 @@ export const courses: Course[] = [
 		instructor: {
 			id: "2",
 			username: "alice",
-			profile: { fullName: "Alice Johnson" }
+			profile: { fullName: "Alice Johnson" },
 		},
-		enrollments: []
+		enrollments: [],
 	},
 	{
 		id: "3",
@@ -138,9 +138,9 @@ export const courses: Course[] = [
 		instructor: {
 			id: "3",
 			username: "bob",
-			profile: { fullName: "Bob Smith" }
+			profile: { fullName: "Bob Smith" },
 		},
-		enrollments: []
+		enrollments: [],
 	},
 	{
 		id: "4",
@@ -153,9 +153,9 @@ export const courses: Course[] = [
 		instructor: {
 			id: "3",
 			username: "bob",
-			profile: { fullName: "Bob Smith" }
+			profile: { fullName: "Bob Smith" },
 		},
-		enrollments: []
+		enrollments: [],
 	},
 	{
 		id: "5",
@@ -169,9 +169,9 @@ export const courses: Course[] = [
 		instructor: {
 			id: "2",
 			username: "alice",
-			profile: { fullName: "Alice Johnson" }
+			profile: { fullName: "Alice Johnson" },
 		},
-		enrollments: []
+		enrollments: [],
 	},
 ];
 

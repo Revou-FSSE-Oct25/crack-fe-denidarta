@@ -31,11 +31,19 @@ export async function upsertProfileByUserId(
 	return json.data;
 }
 
-export async function getCurrentUser(): Promise<{ id: string; email: string; role: string }> {
+export async function getCurrentUser(): Promise<{
+	id: string;
+	email: string;
+	role: string;
+}> {
 	const res = await apiFetch("/auth/me");
 	if (!res.ok) {
 		throw new Error("Failed to fetch current user");
 	}
-	const json = (await res.json()) as ApiResponse<{ id: string; email: string; role: string }>;
+	const json = (await res.json()) as ApiResponse<{
+		id: string;
+		email: string;
+		role: string;
+	}>;
 	return json.data;
 }
