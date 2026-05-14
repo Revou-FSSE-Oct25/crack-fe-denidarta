@@ -17,10 +17,11 @@ import {
 	Loading,
 	Breadcrumb,
 	BreadcrumbItem,
+	IconButton,
 } from "@carbon/react";
-import { Save, Close } from "@carbon/icons-react";
+import { Save, Close, Add, TrashCan } from "@carbon/icons-react";
 import { useRouter } from "next/navigation";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { apiFetch } from "@/lib/api-client";
 import { Course } from "@/types/course";
 import DashboardShell from "@/components/DashboardShell";
@@ -33,6 +34,7 @@ interface AssignmentFormValues {
 	dueDate: string;
 	minPoints: number;
 	status: string;
+	gradingCriteria: { label: string; description?: string; points: number }[];
 }
 
 export default function CreateAssignmentPage() {
@@ -53,9 +55,15 @@ export default function CreateAssignmentPage() {
 			title: "",
 			description: "",
 			dueDate: "",
-			minPoints: 0,
+			minPoints: "" as unknown as number,
 			status: "draft",
+			gradingCriteria: [],
 		},
+	});
+
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: "gradingCriteria",
 	});
 
 	useEffect(() => {
@@ -214,8 +222,94 @@ export default function CreateAssignmentPage() {
 								)}
 							/>
 
-							<div style={{ display: "flex", gap: "1rem" }}>
-								<div style={{ flex: 1 }}>
+							<div className={styles.criteriaSection}>
+								<div className={styles.criteriaHeader}>
+									<Heading>Grading Criteria</Heading>
+									<Button
+										kind="ghost"
+										size="sm"
+										renderIcon={Add}
+										onClick={() => append({ label: "", points: "" as unknown as number, description: "" })}
+									>
+										Add Criteria
+									</Button>
+								</div>
+
+								{fields.map((field, index) => (
+									<div key={field.id} className={styles.criteriaItem}>
+										<div className={styles.criteriaRow}>
+											<div style={{ flex: 2 }}>
+												<Controller
+													name={`gradingCriteria.${index}.label`}
+													control={control}
+													rules={{ required: "Label is required" }}
+													render={({ field: inputField }) => (
+														<TextInput
+															{...inputField}
+															id={`criteria-label-${index}`}
+															labelText="Criteria Name"
+															placeholder="e.g. Code Quality"
+															invalid={!!errors.gradingCriteria?.[index]?.label}
+															invalidText={errors.gradingCriteria?.[index]?.label?.message}
+														/>
+													)}
+												/>
+											</div>
+											<div style={{ flex: 1 }}>
+												<Controller
+													name={`gradingCriteria.${index}.points`}
+													control={control}
+													rules={{ required: "Points are required" }}
+													render={({ field: inputField }) => (
+														<NumberInput
+															id={`criteria-points-${index}`}
+															label="Points"
+															hideSteppers
+															allowEmpty
+															value={inputField.value ?? ""}
+															onChange={(_, { value }) =>
+																inputField.onChange(value === "" ? "" : Number(value))
+															}
+															min={0}
+															invalid={!!errors.gradingCriteria?.[index]?.points}
+															invalidText={errors.gradingCriteria?.[index]?.points?.message}
+														/>
+													)}
+												/>
+											</div>
+											<IconButton
+												kind="ghost"
+												label="Remove criteria"
+												align="bottom"
+												onClick={() => remove(index)}
+												className={styles.removeBtn}
+											>
+												<TrashCan />
+											</IconButton>
+										</div>
+										<Controller
+											name={`gradingCriteria.${index}.description`}
+											control={control}
+											render={({ field: inputField }) => (
+												<TextInput
+													{...inputField}
+													id={`criteria-desc-${index}`}
+													labelText="Description (optional)"
+													placeholder="Details about this criteria"
+												/>
+											)}
+										/>
+									</div>
+								))}
+								{fields.length === 0 && (
+									<p className={styles.emptyCriteria}>
+										No grading criteria added. Click "Add Criteria" to create one.
+									</p>
+								)}
+							</div>
+
+							<div className={styles.row}>
+								<div className={styles.col}>
 									<Controller
 										name="dueDate"
 										control={control}
@@ -242,7 +336,7 @@ export default function CreateAssignmentPage() {
 									/>
 								</div>
 
-								<div style={{ flex: 1 }}>
+								<div className={styles.col}>
 									<Controller
 										name="minPoints"
 										control={control}
@@ -252,9 +346,10 @@ export default function CreateAssignmentPage() {
 												label="Minimum Points"
 												helperText="Minimum score required to pass"
 												hideSteppers
-												value={field.value}
+												allowEmpty
+												value={field.value ?? ""}
 												onChange={(_, { value }) =>
-													field.onChange(Number(value))
+													field.onChange(value === "" ? "" : Number(value))
 												}
 												min={0}
 												max={100}
