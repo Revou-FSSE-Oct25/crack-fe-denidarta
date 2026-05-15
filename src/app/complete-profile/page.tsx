@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { profileSchema, type ProfileFormValues } from "@/schemas/profile.schema";
 import {
 	Button,
 	FluidTextInput,
@@ -14,7 +16,6 @@ import {
 import { apiFetch } from "@/lib/api-client";
 import {
 	Profile,
-	ProfileFormValues,
 	Gender,
 	EducationLevel,
 } from "@/types/index.type";
@@ -46,7 +47,7 @@ export default function CompleteProfilePage() {
 		handleSubmit,
 		control,
 		formState: { isSubmitting, errors },
-	} = useForm<ProfileFormValues>();
+	} = useForm<ProfileFormValues>({ resolver: zodResolver(profileSchema) });
 
 	useEffect(() => {
 		async function checkAuth() {

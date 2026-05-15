@@ -1,29 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-	Button,
-	DataTable,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableHeader,
-	TableRow,
-	Tag,
-	DataTableSkeleton,
-	InlineNotification,
-	Pagination,
-	Search,
-	Heading,
-} from "@carbon/react";
+import { useState } from "react";
+import { Button, Tag, Search } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
-import { apiFetch } from "@/lib/api-client";
-import { LearningMaterial } from "@/types/index.type";
+import { useQuery } from "@tanstack/react-query";
+import { fetchLearningMaterials } from "@/services/learning-materials.service";
 import { learningMaterialTableHeaders } from "@/constants/learning-material";
-import styles from "./learning-material.module.scss";
 import { DATE_LOCALE } from "@/constants";
+import PageLayout, { PageHeader } from "@/components/PageLayout";
+import ResourceTableSection from "@/components/ResourceTableSection";
+import type { LearningMaterial } from "@/types/index.type";
 
 type TagType =
 	| "purple"
@@ -48,176 +34,76 @@ const materialTypeTag: Record<LearningMaterial["materialType"], TagType> = {
 };
 
 export default function LearningMaterialPage() {
-	const [materials, setMaterials] = useState<LearningMaterial[]>([]);
-	const [total, setTotal] = useState(0);
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-		let mounted = true;
-		const controller = new AbortController();
+	const { data, isLoading, error } = useQuery({
+		queryKey: ["learning-materials", page, pageSize],
+		queryFn: () => fetchLearningMaterials(page, pageSize),
+	});
 
-		const params = new URLSearchParams({
-			page: String(page),
-			limit: String(pageSize),
-		});
+	const materials = data?.data ?? [];
+	const total = data?.meta.total ?? 0;
 
-		(async () => {
-			try {
-				const res = await apiFetch(`/learning-materials?${params.toString()}`, {
-					signal: controller.signal,
-				});
-				if (!res.ok)
-					throw new Error(`Failed to fetch learning materials (${res.status})`);
-				const { data } = (await res.json()) as {
-					data: { items: LearningMaterial[]; meta: { total: number } };
-				};
-				if (!mounted) return;
-				setMaterials(data?.items || []);
-				setTotal(data?.meta?.total || 0);
-			} catch (err) {
-				if (!mounted || (err as Error).name === "AbortError") return;
-				setError((err as Error).message);
-			} finally {
-				if (mounted) setLoading(false);
-			}
-		})();
-
-		return () => {
-			mounted = false;
-			controller.abort();
-		};
-	}, [page, pageSize]);
-
-	const rows = (materials || []).map((MATERIAL) => ({
-		id: MATERIAL.id,
-		title: MATERIAL.title,
-		materialType: MATERIAL.materialType.toUpperCase(),
-		orderIndex: String(MATERIAL.orderIndex),
-		uploadedBy:
-			MATERIAL.uploader.profile?.fullName ?? MATERIAL.uploader.username,
-		createdAt: new Date(MATERIAL.createdAt).toLocaleDateString(DATE_LOCALE),
+	const rows = materials.map((material) => ({
+		id: material.id,
+		title: material.title,
+		materialType: material.materialType.toUpperCase(),
+		orderIndex: String(material.orderIndex),
+		uploadedBy: material.uploader.profile?.fullName ?? material.uploader.username,
+		createdAt: new Date(material.createdAt).toLocaleDateString(DATE_LOCALE),
 	}));
 
 	return (
-		<div className={styles.container}>
-			<div className={styles.header}>
-				<div className={styles.headerContent}>
-					<Heading className={styles.title}>Learning Materials</Heading>
-					<p className={styles.subtitle}>
-						{loading ? "..." : `${total} materials total`}
-					</p>
-				</div>
-				<Button kind="primary" size="md" renderIcon={Add} disabled>
-					Add Material
-				</Button>
-			</div>
-
-			{error && (
-				<InlineNotification
-					kind="error"
-					title="Error"
-					subtitle={error}
-					lowContrast
-					style={{ marginBottom: "1rem" }}
-				/>
-			)}
-
-			<div className={styles.tableWrapper}>
-				<div className={styles.searchBar}>
-					<div className={styles.searchWrapper}>
-						<Search
-							closeButtonLabelText="Clear search input"
-							id="search-learning-materials"
-							labelText="Search"
-							placeholder="Search materials (coming soon)"
-							size="md"
-							type="search"
-							disabled
-						/>
-					</div>
-				</div>
-
-				{loading ? (
-					<DataTableSkeleton
-						headers={learningMaterialTableHeaders}
-						rowCount={10}
-					/>
-				) : (
-					<DataTable
-						rows={rows}
-						headers={learningMaterialTableHeaders}
-						isSortable
-					>
-						{({
-							rows,
-							headers,
-							getTableProps,
-							getHeaderProps,
-							getRowProps,
-							getTableContainerProps,
-						}) => (
-							<TableContainer {...getTableContainerProps()}>
-								<Table {...getTableProps()}>
-									<TableHead>
-										<TableRow>
-											{headers.map((header) => (
-												<TableHeader
-													{...getHeaderProps({ header })}
-													key={header.key}
-												>
-													{header.header}
-												</TableHeader>
-											))}
-										</TableRow>
-									</TableHead>
-									<TableBody>
-										{rows.map((row) => (
-											<TableRow {...getRowProps({ row })} key={row.id}>
-												{row.cells.map((cell) => {
-													if (cell.info.header === "materialType") {
-														const type = (
-															cell.value as string
-														).toLowerCase() as LearningMaterial["materialType"];
-														return (
-															<TableCell key={cell.id}>
-																<Tag type={materialTypeTag[type]} size="sm">
-																	{String(cell.value)}
-																</Tag>
-															</TableCell>
-														);
-													}
-													return (
-														<TableCell key={cell.id}>{cell.value}</TableCell>
-													);
-												})}
-											</TableRow>
-										))}
-									</TableBody>
-								</Table>
-							</TableContainer>
-						)}
-					</DataTable>
-				)}
-
-				<Pagination
-					backwardText="Previous"
-					forwardText="Next"
-					itemsPerPageText="Items per page:"
-					page={page}
-					pageNumberText="Page Number"
-					pageSize={pageSize}
-					pageSizes={[10, 20, 30, 40, 50]}
-					size="md"
-					totalItems={total}
-					onChange={({ page, pageSize }) => {
+		<PageLayout>
+			<PageHeader
+				title="Learning Materials"
+				subtitle={isLoading ? "..." : `${total} materials total`}
+				actions={
+					<Button kind="primary" size="md" renderIcon={Add} disabled>
+						Add Material
+					</Button>
+				}
+			/>
+			<ResourceTableSection
+				loading={isLoading}
+				error={error ? error.message : null}
+				headers={learningMaterialTableHeaders}
+				rows={rows}
+				pagination={{
+					page,
+					pageSize,
+					total,
+					onChange: ({ page, pageSize }) => {
 						setPage(page);
 						setPageSize(pageSize);
-					}}
-				/>
-			</div>
-		</div>
+					},
+				}}
+				toolbar={
+					<Search
+						closeButtonLabelText="Clear search input"
+						id="search-learning-materials"
+						labelText="Search"
+						placeholder="Search materials (coming soon)"
+						size="md"
+						type="search"
+						disabled
+					/>
+				}
+				renderCell={(cell) => {
+					if (cell.info.header === "materialType") {
+						const type = (
+							cell.value as string
+						).toLowerCase() as LearningMaterial["materialType"];
+						return (
+							<Tag type={materialTypeTag[type]} size="sm">
+								{String(cell.value)}
+							</Tag>
+						);
+					}
+					return null;
+				}}
+			/>
+		</PageLayout>
 	);
 }

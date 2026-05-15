@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
 	Button,
@@ -25,21 +25,13 @@ import {
 	BreadcrumbItem,
 } from "@carbon/react";
 import { Edit } from "@carbon/icons-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchAssignmentById } from "@/services/assignments.service";
 import { apiFetch } from "@/lib/api-client";
 import { Assignment, SubmissionDetail } from "@/types/index.type";
 import { statusTagType } from "@/utils/tag-type";
 import { DATE_LOCALE, submissionHeaders } from "@/constants";
 import styles from "./assignment-detail.module.scss";
-
-class HttpError extends Error {
-	constructor(
-		public status: number,
-		msg: string,
-	) {
-		super(msg);
-		this.name = "HttpError";
-	}
-}
 
 function submissionStatusTagType(status: string) {
 	const map: Record<string, "blue" | "teal" | "green" | "gray"> = {
@@ -65,43 +57,19 @@ interface GradingState {
 export default function AssignmentDetailPage() {
 	const { id } = useParams<{ id: string }>();
 	const router = useRouter();
+	const queryClient = useQueryClient();
 
-	const [assignment, setAssignment] = useState<Assignment | null>(null);
-	const [loadingAssignment, setLoadingAssignment] = useState(true);
-	const [assignmentError, setAssignmentError] = useState<string | null>(null);
 	const [grading, setGrading] = useState<GradingState | null>(null);
 
-	const fetchAssignment = useCallback(
-		async (signal?: AbortSignal) => {
-			if (!id) return;
-			setLoadingAssignment(true);
-			setAssignmentError(null);
-			try {
-				const res = await apiFetch(`/assignments/${id}`, { signal });
-				if (!res.ok)
-					throw new HttpError(
-						res.status,
-						`Failed to fetch assignment (${res.status})`,
-					);
-				const { data } = (await res.json()) as { data: Assignment };
-				setAssignment(data);
-			} catch (err) {
-				if (err instanceof DOMException && err.name === "AbortError") return;
-				setAssignmentError(
-					err instanceof Error ? err.message : "Unexpected error",
-				);
-			} finally {
-				setLoadingAssignment(false);
-			}
-		},
-		[id],
-	);
-
-	useEffect(() => {
-		const controller = new AbortController();
-		void fetchAssignment(controller.signal);
-		return () => controller.abort();
-	}, [fetchAssignment]);
+	const {
+		data: assignment,
+		isLoading: loadingAssignment,
+		error: assignmentError,
+	} = useQuery({
+		queryKey: ["assignment", id],
+		queryFn: () => fetchAssignmentById(id!),
+		enabled: !!id,
+	});
 
 	const criteria = assignment?.gradingCriteria ?? [];
 
@@ -177,7 +145,7 @@ export default function AssignmentDetailPage() {
 				throw new Error(json.message ?? `Error ${res.status}`);
 			}
 			setGrading(null);
-			await fetchAssignment();
+			void queryClient.invalidateQueries({ queryKey: ["assignment", id] });
 		} catch (err) {
 			setGrading((prev) =>
 				prev
@@ -237,7 +205,7 @@ export default function AssignmentDetailPage() {
 				<InlineNotification
 					kind="error"
 					title="Error"
-					subtitle={assignmentError}
+					subtitle={assignmentError.message}
 					lowContrast
 					className={styles.notification}
 				/>
@@ -405,7 +373,6 @@ export default function AssignmentDetailPage() {
 				</DataTable>
 			)}
 
-			{/* Grading Modal */}
 			{grading && (
 				<Modal
 					open

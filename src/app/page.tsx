@@ -48,27 +48,26 @@ export default function Home() {
 	];
 
 	return (
-		<div className={styles.page}>
+		<div className={`${styles.page} cds--g100`}>
 			{/* ── Navigation ── */}
-			<Navbar>
-				<Navbar.Logo />
-				<Navbar.Links
-					links={[
-						{ label: "Platform", href: "#features" },
-						{ label: "Solutions", href: "#how" },
-						{ label: "Pricing", href: "#pricing" },
-						{ label: "Docs", href: "#" },
-					]}
-				/>
-				<Navbar.Actions>
-					<Link href="/login" className={styles.navLogin}>
-						Log in
-					</Link>
-					<Button kind="primary" size="md" href="/login">
-						Get Started
-					</Button>
-				</Navbar.Actions>
-			</Navbar>
+			<Navbar
+				links={[
+					{ label: "Platform", href: "#features" },
+					{ label: "Solutions", href: "#how" },
+					{ label: "Pricing", href: "#pricing" },
+					{ label: "Docs", href: "#" },
+				]}
+				actions={
+					<>
+						<Link href="/login" className={styles.navLogin}>
+							Log in
+						</Link>
+						<Button kind="primary" size="md" href="/login">
+							Get Started
+						</Button>
+					</>
+				}
+			/>
 
 			{/* ── Hero ── */}
 			<section className={styles.hero}>
@@ -424,7 +423,7 @@ export default function Home() {
 
 				<div className={styles.footerBottom}>
 					<span className={styles.footerCopy}>
-						© 2025 LearnOS Inc. All rights reserved.
+						© 2026 Rapor Biru Inc. All rights reserved.
 					</span>
 					<div className={styles.footerBottomLinks}>
 						{["Privacy Policy", "Terms of Service", "Security"].map((l) => (

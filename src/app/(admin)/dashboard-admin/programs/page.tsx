@@ -1,93 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-	Button,
-	DataTable,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableHeader,
-	TableRow,
-	DataTableSkeleton,
-	InlineNotification,
-	Pagination,
-	Search,
-} from "@carbon/react";
+import { Button, ExpandableSearch, OverflowMenu, OverflowMenuItem } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
-import { apiFetch } from "@/lib/api-client";
-import { Program } from "@/types/index.type";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchPrograms } from "@/services/programs.service";
 import { programTableHeaders } from "@/constants/programs";
-import styles from "./programs.module.scss";
 import { DATE_LOCALE } from "@/constants";
-
-class HttpError extends Error {
-	constructor(public status: number) {
-		super(`Failed to fetch programs (${status})`);
-		this.name = "HttpError";
-	}
-}
+import PageLayout, { PageHeader } from "@/components/PageLayout";
+import ResourceTableSection from "@/components/ResourceTableSection";
+import CreateProgramModal from "@/components/Modals/CreateProgramModal";
 
 export default function ProgramsPage() {
 	const router = useRouter();
-	const [programs, setPrograms] = useState<Program[]>([]);
-	const [total, setTotal] = useState(0);
+	const queryClient = useQueryClient();
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [modalOpen, setModalOpen] = useState(false);
 
-	useEffect(() => {
-		let mounted = true;
-		const controller = new AbortController();
+	const { data, isLoading, error } = useQuery({
+		queryKey: ["programs", page, pageSize],
+		queryFn: () => fetchPrograms(page, pageSize),
+	});
 
-		const params = new URLSearchParams({
-			page: String(page),
-			limit: String(pageSize),
-		});
-
-		async function fetchPrograms() {
-			try {
-				const res = await apiFetch(`/programs?${params}`, {
-					signal: controller.signal,
-				});
-				if (!res.ok) throw new HttpError(res.status);
-				const { data: paginated } = (await res.json()) as {
-					data: { items: Program[]; meta: { total: number } };
-				};
-				if (!mounted) return;
-				const list = paginated?.items ?? [];
-				setPrograms(list);
-				setTotal(paginated?.meta?.total ?? list.length);
-			} catch (err) {
-				if (
-					!mounted ||
-					(err instanceof DOMException && err.name === "AbortError")
-				)
-					return;
-				if (err instanceof HttpError) {
-					setError(err.message);
-				} else if (err instanceof SyntaxError) {
-					setError("Invalid response format from server");
-				} else if (err instanceof Error) {
-					setError(err.message);
-				} else {
-					setError("An unexpected error occurred");
-				}
-			} finally {
-				if (mounted) setLoading(false);
-			}
-		}
-		void fetchPrograms();
-
-		return () => {
-			mounted = false;
-			controller.abort();
-		};
-	}, [page, pageSize]);
+	const programs = data?.data ?? [];
+	const total = data?.meta.total ?? 0;
 
 	const rows = programs.map((program) => ({
 		id: String(program.programId),
@@ -95,109 +33,81 @@ export default function ProgramsPage() {
 		creator: program.createdBy?.fullName ?? program.createdBy?.username,
 		courseCount: String(program.courses?.length ?? 0),
 		enrolledStudents: String(program.students?.length ?? 0),
-		createdAt: new Date(program.createdAt).toLocaleDateString(DATE_LOCALE),
+		createdAt: new Date(program.createdAt).toLocaleString(DATE_LOCALE),
+		action: "",
 	}));
 
 	return (
-		<div className={styles.container}>
-			<div className={styles.header}>
-				<div className={styles.headerContent}>
-					<h1 className={styles.title}>Programs</h1>
-					<p className={styles.subtitle}>
-						{loading ? "..." : `${total} programs total`}
-					</p>
-				</div>
-				<Button
-					kind="primary"
-					size="md"
-					renderIcon={Add}
-					onClick={() => router.push("/create-program")}
-				>
-					Create Program
-				</Button>
-			</div>
-
-			{error && (
-				<InlineNotification
-					kind="error"
-					title="Error"
-					subtitle={error}
-					lowContrast
-					style={{ marginBottom: "1rem" }}
-				/>
-			)}
-
-			<div className={styles.tableWrapper}>
-				<div className={styles.searchBar}>
-					<div className={styles.searchWrapper}>
-						<Search
+		<PageLayout>
+			<PageHeader
+				title="Programs"
+				subtitle={isLoading ? "..." : `${total} programs total`}
+			/>
+			<ResourceTableSection
+				loading={isLoading}
+				error={error ? error.message : null}
+				headers={programTableHeaders}
+				rows={rows}
+				pagination={{
+					page,
+					pageSize,
+					total,
+					onChange: ({ page, pageSize }) => {
+						setPage(page);
+						setPageSize(pageSize);
+					},
+				}}
+				toolbar={
+					<div
+						style={{
+							display: "flex",
+							justifyContent: "flex-end",
+							gap: "0.5rem",
+							width: "100%",
+						}}
+					>
+						<ExpandableSearch
 							closeButtonLabelText="Clear search input"
 							id="search-programs"
 							labelText="Search"
 							placeholder="Search programs (coming soon)"
 							size="md"
 							type="search"
-							disabled
 						/>
+						<Button
+							kind="primary"
+							size="md"
+							renderIcon={Add}
+							onClick={() => setModalOpen(true)}
+						>
+							Create Program
+						</Button>
 					</div>
-				</div>
-				{loading ? (
-					<DataTableSkeleton headers={programTableHeaders} rowCount={10} />
-				) : (
-					<DataTable rows={rows} headers={programTableHeaders} isSortable>
-						{({
-							rows,
-							headers,
-							getTableProps,
-							getHeaderProps,
-							getRowProps,
-							getTableContainerProps,
-						}) => (
-							<TableContainer {...getTableContainerProps()}>
-								<Table {...getTableProps()}>
-									<TableHead>
-										<TableRow>
-											{headers.map((header) => (
-												<TableHeader
-													{...getHeaderProps({ header })}
-													key={header.key}
-												>
-													{header.header}
-												</TableHeader>
-											))}
-										</TableRow>
-									</TableHead>
-									<TableBody>
-										{rows.map((row) => (
-											<TableRow {...getRowProps({ row })} key={row.id}>
-												{row.cells.map((cell) => (
-													<TableCell key={cell.id}>{cell.value}</TableCell>
-												))}
-											</TableRow>
-										))}
-									</TableBody>
-								</Table>
-							</TableContainer>
-						)}
-					</DataTable>
-				)}
-
-				<Pagination
-					backwardText="Previous"
-					forwardText="Next"
-					itemsPerPageText="Items per page:"
-					page={page}
-					pageNumberText="Page Number"
-					pageSize={pageSize}
-					pageSizes={[10, 20, 30, 40, 50]}
-					size="md"
-					totalItems={total}
-					onChange={({ page, pageSize }) => {
-						setPage(page);
-						setPageSize(pageSize);
-					}}
-				/>
-			</div>
-		</div>
+				}
+				renderCell={(cell, row) => {
+					if (cell.info.header === "action") {
+						return (
+							<OverflowMenu size="lg">
+								<OverflowMenuItem
+									itemText="View"
+									onClick={() =>
+										router.push(`/dashboard-admin/programs/${row.id}`)
+									}
+								/>
+							</OverflowMenu>
+						);
+					}
+					return null;
+				}}
+			/>
+			<CreateProgramModal
+				open={modalOpen}
+				onRequestClose={() => setModalOpen(false)}
+				onSuccess={() => {
+					setModalOpen(false);
+					void queryClient.invalidateQueries({ queryKey: ["programs"] });
+				}}
+			/>
+		</PageLayout>
 	);
 }

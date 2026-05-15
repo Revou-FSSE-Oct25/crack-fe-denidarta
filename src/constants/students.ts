@@ -3,6 +3,7 @@ export const studentTableHeaders = [
 	{ key: "email", header: "Email" },
 	{ key: "status", header: "Status" },
 	{ key: "createdAt", header: "Joined" },
+	{ key: "action", header: "" },
 ];
 export const userStatusFilters = [
 	{ id: "all", text: "All Status" },

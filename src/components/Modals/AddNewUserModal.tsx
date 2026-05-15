@@ -1,61 +1,74 @@
 "use client";
 
-import { Modal, TextInput, Select, SelectItem } from "@carbon/react";
 import { useState } from "react";
+import { Modal, TextInput, Select, SelectItem, InlineNotification } from "@carbon/react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { apiFetch } from "@/lib/api-client";
+import { inviteUser } from "@/services/users.service";
+import { addUserSchema, type AddUserFormValues } from "@/schemas/user.schema";
 
 interface AddNewUserModalProps {
 	open: boolean;
 	onRequestClose: () => void;
-	onRequestSubmit: (userId: string, email: string) => Promise<string>;
+	onSuccess: () => void;
 }
 
 export default function AddNewUserModal({
 	open,
 	onRequestClose,
-	onRequestSubmit,
+	onSuccess,
 }: AddNewUserModalProps) {
-	const [email, setEmail] = useState("");
-	const [fullName, setFullName] = useState("");
-	const [role, setRole] = useState("student");
-	const [emailError, setEmailError] = useState("");
 	const [invitationLink, setInvitationLink] = useState<string | null>(null);
+	const [submitting, setSubmitting] = useState(false);
+	const [submitError, setSubmitError] = useState<string | null>(null);
 
-	const handleSubmit = async () => {
-		setEmailError("");
-
-		const emailInput = document.createElement("input");
-		emailInput.type = "email";
-		emailInput.value = email;
-		if (!emailInput.checkValidity()) {
-			setEmailError("Please enter a valid email address");
-			return;
-		}
-
-		const res = await apiFetch("/users", {
-			method: "POST",
-			body: JSON.stringify({ username: fullName, email, role }),
-		});
-
-		if (res.status === 409) {
-			setEmailError("Email already registered");
-			return;
-		}
-
-		if (!res.ok) return;
-
-		const { data: user } = (await res.json()) as { data: { id: string } };
-		const link = await onRequestSubmit(user.id, email);
-		setInvitationLink(link);
-	};
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm<AddUserFormValues>({ resolver: zodResolver(addUserSchema) });
 
 	const handleClose = () => {
-		setEmail("");
-		setFullName("");
-		setRole("student");
-		setEmailError("");
+		reset();
 		setInvitationLink(null);
+		setSubmitError(null);
 		onRequestClose();
+	};
+
+	const onSubmit = async (values: AddUserFormValues) => {
+		setSubmitError(null);
+		setSubmitting(true);
+		try {
+			const res = await apiFetch("/users", {
+				method: "POST",
+				body: JSON.stringify({ username: values.username, email: values.email, role: values.role }),
+			});
+
+			if (res.status === 409) {
+				setSubmitError("Email already registered");
+				return;
+			}
+			if (!res.ok) {
+				const body = (await res.json().catch(() => ({}))) as { message?: string };
+				throw new Error(body.message ?? `Error ${res.status}`);
+			}
+
+			const { data: { data: user } } = (await res.json()) as { data: { data: { id: string } } };
+			const token = await inviteUser(user.id);
+			const link = `${window.location.origin}/create-account/${token}?email=${encodeURIComponent(values.email)}`;
+			setInvitationLink(link);
+		} catch (err) {
+			setSubmitError(err instanceof Error ? err.message : "Failed to add user");
+		} finally {
+			setSubmitting(false);
+		}
+	};
+
+	const handleDone = () => {
+		handleClose();
+		onSuccess();
 	};
 
 	if (invitationLink) {
@@ -65,8 +78,8 @@ export default function AddNewUserModal({
 				modalHeading="User Invited"
 				open={open}
 				primaryButtonText="Done"
-				onRequestClose={handleClose}
-				onRequestSubmit={handleClose}
+				onRequestClose={handleDone}
+				onRequestSubmit={handleDone}
 				secondaryButtonText=""
 			>
 				<p style={{ marginBottom: "1rem" }}>
@@ -88,38 +101,46 @@ export default function AddNewUserModal({
 			aria-label="Add new user modal"
 			modalHeading="Add New User"
 			open={open}
-			primaryButtonText="Add"
+			primaryButtonText={submitting ? "Adding..." : "Add"}
+			primaryButtonDisabled={submitting}
 			secondaryButtonText="Cancel"
 			onRequestClose={handleClose}
-			onRequestSubmit={handleSubmit}
+			onRequestSubmit={handleSubmit(onSubmit)}
 			onSecondarySubmit={handleClose}
 		>
 			<div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+				{submitError && (
+					<InlineNotification
+						kind="error"
+						title="Error"
+						subtitle={submitError}
+						lowContrast
+						onClose={() => setSubmitError(null)}
+					/>
+				)}
 				<TextInput
 					data-modal-primary-focus
 					id="add-user-email"
 					labelText="Email"
 					placeholder="user@example.com"
-					value={email}
-					onChange={(e) => {
-						setEmail(e.target.value);
-						setEmailError("");
-					}}
-					invalid={!!emailError}
-					invalidText={emailError}
+					invalid={!!errors.email}
+					invalidText={errors.email?.message}
+					{...register("email")}
 				/>
 				<TextInput
 					id="username"
 					labelText="Username"
 					placeholder="e.g. john_doe"
-					value={fullName}
-					onChange={(e) => setFullName(e.target.value)}
+					invalid={!!errors.username}
+					invalidText={errors.username?.message}
+					{...register("username")}
 				/>
 				<Select
 					id="add-user-role"
 					labelText="Role"
-					value={role}
-					onChange={(e) => setRole(e.target.value)}
+					invalid={!!errors.role}
+					invalidText={errors.role?.message}
+					{...register("role")}
 				>
 					<SelectItem text="Student" value="student" />
 					<SelectItem text="Instructor" value="instructor" />

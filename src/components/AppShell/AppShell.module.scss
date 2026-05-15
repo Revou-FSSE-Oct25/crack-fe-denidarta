@@ -1,0 +1,43 @@
+.shell {
+  min-height: 100vh;
+}
+
+.layout {
+  display: flex;
+  padding-top: 3rem;
+  min-height: calc(100vh - 3rem);
+}
+
+.navSpacer {
+  flex-shrink: 0;
+  width: 16rem;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.sideNavLight :global(.cds--side-nav),
+.sideNavLight {
+  background-color: #ffffff !important;
+}
+
+.sideNavDark :global(.cds--side-nav),
+.sideNavDark {
+  background-color: #161616 !important;
+}
+
+.headerLight {
+  background-color: #ffffff !important;
+}
+
+.headerDark {
+  background-color: #161616 !important;
+}
+
+.panelEmpty {
+  padding: 1rem;
+  color: var(--cds-text-secondary);
+  font-size: 0.875rem;
+}

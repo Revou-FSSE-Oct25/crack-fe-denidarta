@@ -8,6 +8,52 @@ interface PaginatedResponse<T> {
 	};
 }
 
+interface Paginated<T> {
+	data: T[];
+	meta: { total: number };
+}
+
+export async function fetchStudents(
+	page: number,
+	limit: number,
+	search?: string,
+	status?: string,
+): Promise<Paginated<User>> {
+	const params = new URLSearchParams({
+		role: "student",
+		page: String(page),
+		limit: String(limit),
+		...(search && { search }),
+		...(status && status !== "all" && { status }),
+	});
+	const res = await apiFetch(`/users?${params}`);
+	if (!res.ok) throw new Error(`Failed to fetch students (${res.status})`);
+	const { data } = (await res.json()) as { data: Paginated<User> };
+	return data;
+}
+
+export async function createUser(payload: {
+	username: string;
+	email: string;
+	role: string;
+}): Promise<User> {
+	const res = await apiFetch("/users", {
+		method: "POST",
+		body: JSON.stringify(payload),
+	});
+	if (res.status === 409) throw new Error("EMAIL_TAKEN");
+	if (!res.ok) throw new Error("Failed to create user");
+	const { data } = (await res.json()) as { data: { data: User } };
+	return data.data;
+}
+
+export async function inviteUser(userId: string): Promise<string> {
+	const res = await apiFetch(`/auth/invite/${userId}`, { method: "POST" });
+	if (!res.ok) throw new Error("Failed to send invitation");
+	const { data } = (await res.json()) as { data: { inviteToken: string } };
+	return data.inviteToken;
+}
+
 export async function fetchAdminsAndInstructors(): Promise<User[]> {
 	console.log("[users.service] fetching admins and instructors...");
 	const res = await apiFetch("/users?roles=admin,instructor&limit=100");

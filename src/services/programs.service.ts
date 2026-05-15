@@ -5,6 +5,29 @@ interface ApiResponse<T> {
 	data: T;
 }
 
+interface Paginated<T> {
+	data: T[];
+	meta: { total: number };
+}
+
+export async function fetchPrograms(
+	page: number,
+	limit: number,
+): Promise<Paginated<Program>> {
+	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const res = await apiFetch(`/programs?${params}`);
+	if (!res.ok) throw new Error(`Failed to fetch programs (${res.status})`);
+	const { data } = (await res.json()) as { data: Paginated<Program> };
+	return data;
+}
+
+export async function fetchAllPrograms(): Promise<Program[]> {
+	const res = await apiFetch("/programs?limit=100");
+	if (!res.ok) throw new Error("Failed to fetch programs");
+	const { data } = (await res.json()) as { data: Paginated<Program> };
+	return data.data ?? [];
+}
+
 export async function createProgram(
 	name: string,
 	createdBy: string,
@@ -27,4 +50,11 @@ export async function createProgram(
 	}
 	const json = (await res.json()) as ApiResponse<Program>;
 	return json.data;
+}
+
+export async function fetchProgram(id: string): Promise<Program> {
+	const res = await apiFetch(`/programs/${id}`);
+	if (!res.ok) throw new Error(`Failed to fetch program (${res.status})`);
+	const { data } = (await res.json()) as ApiResponse<{ data: Program }>;
+	return data.data;
 }

@@ -1,9 +1,9 @@
-import StudentDashboardShell from "@/components/StudentDashboardShell";
+import AppShell from "@/components/AppShell";
 
 export default function DashboardLayout({
-	children,
+  children,
 }: {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-	return <StudentDashboardShell>{children}</StudentDashboardShell>;
+  return <AppShell role="student">{children}</AppShell>;
 }

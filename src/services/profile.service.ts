@@ -41,9 +41,9 @@ export async function getCurrentUser(): Promise<{
 		throw new Error("Failed to fetch current user");
 	}
 	const json = (await res.json()) as ApiResponse<{
-		id: string;
+		sub: string;
 		email: string;
 		role: string;
 	}>;
-	return json.data;
+	return { id: json.data.sub, email: json.data.email, role: json.data.role };
 }

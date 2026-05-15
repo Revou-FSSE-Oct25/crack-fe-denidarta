@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import {
 	Breadcrumb,
@@ -19,19 +19,17 @@ import {
 	TableRow,
 	Tag,
 } from "@carbon/react";
-import { apiFetch } from "@/lib/api-client";
-import { ClassSession } from "@/types/index.type";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	fetchClassSessionById,
+	fetchSessionAttendance,
+	type AttendanceRecord,
+} from "@/services/class-sessions.service";
 import { statusTagType } from "@/utils/tag-type";
 import VerifyAttendanceModal, {
 	type VerifyAttendanceRecord,
 } from "@/components/Modals/VerifyAttendanceModal";
 import styles from "../class-sessions.module.scss";
-
-interface AttendanceRecord extends VerifyAttendanceRecord {
-	isVerified: boolean;
-	verifiedBy: string | null;
-	verifiedAt: string | null;
-}
 
 const attendanceHeaders = [
 	{ key: "name", header: "Student" },
@@ -44,57 +42,23 @@ const attendanceHeaders = [
 
 export default function SessionAttendancePage() {
 	const { sessionId } = useParams<{ sessionId: string }>();
+	const queryClient = useQueryClient();
+	const [verifyRecord, setVerifyRecord] = useState<AttendanceRecord | null>(null);
 
-	const [session, setSession] = useState<ClassSession | null>(null);
-	const [records, setRecords] = useState<AttendanceRecord[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-	const [verifyRecord, setVerifyRecord] = useState<AttendanceRecord | null>(
-		null,
-	);
+	const { data: session, isLoading: sessionLoading, error: sessionError } = useQuery({
+		queryKey: ["class-session", sessionId],
+		queryFn: () => fetchClassSessionById(sessionId!),
+		enabled: !!sessionId,
+	});
 
-	useEffect(() => {
-		let mounted = true;
+	const { data: records = [], isLoading: attendanceLoading, error: attendanceError } = useQuery({
+		queryKey: ["session-attendance", sessionId],
+		queryFn: () => fetchSessionAttendance(sessionId!),
+		enabled: !!sessionId,
+	});
 
-		async function fetchData() {
-			try {
-				const [sessionRes, attendanceRes] = await Promise.all([
-					apiFetch(`/class-sessions/${sessionId}`),
-					apiFetch(`/attendances/session/${sessionId}`),
-				]);
-
-				if (!sessionRes.ok)
-					throw new Error(`Failed to load session (${sessionRes.status})`);
-				if (!attendanceRes.ok)
-					throw new Error(
-						`Failed to load attendance (${attendanceRes.status})`,
-					);
-
-				const { data: sessionData } = (await sessionRes.json()) as {
-					data: ClassSession;
-				};
-				const { data: attendanceData } = (await attendanceRes.json()) as {
-					data: AttendanceRecord[];
-				};
-
-				if (!mounted) return;
-				setSession(sessionData);
-				setRecords(attendanceData ?? []);
-			} catch (err) {
-				if (!mounted) return;
-				setError(
-					err instanceof Error ? err.message : "An unexpected error occurred",
-				);
-			} finally {
-				if (mounted) setLoading(false);
-			}
-		}
-
-		void fetchData();
-		return () => {
-			mounted = false;
-		};
-	}, [sessionId]);
+	const loading = sessionLoading || attendanceLoading;
+	const error = sessionError?.message ?? attendanceError?.message ?? null;
 
 	const rows = records.map((r) => ({
 		id: r.id,
@@ -231,10 +195,10 @@ export default function SessionAttendancePage() {
 			<VerifyAttendanceModal
 				record={verifyRecord}
 				onRequestClose={() => setVerifyRecord(null)}
-				onSuccess={(updated) => {
-					setRecords((prev) =>
-						prev.map((r) => (r.id === updated.id ? { ...r, ...updated } : r)),
-					);
+				onSuccess={(updated: VerifyAttendanceRecord) => {
+					void queryClient.invalidateQueries({
+						queryKey: ["session-attendance", sessionId],
+					});
 					setVerifyRecord(null);
 				}}
 			/>

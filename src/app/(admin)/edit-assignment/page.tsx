@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import {
 	Button,
 	Form,
@@ -23,32 +23,36 @@ import {
 import { Save, Add, TrashCan, CatalogPublish } from "@carbon/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-client";
-import { Course } from "@/types/course";
+import { fetchAllCourses } from "@/services/courses.service";
 import { Assignment } from "@/types/assignment";
-import DashboardShell from "@/components/DashboardShell";
+import AppShell from "@/components/AppShell";
+import { assignmentSchema, type AssignmentFormValues } from "@/schemas/assignment.schema";
 import styles from "./edit-assignment.module.scss";
 
-interface AssignmentFormValues {
-	courseId: string;
-	title: string;
-	description: string;
-	dueDate: string;
-	minPoints: number;
-	status: string;
-	gradingCriteria: { label: string; description?: string; points: number }[];
+export default function EditAssignmentPage() {
+  return (
+    <Suspense>
+      <EditAssignmentPageInner />
+    </Suspense>
+  );
 }
 
-export default function EditAssignmentPage() {
+function EditAssignmentPageInner() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const assignmentId = searchParams.get("id");
 
-	const [courses, setCourses] = useState<Course[]>([]);
-	const [loading, setLoading] = useState(true);
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
+
+	const { data: courses = [] } = useQuery({
+		queryKey: ["courses-all"],
+		queryFn: fetchAllCourses,
+	});
 
 	const {
 		control,
@@ -57,6 +61,7 @@ export default function EditAssignmentPage() {
 		reset,
 		formState: { errors },
 	} = useForm<AssignmentFormValues>({
+		resolver: zodResolver(assignmentSchema),
 		defaultValues: {
 			courseId: "",
 			title: "",
@@ -73,32 +78,18 @@ export default function EditAssignmentPage() {
 		name: "gradingCriteria",
 	});
 
+	const [loading, setLoading] = useState(true);
+
 	useEffect(() => {
-		const fetchData = async () => {
-			if (!assignmentId) {
-				setError("No assignment ID provided");
-				setLoading(false);
-				return;
-			}
-
-			try {
-				const [coursesRes, assignmentRes] = await Promise.all([
-					apiFetch("/courses?limit=100"),
-					apiFetch(`/assignments/${assignmentId}`),
-				]);
-
-				if (!coursesRes.ok) throw new Error("Failed to fetch courses");
-				if (!assignmentRes.ok)
-					throw new Error("Failed to fetch assignment details");
-
-				const { data: coursesData } = await coursesRes.json();
-				const { data: assignmentData } = (await assignmentRes.json()) as {
-					data: Assignment;
-				};
-
-				setCourses(coursesData.items || []);
-
-				// Populate form
+		if (!assignmentId) {
+			setError("No assignment ID provided");
+			setLoading(false);
+			return;
+		}
+		apiFetch(`/assignments/${assignmentId}`)
+			.then(async (res) => {
+				if (!res.ok) throw new Error("Failed to fetch assignment details");
+				const { data: assignmentData } = (await res.json()) as { data: Assignment };
 				reset({
 					courseId: assignmentData.courseId,
 					title: assignmentData.title,
@@ -108,15 +99,9 @@ export default function EditAssignmentPage() {
 					status: assignmentData.status,
 					gradingCriteria: assignmentData.gradingCriteria || [],
 				});
-			} catch (err) {
-				console.error(err);
-				setError("Could not load data. Please try again.");
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchData();
+			})
+			.catch((err) => setError((err as Error).message))
+			.finally(() => setLoading(false));
 	}, [assignmentId, reset]);
 
 	const onSubmit = async (data: AssignmentFormValues) => {
@@ -155,11 +140,11 @@ export default function EditAssignmentPage() {
 
 	if (loading) {
 		return (
-			<DashboardShell>
+			<AppShell role="admin">
 				<div className={styles.loading}>
 					<Loading withOverlay={false} />
 				</div>
-			</DashboardShell>
+			</AppShell>
 		);
 	}
 
@@ -207,8 +192,7 @@ export default function EditAssignmentPage() {
 						<Controller
 							name="courseId"
 							control={control}
-							rules={{ required: "Please select a course" }}
-							render={({ field }) => (
+								render={({ field }) => (
 								<Select
 									{...field}
 									id="courseId"
@@ -233,11 +217,7 @@ export default function EditAssignmentPage() {
 						<Controller
 							name="title"
 							control={control}
-							rules={{
-								required: "Title is required",
-								maxLength: { value: 255, message: "Title too long" },
-							}}
-							render={({ field }) => (
+								render={({ field }) => (
 								<TextInput
 									{...field}
 									id="title"
@@ -290,8 +270,7 @@ export default function EditAssignmentPage() {
 											<Controller
 												name={`gradingCriteria.${index}.label`}
 												control={control}
-												rules={{ required: "Label is required" }}
-												render={({ field: inputField }) => (
+													render={({ field: inputField }) => (
 													<TextInput
 														{...inputField}
 														id={`criteria-label-${index}`}
@@ -309,8 +288,7 @@ export default function EditAssignmentPage() {
 											<Controller
 												name={`gradingCriteria.${index}.points`}
 												control={control}
-												rules={{ required: "Points are required" }}
-												render={({ field: inputField }) => (
+													render={({ field: inputField }) => (
 													<NumberInput
 														id={`criteria-points-${index}`}
 														label="Points"
@@ -368,8 +346,7 @@ export default function EditAssignmentPage() {
 								<Controller
 									name="dueDate"
 									control={control}
-									rules={{ required: "Due date is required" }}
-									render={({ field }) => (
+										render={({ field }) => (
 										<DatePicker
 											datePickerType="single"
 											value={field.value}
@@ -450,5 +427,5 @@ export default function EditAssignmentPage() {
 		</div>
 	);
 
-	return <DashboardShell>{content}</DashboardShell>;
+	return <AppShell role="admin">{content}</AppShell>;
 }

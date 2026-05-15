@@ -47,10 +47,10 @@ export default function StudentDashboardPage() {
 				const res = await apiFetch("/courses", { signal: controller.signal });
 				if (!res.ok) throw new HttpError(res.status);
 				const { data } = (await res.json()) as {
-					data: { items: Course[]; meta: { total: number } };
+					data: { data: Course[]; meta: { total: number } };
 				};
 				if (!mounted) return;
-				setCourses(data?.items ?? []);
+				setCourses(data?.data ?? []);
 			} catch (err) {
 				if (
 					!mounted ||

@@ -1,9 +1,9 @@
-import DashboardShell from "@/components/DashboardShell";
+import AppShell from "@/components/AppShell";
 
 export default function DashboardLayout({
-	children,
+  children,
 }: {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-	return <DashboardShell>{children}</DashboardShell>;
+  return <AppShell role="admin">{children}</AppShell>;
 }

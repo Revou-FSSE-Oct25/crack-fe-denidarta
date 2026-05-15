@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
 	DataTable,
 	DataTableSkeleton,
@@ -17,65 +17,19 @@ import {
 	Tag,
 } from "@carbon/react";
 import { Certificate } from "@carbon/icons-react";
-import { apiFetch } from "@/lib/api-client";
-import { Certificate as CertificateType } from "@/types/index.type";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAllCertificates } from "@/services/certificates.service";
 import { certificateTableHeaders } from "@/constants/certificates";
 import styles from "./program-certificates.module.scss";
 import { DATE_LOCALE } from "@/constants";
 
-class HttpError extends Error {
-	constructor(public status: number) {
-		super(`Failed to fetch certificates (${status})`);
-		this.name = "HttpError";
-	}
-}
-
 export default function ProgramCertificatesPage() {
-	const [certificates, setCertificates] = useState<CertificateType[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 	const [search, setSearch] = useState("");
 
-	useEffect(() => {
-		let mounted = true;
-		const controller = new AbortController();
-
-		async function fetchCertificates() {
-			try {
-				const res = await apiFetch("/certificates", {
-					signal: controller.signal,
-				});
-				if (!res.ok) throw new HttpError(res.status);
-				const body = (await res.json()) as { data: CertificateType[] };
-				if (!mounted) return;
-				setCertificates(Array.isArray(body.data) ? body.data : []);
-			} catch (err) {
-				if (
-					!mounted ||
-					(err instanceof DOMException && err.name === "AbortError")
-				)
-					return;
-				if (err instanceof HttpError) {
-					setError(err.message);
-				} else if (err instanceof SyntaxError) {
-					setError("Invalid response format from server");
-				} else if (err instanceof Error) {
-					setError(err.message);
-				} else {
-					setError("An unexpected error occurred");
-				}
-			} finally {
-				if (mounted) setLoading(false);
-			}
-		}
-
-		void fetchCertificates();
-
-		return () => {
-			mounted = false;
-			controller.abort();
-		};
-	}, []);
+	const { data: certificates = [], isLoading, error } = useQuery({
+		queryKey: ["certificates-all"],
+		queryFn: fetchAllCertificates,
+	});
 
 	const filtered = useMemo(() => {
 		const q = search.trim().toLowerCase();
@@ -114,7 +68,7 @@ export default function ProgramCertificatesPage() {
 						<Heading>Program Certificates</Heading>
 					</div>
 					<p className={styles.subtitle}>
-						{loading
+						{isLoading
 							? "Loading..."
 							: `${filtered.length} of ${certificates.length} certificate${certificates.length !== 1 ? "s" : ""}`}
 					</p>
@@ -125,7 +79,7 @@ export default function ProgramCertificatesPage() {
 				<InlineNotification
 					kind="error"
 					title="Error"
-					subtitle={error}
+					subtitle={error.message}
 					lowContrast
 				/>
 			)}
@@ -145,7 +99,7 @@ export default function ProgramCertificatesPage() {
 					/>
 				</div>
 
-				{loading ? (
+				{isLoading ? (
 					<DataTableSkeleton headers={certificateTableHeaders} rowCount={8} />
 				) : rows.length === 0 ? (
 					<div className={styles.empty}>

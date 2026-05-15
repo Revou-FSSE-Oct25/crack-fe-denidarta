@@ -12,7 +12,10 @@ import {
 	Link,
 } from "@carbon/react";
 import { ArrowRight } from "@carbon/icons-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { apiFetch } from "@/lib/api-client";
+import { createAccountSchema, type CreateAccountFormValues } from "@/schemas/auth.schema";
 import styles from "./page.module.scss";
 
 interface PageProps {
@@ -20,8 +23,6 @@ interface PageProps {
 }
 
 export default function CreateAccountPage({ params }: PageProps) {
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
@@ -30,21 +31,17 @@ export default function CreateAccountPage({ params }: PageProps) {
 	const email = searchParams.get("email") || "";
 	const inviteTokenPromise = params;
 
-	const onSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
+	const {
+		register,
+		handleSubmit,
+		watch,
+		formState: { errors },
+	} = useForm<CreateAccountFormValues>({ resolver: zodResolver(createAccountSchema) });
+
+	const passwordValue = watch("password", "");
+
+	const onSubmit = async (data: CreateAccountFormValues) => {
 		setError(null);
-
-		// Validation
-		if (password.length < 8) {
-			setError("Password must be at least 8 characters long");
-			return;
-		}
-
-		if (password !== confirmPassword) {
-			setError("Passwords do not match");
-			return;
-		}
-
 		try {
 			setLoading(true);
 			const { inviteToken } = await inviteTokenPromise;
@@ -53,7 +50,7 @@ export default function CreateAccountPage({ params }: PageProps) {
 				method: "POST",
 				body: JSON.stringify({
 					inviteToken,
-					password,
+					password: data.password,
 				}),
 			});
 
@@ -68,7 +65,7 @@ export default function CreateAccountPage({ params }: PageProps) {
 			// Auto-login after successful activation
 			const loginRes = await apiFetch("/auth/login", {
 				method: "POST",
-				body: JSON.stringify({ email, password }),
+				body: JSON.stringify({ email, password: data.password }),
 			});
 
 			if (loginRes.ok) {
@@ -118,7 +115,7 @@ export default function CreateAccountPage({ params }: PageProps) {
 					/>
 				)}
 
-				<Form onSubmit={onSubmit} noValidate className={styles.form}>
+				<Form onSubmit={handleSubmit(onSubmit)} noValidate className={styles.form}>
 					<Stack gap={0}>
 						{/* Email Field */}
 						<FluidTextInput
@@ -138,23 +135,19 @@ export default function CreateAccountPage({ params }: PageProps) {
 								id={"password-input"}
 								labelText={"Password"}
 								placeholder={"Password"}
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
+								invalid={!!errors.password}
+								invalidText={errors.password?.message}
+								{...register("password")}
 							/>
 
 							<FluidPasswordInput
 								id={"confirm-password"}
 								labelText={"Confirm Password"}
 								placeholder={"Confirm Password"}
-								invalid={
-									confirmPassword.length > 0 && password !== confirmPassword
-								}
-								invalidText={
-									password !== confirmPassword ? "Passwords do not match" : ""
-								}
-								value={confirmPassword}
-								onChange={(e) => setConfirmPassword(e.target.value)}
-								disabled={password === ""}
+								invalid={!!errors.confirmPassword}
+								invalidText={errors.confirmPassword?.message}
+								disabled={!passwordValue}
+								{...register("confirmPassword")}
 							/>
 						</div>
 
@@ -166,7 +159,7 @@ export default function CreateAccountPage({ params }: PageProps) {
 							size="lg"
 							renderIcon={ArrowRight}
 							className={styles.submitButton}
-							disabled={loading || password.length === 0}
+							disabled={loading || !passwordValue}
 						>
 							{loading ? "Creating account..." : "Create account"}
 						</Button>

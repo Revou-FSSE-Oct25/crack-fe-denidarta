@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
 	Button,
@@ -12,45 +12,41 @@ import {
 	FluidDatePickerInput,
 } from "@carbon/react";
 import { ArrowLeft, ChevronRight } from "@carbon/icons-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { createProgram } from "@/services/programs.service";
 import { getCurrentUser } from "@/services/profile.service";
 import { fetchAdminsAndInstructors } from "@/services/users.service";
+import { programSchema, type ProgramFormValues } from "@/schemas/program.schema";
 import styles from "./create-program.module.scss";
 
 export default function CreateProgramPage() {
 	const router = useRouter();
-	const [programName, setProgramName] = useState("");
-	const [headOfProgram, setHeadOfProgram] = useState("");
-
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [headItems, setHeadItems] = useState<
-		Array<{ id: string; text: string }>
-	>([]);
-	const [headLoading, setHeadLoading] = useState(true);
 
-	useEffect(() => {
-		fetchAdminsAndInstructors()
-			.then((users) => {
-				setHeadItems(
-					users.map((user) => ({ id: user.id, text: user.username })),
-				);
-			})
-			.catch((err) => console.error("Failed to load users:", err))
-			.finally(() => setHeadLoading(false));
-	}, []);
+	const { data: rawUsers = [], isLoading: headLoading } = useQuery({
+		queryKey: ["users", "admins-instructors"],
+		queryFn: fetchAdminsAndInstructors,
+	});
+	const headItems = rawUsers.map((u) => ({ id: u.id, text: u.username }));
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		if (!programName.trim()) {
-			setError("Program name is required");
-			return;
-		}
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<ProgramFormValues>({
+		resolver: zodResolver(programSchema),
+		defaultValues: { programName: "", headOfProgram: "" },
+	});
+
+	const onSubmit = async (values: ProgramFormValues) => {
 		setLoading(true);
 		setError(null);
 		try {
 			const user = await getCurrentUser();
-			await createProgram(programName, user.id, headOfProgram || undefined);
+			await createProgram(values.programName, user.id, values.headOfProgram || undefined);
 			router.push("/dashboard/programs");
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Failed to create program");
@@ -113,7 +109,7 @@ export default function CreateProgramPage() {
 					</div>
 				</aside>
 
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className={styles.formCard}>
 						{error && (
 							<InlineNotification
@@ -132,32 +128,24 @@ export default function CreateProgramPage() {
 									id="program-name"
 									labelText="Program Name"
 									placeholder="e.g. Web Development Bootcamp 2025"
-									value={programName}
-									onChange={(e) => setProgramName(e.target.value)}
 									disabled={loading}
 									maxLength={255}
-									required
+									invalid={!!errors.programName}
+									invalidText={errors.programName?.message}
+									{...register("programName")}
 								/>
 								<FluidSelect
 									id="head-of-program"
 									labelText="Head of Program"
 									disabled={headLoading || loading}
-									onChange={(e) => setHeadOfProgram(e.target.value)}
+									{...register("headOfProgram")}
 								>
 									<SelectItem
 										value=""
-										text={
-											headLoading
-												? "Loading users..."
-												: "Select a head of program"
-										}
+										text={headLoading ? "Loading users..." : "Select a head of program"}
 									/>
 									{headItems.map((item) => (
-										<SelectItem
-											key={item.id}
-											value={item.id}
-											text={item.text}
-										/>
+										<SelectItem key={item.id} value={item.id} text={item.text} />
 									))}
 								</FluidSelect>
 							</FluidForm>

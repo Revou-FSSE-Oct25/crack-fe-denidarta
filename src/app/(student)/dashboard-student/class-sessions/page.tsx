@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import {
 	Button,
 	DataTable,
@@ -15,8 +15,9 @@ import {
 	TableRow,
 	Tag,
 } from "@carbon/react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchMySessionsWithAttendance } from "@/services/class-sessions.service";
 import { apiFetch } from "@/lib/api-client";
-import { ClassAttendance, ClassSession } from "@/types/index.type";
 import { statusTagType } from "@/utils/tag-type";
 import styles from "./page.module.scss";
 
@@ -31,87 +32,15 @@ const headers = [
 	{ key: "action", header: "Action" },
 ];
 
-interface SessionRow {
-	id: string;
-	title: string;
-	courseName: string;
-	sessionDate: string;
-	time: string;
-	location: string;
-	status: ClassSession["status"];
-	attendanceId: string | null;
-	attendanceStatus: ClassAttendance["status"] | null;
-	isVerified: boolean;
-}
-
 export default function StudentSessionsPage() {
-	const [rows, setRows] = useState<SessionRow[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-	const [checkInErrors, setCheckInErrors] = useState<Record<string, string>>(
-		{},
-	);
+	const queryClient = useQueryClient();
+	const [checkInErrors, setCheckInErrors] = useState<Record<string, string>>({});
 	const [checkingIn, setCheckingIn] = useState<Record<string, boolean>>({});
 
-	const fetchAll = useCallback(async () => {
-		const controller = new AbortController();
-		setLoading(true);
-		setError(null);
-
-		try {
-			const [sessionsRes, attendancesRes] = await Promise.all([
-				apiFetch("/class-sessions?limit=100", { signal: controller.signal }),
-				apiFetch("/attendances", { signal: controller.signal }),
-			]);
-
-			if (!sessionsRes.ok)
-				throw new Error(`Failed to fetch sessions (${sessionsRes.status})`);
-
-			const { data: sessionsData } = (await sessionsRes.json()) as {
-				data: { items: ClassSession[] };
-			};
-			const sessions: ClassSession[] = sessionsData?.items ?? [];
-
-			const attendances: ClassAttendance[] = attendancesRes.ok
-				? (((await attendancesRes.json()) as { data: ClassAttendance[] })
-						.data ?? [])
-				: [];
-
-			const attendanceBySession = new Map<string, ClassAttendance>();
-			for (const att of attendances) {
-				attendanceBySession.set(att.classSessionId, att);
-			}
-
-			const mapped: SessionRow[] = sessions.map((s) => {
-				const att = attendanceBySession.get(s.id) ?? null;
-				return {
-					id: s.id,
-					title: s.title,
-					courseName: s.course?.name ?? "—",
-					sessionDate: new Date(s.sessionDate).toLocaleDateString("id-ID"),
-					time: `${s.startTime} – ${s.endTime}`,
-					location: s.meetingUrl ? s.meetingUrl : (s.location ?? "—"),
-					status: s.status,
-					attendanceId: att?.id ?? null,
-					attendanceStatus: att?.status ?? null,
-					isVerified: att?.isVerified ?? false,
-				};
-			});
-
-			setRows(mapped);
-		} catch (err) {
-			if (err instanceof DOMException && err.name === "AbortError") return;
-			setError(
-				err instanceof Error ? err.message : "An unexpected error occurred",
-			);
-		} finally {
-			setLoading(false);
-		}
-	}, []);
-
-	useEffect(() => {
-		void fetchAll();
-	}, [fetchAll]);
+	const { data: rows = [], isLoading, error } = useQuery({
+		queryKey: ["my-sessions"],
+		queryFn: fetchMySessionsWithAttendance,
+	});
 
 	async function checkIn(sessionId: string, attendanceId: string) {
 		setCheckingIn((prev) => ({ ...prev, [sessionId]: true }));
@@ -123,12 +52,7 @@ export default function StudentSessionsPage() {
 			});
 			if (res.status === 403) throw new Error("Check-in not available");
 			if (!res.ok) throw new Error("Check-in failed");
-
-			setRows((prev) =>
-				prev.map((r) =>
-					r.id === sessionId ? { ...r, attendanceStatus: "present" } : r,
-				),
-			);
+			void queryClient.invalidateQueries({ queryKey: ["my-sessions"] });
 		} catch (err) {
 			setCheckInErrors((prev) => ({
 				...prev,
@@ -139,7 +63,7 @@ export default function StudentSessionsPage() {
 		}
 	}
 
-	if (loading) return <DataTableSkeleton headers={headers} rowCount={5} />;
+	if (isLoading) return <DataTableSkeleton headers={headers} rowCount={5} />;
 
 	return (
 		<div className={styles.container}>
@@ -154,7 +78,7 @@ export default function StudentSessionsPage() {
 				<InlineNotification
 					kind="error"
 					title="Error"
-					subtitle={error}
+					subtitle={error.message}
 					lowContrast
 					style={{ marginBottom: "1rem" }}
 				/>
@@ -165,11 +89,7 @@ export default function StudentSessionsPage() {
 			)}
 
 			{rows.length > 0 && (
-				<DataTable
-					rows={rows.map((r) => ({ ...r, id: r.id }))}
-					headers={headers}
-					isSortable
-				>
+				<DataTable rows={rows} headers={headers} isSortable>
 					{({
 						rows: tableRows,
 						headers: tableHeaders,
@@ -216,17 +136,11 @@ export default function StudentSessionsPage() {
 														return (
 															<TableCell key={cell.id}>
 																{att === "present" ? (
-																	<Tag type="green" size="sm">
-																		Present
-																	</Tag>
+																	<Tag type="green" size="sm">Present</Tag>
 																) : att === "unverified" ? (
-																	<Tag type="gray" size="sm">
-																		Not checked in
-																	</Tag>
+																	<Tag type="gray" size="sm">Not checked in</Tag>
 																) : att ? (
-																	<Tag type="red" size="sm">
-																		{att}
-																	</Tag>
+																	<Tag type="red" size="sm">{att}</Tag>
 																) : (
 																	<span>—</span>
 																)}

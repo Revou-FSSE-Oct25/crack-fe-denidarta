@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
 	Button,
 	Form,
@@ -23,28 +23,24 @@ import {
 import { Save, Add, TrashCan, CatalogPublish } from "@carbon/icons-react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-client";
-import { Course } from "@/types/course";
-import DashboardShell from "@/components/DashboardShell";
+import { fetchAllCourses } from "@/services/courses.service";
+import AppShell from "@/components/AppShell";
+import { assignmentSchema, type AssignmentFormValues } from "@/schemas/assignment.schema";
 import styles from "./create-assignment.module.scss";
-
-interface AssignmentFormValues {
-	courseId: string;
-	title: string;
-	description: string;
-	dueDate: string;
-	minPoints: number;
-	status: string;
-	gradingCriteria: { label: string; description?: string; points: number }[];
-}
 
 export default function CreateAssignmentPage() {
 	const router = useRouter();
-	const [courses, setCourses] = useState<Course[]>([]);
-	const [loadingCourses, setLoadingCourses] = useState(true);
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
+
+	const { data: courses = [], isLoading: loadingCourses } = useQuery({
+		queryKey: ["courses-all"],
+		queryFn: fetchAllCourses,
+	});
 
 	const {
 		control,
@@ -52,6 +48,7 @@ export default function CreateAssignmentPage() {
 		setValue,
 		formState: { errors },
 	} = useForm<AssignmentFormValues>({
+		resolver: zodResolver(assignmentSchema),
 		defaultValues: {
 			courseId: "",
 			title: "",
@@ -67,24 +64,6 @@ export default function CreateAssignmentPage() {
 		control,
 		name: "gradingCriteria",
 	});
-
-	useEffect(() => {
-		const fetchCourses = async () => {
-			try {
-				const res = await apiFetch("/courses?limit=100");
-				if (!res.ok) throw new Error("Failed to fetch courses");
-				const { data } = await res.json();
-				setCourses(data.items || []);
-			} catch (err) {
-				console.error(err);
-				setError("Could not load courses. Please try again.");
-			} finally {
-				setLoadingCourses(false);
-			}
-		};
-
-		fetchCourses();
-	}, []);
 
 	const onSubmit = async (data: AssignmentFormValues) => {
 		setError(null);
@@ -172,8 +151,7 @@ export default function CreateAssignmentPage() {
 							<Controller
 								name="courseId"
 								control={control}
-								rules={{ required: "Please select a course" }}
-								render={({ field }) => (
+																render={({ field }) => (
 									<Select
 										{...field}
 										id="courseId"
@@ -198,11 +176,7 @@ export default function CreateAssignmentPage() {
 							<Controller
 								name="title"
 								control={control}
-								rules={{
-									required: "Title is required",
-									maxLength: { value: 255, message: "Title too long" },
-								}}
-								render={({ field }) => (
+									render={({ field }) => (
 									<TextInput
 										{...field}
 										id="title"
@@ -255,8 +229,7 @@ export default function CreateAssignmentPage() {
 												<Controller
 													name={`gradingCriteria.${index}.label`}
 													control={control}
-													rules={{ required: "Label is required" }}
-													render={({ field: inputField }) => (
+																			render={({ field: inputField }) => (
 														<TextInput
 															{...inputField}
 															id={`criteria-label-${index}`}
@@ -274,8 +247,7 @@ export default function CreateAssignmentPage() {
 												<Controller
 													name={`gradingCriteria.${index}.points`}
 													control={control}
-													rules={{ required: "Points are required" }}
-													render={({ field: inputField }) => (
+																			render={({ field: inputField }) => (
 														<NumberInput
 															id={`criteria-points-${index}`}
 															label="Points"
@@ -335,8 +307,7 @@ export default function CreateAssignmentPage() {
 									<Controller
 										name="dueDate"
 										control={control}
-										rules={{ required: "Due date is required" }}
-										render={({ field }) => (
+													render={({ field }) => (
 											<DatePicker
 												datePickerType="single"
 												onClose={() => field.onBlur()}
@@ -417,5 +388,5 @@ export default function CreateAssignmentPage() {
 		</div>
 	);
 
-	return <DashboardShell>{content}</DashboardShell>;
+	return <AppShell role="admin">{content}</AppShell>;
 }

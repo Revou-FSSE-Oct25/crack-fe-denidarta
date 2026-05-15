@@ -14,8 +14,9 @@ import {
 import { ArrowRight, UserAvatar } from "@carbon/icons-react";
 import styles from "./page.module.scss";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { login } from "@/services/auth.service";
-import { LoginFormValues } from "@/types/index.type";
+import { loginSchema, type LoginFormValues } from "@/schemas/auth.schema";
 
 export default function LoginPage() {
 	const [error, setError] = useState<string | null>(null);
@@ -24,7 +25,7 @@ export default function LoginPage() {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<LoginFormValues>();
+	} = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) });
 
 	const onSubmit = async (data: LoginFormValues) => {
 		setError(null);
@@ -85,7 +86,7 @@ export default function LoginPage() {
 								placeholder="Registered email address"
 								invalid={!!errors.email}
 								invalidText={errors.email?.message}
-								{...register("email", { required: "Email is required" })}
+								{...register("email")}
 							/>
 
 							<PasswordInput
@@ -94,7 +95,7 @@ export default function LoginPage() {
 								placeholder="Enter your password"
 								invalid={!!errors.password}
 								invalidText={errors.password?.message}
-								{...register("password", { required: "Password is required" })}
+								{...register("password")}
 							/>
 
 							<Button

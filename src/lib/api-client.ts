@@ -1,5 +1,4 @@
-const BACKEND_URL =
-	process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3001";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 // Prevents multiple concurrent refresh calls — all waiters share one in-flight promise.
 let refreshPromise: Promise<string | null> | null = null;

@@ -181,14 +181,7 @@ export default function StudentProfilePage() {
 					<InlineNotification
 						kind="info"
 						title="Profile incomplete"
-						subtitle={
-							(
-								<>
-									You haven&apos;t completed your profile yet.{" "}
-									<a href="/complete-profile">Complete it now</a>.
-								</>
-							) as any
-						}
+						subtitle="You haven't completed your profile yet. Visit /complete-profile to complete it."
 						lowContrast
 					/>
 				)}
