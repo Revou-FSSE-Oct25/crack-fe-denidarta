@@ -21,6 +21,7 @@ import {
 import { Add } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/api-client";
 import { ClassSession } from "@/types/index.type";
+import CreateClassSessionModal from "@/components/Modals/CreateClassSessionModal";
 import { classSessionTableHeaders } from "@/constants/class-sessions";
 import { statusTagType } from "@/utils/tag-type";
 import styles from "./class-sessions.module.scss";
@@ -51,6 +52,8 @@ export default function ClassSessionsPage() {
 	const [pageSize, setPageSize] = useState(10);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [modalOpen, setModalOpen] = useState(false);
+	const [refreshKey, setRefreshKey] = useState(0);
 
 	useEffect(() => {
 		let mounted = true;
@@ -67,11 +70,13 @@ export default function ClassSessionsPage() {
 					signal: controller.signal,
 				});
 				if (!res.ok) throw new HttpError(res.status);
-				const { data } = (await res.json()) as { data: ClassSession[] };
+				const { data } = (await res.json()) as {
+					data: { items: ClassSession[]; meta: { total: number } };
+				};
 				if (!mounted) return;
-				const list = data ?? [];
+				const list = data?.items ?? [];
 				setSessions(list);
-				setTotal(list.length);
+				setTotal(data?.meta?.total ?? list.length);
 			} catch (err) {
 				if (
 					!mounted ||
@@ -97,7 +102,7 @@ export default function ClassSessionsPage() {
 			mounted = false;
 			controller.abort();
 		};
-	}, [page, pageSize]);
+	}, [page, pageSize, refreshKey]);
 
 	const rows = sessions.map((session) => ({
 		id: String(session.id),
@@ -111,6 +116,8 @@ export default function ClassSessionsPage() {
 			secondary: formatTime(session.endTime),
 		},
 		status: session.status,
+		instructor: session.instructor?.profile?.fullName ?? "—",
+		actions: session.id,
 	}));
 
 	return (
@@ -122,7 +129,12 @@ export default function ClassSessionsPage() {
 						{loading ? "..." : `${total} class sessions total`}
 					</p>
 				</div>
-				<Button kind="primary" size="md" renderIcon={Add} disabled>
+				<Button
+					kind="primary"
+					size="md"
+					renderIcon={Add}
+					onClick={() => setModalOpen(true)}
+				>
 					Create Session
 				</Button>
 			</div>
@@ -254,6 +266,21 @@ export default function ClassSessionsPage() {
 														);
 													}
 
+													// Actions cell
+													if (cell.info.header === "actions") {
+														return (
+															<TableCell key={cell.id}>
+																<Button
+																	kind="ghost"
+																	size="sm"
+																	href={`/dashboard-admin/class-sessions/${String(cell.value)}`}
+																>
+																	Attendance
+																</Button>
+															</TableCell>
+														);
+													}
+
 													// Default cell
 													return (
 														<TableCell key={cell.id}>
@@ -286,6 +313,14 @@ export default function ClassSessionsPage() {
 					}}
 				/>
 			</div>
+			<CreateClassSessionModal
+				open={modalOpen}
+				onRequestClose={() => setModalOpen(false)}
+				onSuccess={() => {
+					setRefreshKey((k) => k + 1);
+					setModalOpen(false);
+				}}
+			/>
 		</div>
 	);
 }

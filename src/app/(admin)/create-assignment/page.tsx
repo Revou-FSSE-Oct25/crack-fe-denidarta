@@ -18,8 +18,9 @@ import {
 	Breadcrumb,
 	BreadcrumbItem,
 	IconButton,
+	Section,
 } from "@carbon/react";
-import { Save, Close, Add, TrashCan } from "@carbon/icons-react";
+import { Save, Add, TrashCan, CatalogPublish } from "@carbon/icons-react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { apiFetch } from "@/lib/api-client";
@@ -48,6 +49,7 @@ export default function CreateAssignmentPage() {
 	const {
 		control,
 		handleSubmit,
+		setValue,
 		formState: { errors },
 	} = useForm<AssignmentFormValues>({
 		defaultValues: {
@@ -116,6 +118,11 @@ export default function CreateAssignmentPage() {
 		}
 	};
 
+	const onActionSubmit = (status: string) => {
+		setValue("status", status);
+		handleSubmit(onSubmit)();
+	};
+
 	const content = (
 		<div className={styles.container}>
 			<Breadcrumb className={styles.breadcrumb}>
@@ -126,12 +133,12 @@ export default function CreateAssignmentPage() {
 				<BreadcrumbItem isCurrentPage>Create Assignment</BreadcrumbItem>
 			</Breadcrumb>
 
-			<div className={styles.header}>
+			<Section level={2} className={styles.header}>
 				<Heading className={styles.title}>Create New Assignment</Heading>
 				<p className={styles.subtitle}>
 					Define the task and requirements for students in a specific course.
 				</p>
-			</div>
+			</Section>
 
 			{error && (
 				<InlineNotification
@@ -222,14 +229,20 @@ export default function CreateAssignmentPage() {
 								)}
 							/>
 
-							<div className={styles.criteriaSection}>
+							<Section level={4} className={styles.criteriaSection}>
 								<div className={styles.criteriaHeader}>
 									<Heading>Grading Criteria</Heading>
 									<Button
 										kind="ghost"
 										size="sm"
 										renderIcon={Add}
-										onClick={() => append({ label: "", points: "" as unknown as number, description: "" })}
+										onClick={() =>
+											append({
+												label: "",
+												points: "" as unknown as number,
+												description: "",
+											})
+										}
 									>
 										Add Criteria
 									</Button>
@@ -250,7 +263,9 @@ export default function CreateAssignmentPage() {
 															labelText="Criteria Name"
 															placeholder="e.g. Code Quality"
 															invalid={!!errors.gradingCriteria?.[index]?.label}
-															invalidText={errors.gradingCriteria?.[index]?.label?.message}
+															invalidText={
+																errors.gradingCriteria?.[index]?.label?.message
+															}
 														/>
 													)}
 												/>
@@ -268,11 +283,17 @@ export default function CreateAssignmentPage() {
 															allowEmpty
 															value={inputField.value ?? ""}
 															onChange={(_, { value }) =>
-																inputField.onChange(value === "" ? "" : Number(value))
+																inputField.onChange(
+																	value === "" ? "" : Number(value),
+																)
 															}
 															min={0}
-															invalid={!!errors.gradingCriteria?.[index]?.points}
-															invalidText={errors.gradingCriteria?.[index]?.points?.message}
+															invalid={
+																!!errors.gradingCriteria?.[index]?.points
+															}
+															invalidText={
+																errors.gradingCriteria?.[index]?.points?.message
+															}
 														/>
 													)}
 												/>
@@ -303,10 +324,11 @@ export default function CreateAssignmentPage() {
 								))}
 								{fields.length === 0 && (
 									<p className={styles.emptyCriteria}>
-										No grading criteria added. Click "Add Criteria" to create one.
+										No grading criteria added. Click &quot;Add Criteria&quot; to create
+										one.
 									</p>
 								)}
-							</div>
+							</Section>
 
 							<div className={styles.row}>
 								<div className={styles.col}>
@@ -359,38 +381,33 @@ export default function CreateAssignmentPage() {
 								</div>
 							</div>
 
-							<Controller
-								name="status"
-								control={control}
-								render={({ field }) => (
-									<Select {...field} id="status" labelText="Publish Status">
-										<SelectItem
-											text="Draft (Hidden from students)"
-											value="draft"
-										/>
-										<SelectItem
-											text="Published (Visible and active)"
-											value="published"
-										/>
-										<SelectItem
-											text="Closed (No longer accepting submissions)"
-											value="closed"
-										/>
-									</Select>
-								)}
-							/>
-
 							<div className={styles.actions}>
 								<Button
+									id="btn-cancel"
 									kind="secondary"
-									renderIcon={Close}
 									onClick={() => router.back()}
 									disabled={submitting}
 								>
 									Cancel
 								</Button>
-								<Button type="submit" renderIcon={Save} disabled={submitting}>
-									{submitting ? "Creating..." : "Create Assignment"}
+								<Button
+									id="btn-draft"
+									type="button"
+									kind="secondary"
+									renderIcon={Save}
+									disabled={submitting}
+									onClick={() => onActionSubmit("draft")}
+								>
+									Save as Draft
+								</Button>
+								<Button
+									id="btn-publish"
+									type="button"
+									renderIcon={CatalogPublish}
+									disabled={submitting}
+									onClick={() => onActionSubmit("published")}
+								>
+									{submitting ? "Publishing..." : "Publish Assignment"}
 								</Button>
 							</div>
 						</Stack>

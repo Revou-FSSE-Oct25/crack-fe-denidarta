@@ -1,26 +1,29 @@
 export interface Course {
 	id: string;
 	name: string;
-	description: string;
-	instructor_id: string;
+	description: string | null;
+	instructorId: string;
 	instructor: {
-		id: string;
-		username: string;
-		profile: { fullName: string | null } | null;
+		userId: string;
+		profile: { fullName: string | null };
 	};
-	enrollments: CourseEnrollment[];
+	program?: {
+		name: string;
+	};
 	status: "draft" | "active" | "archived" | "completed";
-	created_at: string;
-	updated_at: string;
+	startedAt: string | null;
+	endedAt: string | null;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface CourseEnrollment {
 	id: number;
-	course_id: number;
-	user_id: number;
+	courseId: number;
+	userId: number;
 	status: "enrolled" | "completed" | "dropped" | "pending";
-	created_at: string;
-	updated_at: string;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface LearningMaterial {
@@ -56,13 +59,21 @@ export interface ClassSession {
 		id: string;
 		name: string;
 	};
+	instructor?: {
+		userId: string;
+		profile: {
+			fullName: string | null;
+		};
+	};
 }
 
 export interface ClassAttendance {
-	id: number;
-	class_session_id: number;
-	user_id: number;
-	status: "present" | "absent" | "late" | "excused";
-	created_at: string;
-	updated_at: string;
+	id: string;
+	classSessionId: string;
+	userId: string;
+	status: "present" | "absent" | "late" | "excused" | "unverified";
+	isVerified: boolean;
+	verifiedAt: string | null;
+	createdAt: string;
+	updatedAt: string;
 }

@@ -5,26 +5,56 @@ export interface Assignment {
 	title: string;
 	description: string | null;
 	dueDate: string;
-	minPoints: string;
+	minPoints: number;
 	submitted: number;
 	toSubmit: number;
 	status: "draft" | "published" | "closed";
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: string | null;
+	gradingCriteria?: { label: string; points: number; description: string }[];
+	submissions?: {
+		submissionId: string;
+		userId: string;
+		fullName: string | null;
+		status: "notSubmitted" | "submitted" | "graded";
+		dateSubmitted: string | null;
+		grade: number | null;
+		passed: boolean | null;
+		feedback?: string | null;
+		gradedAt: string | null;
+	}[];
+}
+
+export interface SubmissionDetail {
+	id: string;
+	assignmentId: string;
+	studentId: string;
+	submissionText: string | null;
+	fileUrl: string | null;
+	submittedAt: string | null;
+	grade: number | null;
+	passed: boolean | null;
+	feedback: string | null;
+	status: "notSubmitted" | "submitted" | "graded";
+	createdAt: string;
+	updatedAt: string;
+	student: { profile: { fullName: string | null } | null } | null;
+	assignment: { id: string; title: string } | null;
 }
 
 export interface AssignmentSubmission {
-	id: number;
-	assignment_id: number;
-	user_id: number;
-	submission_text: string | null;
-	file_url: string | null;
-	submitted_at: string | null;
+	id: string;
+	assignmentId: string;
+	userId: string;
+	userFullName?: string | null;
+	submissionText: string | null;
+	fileUrl: string | null;
+	submittedAt: string | null;
 	grade: number | null;
 	passed: boolean;
 	feedback: string | null;
-	status: "draft" | "submitted" | "graded" | "returned";
-	created_at: string;
-	updated_at: string;
+	status: "notSubmitted" | "submitted" | "graded";
+	createdAt: string;
+	updatedAt: string;
 }

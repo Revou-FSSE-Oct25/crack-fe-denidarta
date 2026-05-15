@@ -90,12 +90,12 @@ export default function ProgramsPage() {
 	}, [page, pageSize]);
 
 	const rows = programs.map((program) => ({
-		id: String(program.id),
+		id: String(program.programId),
 		name: program.name,
-		creator: program.creator.profile?.fullName ?? program.creator.username,
+		creator: program.createdBy?.fullName ?? program.createdBy?.username,
 		courseCount: String(program.courses?.length ?? 0),
-		enrolledStudents: String(program.enrolledStudents?.length ?? 0),
-		createdAt: new Date(program.created_at).toLocaleDateString(DATE_LOCALE),
+		enrolledStudents: String(program.students?.length ?? 0),
+		createdAt: new Date(program.createdAt).toLocaleDateString(DATE_LOCALE),
 	}));
 
 	return (

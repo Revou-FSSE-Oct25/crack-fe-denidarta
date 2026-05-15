@@ -16,15 +16,20 @@ import {
 	InlineNotification,
 	Pagination,
 	Search,
+	Stack,
 } from "@carbon/react";
-import { Add } from "@carbon/icons-react";
+import { Add, Edit } from "@carbon/icons-react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-client";
 import { Assignment } from "@/types/index.type";
-import { assignmentTableHeaders } from "@/constants/assignments";
 
 const ASSIGNMENT_HEADERS = [
-	...assignmentTableHeaders,
+	{ key: "title", header: "Assignment & Course" },
+	{ key: "status", header: "Status" },
+	{ key: "dueDate", header: "Due Date" },
+	{ key: "submitted", header: "Submitted" },
+	{ key: "minPoints", header: "Min Points" },
+	{ key: "createdAt", header: "Created At" },
 	{ key: "action", header: "" },
 ];
 import { statusTagType } from "@/utils/tag-type";
@@ -144,7 +149,7 @@ export default function AssignmentsPage() {
 							id="search-assignments"
 							labelText="Search"
 							placeholder="Search assignments (coming soon)"
-							size="md"
+							size="lg"
 							type="search"
 							disabled
 						/>
@@ -154,7 +159,12 @@ export default function AssignmentsPage() {
 				{loading ? (
 					<DataTableSkeleton headers={ASSIGNMENT_HEADERS} rowCount={10} />
 				) : (
-					<DataTable rows={rows} headers={ASSIGNMENT_HEADERS} isSortable>
+					<DataTable
+						rows={rows}
+						headers={ASSIGNMENT_HEADERS}
+						isSortable
+						size="lg"
+					>
 						{({
 							rows,
 							headers,
@@ -164,7 +174,7 @@ export default function AssignmentsPage() {
 							getTableContainerProps,
 						}) => (
 							<TableContainer {...getTableContainerProps()}>
-								<Table {...getTableProps()}>
+								<Table {...getTableProps()} size="lg">
 									<TableHead>
 										<TableRow>
 											{headers.map((header) => (
@@ -181,6 +191,21 @@ export default function AssignmentsPage() {
 										{rows.map((row) => (
 											<TableRow {...getRowProps({ row })} key={row.id}>
 												{row.cells.map((cell) => {
+													if (cell.info.header === "title") {
+														const assignment = assignments.find(
+															(a) => a.id === row.id,
+														);
+														return (
+															<TableCell key={cell.id}>
+																<div style={{ fontWeight: 600 }}>
+																	{String(cell.value)}
+																</div>
+																<div className={styles.secondaryText}>
+																	{assignment?.course?.name ?? "-"}
+																</div>
+															</TableCell>
+														);
+													}
 													if (cell.info.header === "status") {
 														return (
 															<TableCell key={cell.id}>
@@ -196,17 +221,31 @@ export default function AssignmentsPage() {
 													if (cell.info.header === "action") {
 														return (
 															<TableCell key={cell.id}>
-																<Button
-																	kind="ghost"
-																	size="sm"
-																	onClick={() =>
-																		router.push(
-																			`/dashboard-admin/assignments/${String(cell.value)}`,
-																		)
-																	}
-																>
-																	View
-																</Button>
+																<Stack orientation="horizontal" gap={2}>
+																	<Button
+																		kind="ghost"
+																		size="sm"
+																		onClick={() =>
+																			router.push(
+																				`/dashboard-admin/assignments/${String(cell.value)}`,
+																			)
+																		}
+																	>
+																		View
+																	</Button>
+																	<Button
+																		kind="ghost"
+																		size="sm"
+																		renderIcon={Edit}
+																		onClick={() =>
+																			router.push(
+																				`/edit-assignment?id=${String(cell.value)}`,
+																			)
+																		}
+																	>
+																		Edit
+																	</Button>
+																</Stack>
 															</TableCell>
 														);
 													}
@@ -231,7 +270,7 @@ export default function AssignmentsPage() {
 					pageNumberText="Page Number"
 					pageSize={pageSize}
 					pageSizes={[10, 20, 30, 40, 50]}
-					size="md"
+					size="lg"
 					totalItems={total}
 					onChange={({ page, pageSize }) => {
 						setPage(page);

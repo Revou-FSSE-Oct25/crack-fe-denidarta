@@ -72,11 +72,11 @@ export default function LearningMaterialPage() {
 				if (!res.ok)
 					throw new Error(`Failed to fetch learning materials (${res.status})`);
 				const { data } = (await res.json()) as {
-					data: { data: LearningMaterial[]; total: number };
+					data: { items: LearningMaterial[]; meta: { total: number } };
 				};
 				if (!mounted) return;
-				setMaterials(data.data);
-				setTotal(data.total);
+				setMaterials(data?.items || []);
+				setTotal(data?.meta?.total || 0);
 			} catch (err) {
 				if (!mounted || (err as Error).name === "AbortError") return;
 				setError((err as Error).message);
@@ -91,7 +91,7 @@ export default function LearningMaterialPage() {
 		};
 	}, [page, pageSize]);
 
-	const rows = materials.map((MATERIAL) => ({
+	const rows = (materials || []).map((MATERIAL) => ({
 		id: MATERIAL.id,
 		title: MATERIAL.title,
 		materialType: MATERIAL.materialType.toUpperCase(),

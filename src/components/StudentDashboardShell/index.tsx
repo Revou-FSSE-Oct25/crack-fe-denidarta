@@ -19,6 +19,8 @@ import {
 	Book,
 	IbmKnowledgeCatalog,
 	EventSchedule,
+	UserProfile,
+	Certificate,
 	Notification,
 	Search,
 	Logout,
@@ -50,6 +52,18 @@ const navItems = [
 		href: "/dashboard-student/learning-material",
 		label: "Learning Material",
 		icon: Book,
+		exact: false,
+	},
+	{
+		href: "/dashboard-student/profile",
+		label: "My Profile",
+		icon: UserProfile,
+		exact: false,
+	},
+	{
+		href: "/dashboard-student/certificates",
+		label: "My Certificates",
+		icon: Certificate,
 		exact: false,
 	},
 ];

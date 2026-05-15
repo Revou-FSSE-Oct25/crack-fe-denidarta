@@ -109,9 +109,9 @@ export default function AddNewUserModal({
 					invalidText={emailError}
 				/>
 				<TextInput
-					id="add-user-full-name"
-					labelText="Full Name"
-					placeholder="John Doe"
+					id="username"
+					labelText="Username"
+					placeholder="e.g. john_doe"
 					value={fullName}
 					onChange={(e) => setFullName(e.target.value)}
 				/>

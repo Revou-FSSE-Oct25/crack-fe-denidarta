@@ -46,9 +46,11 @@ export default function StudentDashboardPage() {
 			try {
 				const res = await apiFetch("/courses", { signal: controller.signal });
 				if (!res.ok) throw new HttpError(res.status);
-				const { data: courseList } = (await res.json()) as { data: Course[] };
+				const { data } = (await res.json()) as {
+					data: { items: Course[]; meta: { total: number } };
+				};
 				if (!mounted) return;
-				setCourses(courseList ?? []);
+				setCourses(data?.items ?? []);
 			} catch (err) {
 				if (
 					!mounted ||
@@ -80,8 +82,7 @@ export default function StudentDashboardPage() {
 	const rows = courses.map((course) => ({
 		id: String(course.id),
 		courseName: course.name,
-		instructor:
-			course.instructor.profile?.fullName ?? course.instructor.username,
+		instructor: course.instructor.profile?.fullName ?? "-",
 		status: course.status,
 		description: course.description,
 	}));

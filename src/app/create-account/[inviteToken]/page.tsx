@@ -10,7 +10,6 @@ import {
 	FluidPasswordInput,
 	FluidTextInput,
 	Link,
-	Modal,
 } from "@carbon/react";
 import { ArrowRight } from "@carbon/icons-react";
 import { apiFetch } from "@/lib/api-client";
@@ -25,7 +24,6 @@ export default function CreateAccountPage({ params }: PageProps) {
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
-	const [showSuccess, setShowSuccess] = useState(false);
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
@@ -67,16 +65,30 @@ export default function CreateAccountPage({ params }: PageProps) {
 				return;
 			}
 
-			setShowSuccess(true);
+			// Auto-login after successful activation
+			const loginRes = await apiFetch("/auth/login", {
+				method: "POST",
+				body: JSON.stringify({ email, password }),
+			});
+
+			if (loginRes.ok) {
+				const { data: loginData } = (await loginRes.json()) as {
+					data: { accessToken: string; refreshToken?: string };
+				};
+				localStorage.setItem("accessToken", loginData.accessToken);
+				if (loginData.refreshToken) {
+					localStorage.setItem("refreshToken", loginData.refreshToken);
+				}
+				router.push("/complete-profile");
+			} else {
+				// Activation succeeded but login failed — fall back to login page
+				router.push("/login");
+			}
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "An error occurred");
 		} finally {
 			setLoading(false);
 		}
-	};
-
-	const handleSuccessModalClose = () => {
-		router.push("/login");
 	};
 
 	return (
@@ -209,21 +221,6 @@ export default function CreateAccountPage({ params }: PageProps) {
 					</div>
 				</div>
 			</div>
-
-			{/* Success Modal */}
-			<Modal
-				open={showSuccess}
-				modalHeading="Account Created Successfully"
-				primaryButtonText="Go to Login"
-				onRequestClose={handleSuccessModalClose}
-				onRequestSubmit={handleSuccessModalClose}
-				shouldSubmitOnEnter
-			>
-				<p>
-					Your account has been created successfully! You can now log in with
-					your credentials.
-				</p>
-			</Modal>
 		</div>
 	);
 }

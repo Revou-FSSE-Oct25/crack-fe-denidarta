@@ -1,5 +1,3 @@
-import { Course } from "./course";
-
 export interface ProgramEnrollment {
 	id: string;
 	programId: string;
@@ -13,22 +11,28 @@ export interface ProgramEnrollment {
 }
 
 export interface Program {
-	id: string;
+	programId: string;
 	name: string;
-	created_by: string;
-	head_of_program_id: string | null;
-	creator: {
-		id: string;
+	createdAt: string;
+	createdBy: {
+		userId: string;
 		username: string;
-		profile: { fullName: string | null } | null;
+		fullName: string | null;
 	};
 	headOfProgram: {
-		id: string;
-		username: string;
-		profile: { fullName: string | null } | null;
+		userId: string;
+		fullName: string | null;
 	} | null;
-	courses: Course[];
-	enrolledStudents: { userId: string; fullName: string }[];
-	created_at: string;
-	updated_at: string;
+	courses: {
+		courseId: string;
+		courseTitle: string;
+		instructor: {
+			userId: string;
+			profile: { fullName: string | null };
+		};
+	}[];
+	students: {
+		userId: string;
+		fullName: string | null;
+	}[];
 }

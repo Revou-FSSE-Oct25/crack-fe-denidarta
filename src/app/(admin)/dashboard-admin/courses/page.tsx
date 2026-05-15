@@ -55,13 +55,13 @@ export default function CoursesPage() {
 					signal: controller.signal,
 				});
 				if (!res.ok) throw new HttpError(res.status);
-				const { data: courseList } = (await res.json()) as {
-					data: Course[];
+				const { data } = (await res.json()) as {
+					data: { items: Course[]; meta: { total: number } };
 				};
 				if (!mounted) return;
-				const list = courseList ?? [];
+				const list = data?.items ?? [];
 				setCourses(list);
-				setTotal(list.length);
+				setTotal(data?.meta?.total ?? list.length);
 			} catch (err) {
 				if (
 					!mounted ||
@@ -91,13 +91,19 @@ export default function CoursesPage() {
 
 	const rows = courses.map((course) => ({
 		id: String(course.id),
-		courseName: course.name,
-		instructor:
-			course.instructor.profile?.fullName ?? course.instructor.username,
+		courseName: {
+			primary: course.name,
+			secondary: course.program?.name ?? "—",
+		},
+		instructor: course.instructor.profile?.fullName ?? "—",
 		status: course.status,
-		createdAt: new Date(course.created_at).toLocaleDateString(DATE_LOCALE),
-		description: course.description,
-		enrolledStudents: String(course.enrollments?.length ?? 0),
+		startedAt: course.startedAt
+			? new Date(course.startedAt).toLocaleDateString(DATE_LOCALE)
+			: "—",
+		endedAt: course.endedAt
+			? new Date(course.endedAt).toLocaleDateString(DATE_LOCALE)
+			: "—",
+		description: course.description ?? "—",
 	}));
 
 	return (
@@ -150,7 +156,7 @@ export default function CoursesPage() {
 							getTableContainerProps,
 						}) => (
 							<TableContainer {...getTableContainerProps()}>
-								<Table {...getTableProps()}>
+								<Table {...getTableProps()} size="xl">
 									<TableHead>
 										<TableRow>
 											{headers.map((header) => (
@@ -167,6 +173,33 @@ export default function CoursesPage() {
 										{rows.map((row) => (
 											<TableRow {...getRowProps({ row })} key={row.id}>
 												{row.cells.map((cell) => {
+													if (cell.info.header === "courseName") {
+														const v = cell.value as {
+															primary: string;
+															secondary: string;
+														};
+														return (
+															<TableCell key={cell.id}>
+																<p
+																	style={{
+																		fontWeight: 400,
+																		marginBottom: "0.125rem",
+																	}}
+																>
+																	{v.primary}
+																</p>
+																<p
+																	style={{
+																		fontSize: "0.75rem",
+																		color: "#525252",
+																		margin: 0,
+																	}}
+																>
+																	{v.secondary}
+																</p>
+															</TableCell>
+														);
+													}
 													if (cell.info.header === "status") {
 														return (
 															<TableCell key={cell.id}>
@@ -180,7 +213,9 @@ export default function CoursesPage() {
 														);
 													}
 													return (
-														<TableCell key={cell.id}>{cell.value}</TableCell>
+														<TableCell key={cell.id}>
+															{cell.value as string}
+														</TableCell>
 													);
 												})}
 											</TableRow>

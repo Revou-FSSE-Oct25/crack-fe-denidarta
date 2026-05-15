@@ -9,10 +9,11 @@ export const assignmentTableHeaders = [
 ];
 
 export const submissionHeaders = [
-	{ key: "userId", header: "Student ID" },
+	{ key: "userFullName", header: "Student Name" },
 	{ key: "status", header: "Status" },
 	{ key: "grade", header: "Grade" },
 	{ key: "passed", header: "Passed" },
 	{ key: "submittedAt", header: "Submitted At" },
 	{ key: "feedback", header: "Feedback" },
+	{ key: "actions", header: "Actions" },
 ];
