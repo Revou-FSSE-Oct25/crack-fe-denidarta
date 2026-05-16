@@ -21,10 +21,30 @@ export default function StudentsPage() {
 	const [inputValue, setInputValue] = useState("");
 	const [modalOpen, setModalOpen] = useState(false);
 	const [selectedStatus, setSelectedStatus] = useState(userStatusFilters[0]);
+	const [sortBy, setSortBy] = useState<"fullName" | "createdAt" | "email">(
+		"createdAt",
+	);
+	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
 	const { data, isLoading, error } = useQuery({
-		queryKey: ["students", page, pageSize, search, selectedStatus.id],
-		queryFn: () => fetchStudents(page, pageSize, search, selectedStatus.id),
+		queryKey: [
+			"students",
+			page,
+			pageSize,
+			search,
+			selectedStatus.id,
+			sortBy,
+			sortOrder,
+		],
+		queryFn: () =>
+			fetchStudents(
+				page,
+				pageSize,
+				search,
+				selectedStatus.id,
+				sortBy,
+				sortOrder,
+			),
 	});
 
 	const users = data?.data ?? [];
@@ -49,6 +69,20 @@ export default function StudentsPage() {
 				error={error ? error.message : null}
 				headers={studentTableHeaders}
 				rows={rows}
+				sort={{
+					key: sortBy,
+					direction: sortOrder,
+					onChange: (key, direction) => {
+						if (
+							key === "fullName" ||
+							key === "email" ||
+							key === "createdAt"
+						) {
+							setSortBy(key);
+							setSortOrder(direction);
+						}
+					},
+				}}
 				pagination={{
 					page,
 					pageSize,

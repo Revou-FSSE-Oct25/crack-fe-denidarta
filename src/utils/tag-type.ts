@@ -30,7 +30,8 @@ const STATUS_TAG_TYPE: Record<string, TagType> = {
 	cancelled: "red",
 };
 
-export function statusTagType(status: string): TagType {
+export function statusTagType(status: string | undefined | null): TagType {
+	if (!status) return "gray";
 	return STATUS_TAG_TYPE[status.toLowerCase()] ?? "gray";
 }
 
@@ -40,6 +41,7 @@ const ROLE_TAG_TYPE: Record<string, TagType> = {
 	student: "blue",
 };
 
-export function roleTagType(role: string): TagType {
+export function roleTagType(role: string | undefined | null): TagType {
+	if (!role) return "gray";
 	return ROLE_TAG_TYPE[role.toLowerCase()] ?? "gray";
 }

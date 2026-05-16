@@ -31,12 +31,19 @@ interface PaginationConfig {
 	onChange: (args: { page: number; pageSize: number }) => void;
 }
 
+interface SortConfig {
+	key: string;
+	direction: "asc" | "desc";
+	onChange: (key: string, direction: "asc" | "desc") => void;
+}
+
 interface ResourceTableSectionProps {
 	loading: boolean;
 	error: string | null;
 	headers: readonly { key: string; header: string }[];
 	rows: readonly ({ id: string } & Record<string, unknown>)[];
 	pagination?: PaginationConfig;
+	sort?: SortConfig;
 	toolbar?: React.ReactNode;
 	renderCell?: (cell: Cell, row: Row) => React.ReactNode | null;
 }
@@ -49,6 +56,7 @@ export default function ResourceTableSection({
 	headers,
 	rows,
 	pagination,
+	sort,
 	toolbar,
 	renderCell,
 }: ResourceTableSectionProps) {
@@ -69,7 +77,11 @@ export default function ResourceTableSection({
 			{loading ? (
 				<DataTableSkeleton headers={[...headers]} rowCount={10} />
 			) : (
-				<DataTable rows={[...rows]} headers={[...headers]} isSortable>
+				<DataTable
+					rows={[...rows]}
+					headers={[...headers]}
+					isSortable={true}
+				>
 					{({
 						rows: tableRows,
 						headers: tableHeaders,
@@ -84,8 +96,27 @@ export default function ResourceTableSection({
 									<TableRow>
 										{tableHeaders.map((header) => (
 											<TableHeader
-												{...getHeaderProps({ header })}
+												{...getHeaderProps({
+													header,
+													onClick: () => {
+														if (sort) {
+															const isAsc =
+																sort.key === header.key &&
+																sort.direction === "asc";
+															sort.onChange(
+																header.key,
+																isAsc ? "desc" : "asc",
+															);
+														}
+													},
+												})}
 												key={header.key}
+												isSortable={true}
+												sortDirection={
+													sort?.key === header.key
+														? (sort.direction.toUpperCase() as any)
+														: "NONE"
+												}
 											>
 												{header.header}
 											</TableHeader>
@@ -98,7 +129,9 @@ export default function ResourceTableSection({
 											{row.cells.map((cell) => {
 												const custom = renderCell?.(cell, row);
 												if (custom !== null && custom !== undefined) {
-													return <TableCell key={cell.id}>{custom}</TableCell>;
+													return (
+														<TableCell key={cell.id}>{custom}</TableCell>
+													);
 												}
 												return (
 													<TableCell key={cell.id}>

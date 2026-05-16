@@ -20,8 +20,11 @@ export async function fetchClassSessions(
 export async function fetchClassSessionById(id: string): Promise<ClassSession> {
 	const res = await apiFetch(`/class-sessions/${id}`);
 	if (!res.ok) throw new Error(`Failed to fetch class session (${res.status})`);
-	const { data } = (await res.json()) as { data: ClassSession };
-	return data;
+	const json = (await res.json()) as { data: { data: ClassSession } | ClassSession };
+	if ("data" in json.data && !Array.isArray(json.data.data)) {
+		return json.data.data;
+	}
+	return json.data as ClassSession;
 }
 
 export async function fetchStudentClassSessions(
@@ -77,13 +80,12 @@ export async function fetchMySessionsWithAttendance(): Promise<SessionWithAttend
 
 	if (!sessionsRes.ok) throw new Error(`Failed to fetch sessions (${sessionsRes.status})`);
 
-	const { data: sessionsData } = (await sessionsRes.json()) as {
-		data: { items: ClassSession[] };
-	};
-	const sessions: ClassSession[] = sessionsData?.items ?? [];
+	const sessionsJson = await sessionsRes.json();
+	const sessions: ClassSession[] = sessionsJson.data?.data ?? sessionsJson.data ?? [];
 
+	const attendancesJson = await attendancesRes.json();
 	const attendances: ClassAttendance[] = attendancesRes.ok
-		? (((await attendancesRes.json()) as { data: ClassAttendance[] }).data ?? [])
+		? (attendancesJson.data?.data ?? attendancesJson.data ?? [])
 		: [];
 
 	const attendanceBySession = new Map<string, ClassAttendance>();

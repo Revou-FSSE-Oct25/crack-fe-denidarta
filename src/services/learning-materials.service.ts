@@ -35,14 +35,15 @@ interface MaterialWithCourse extends LearningMaterial {
 export async function fetchMyLearningMaterials(): Promise<MaterialWithCourse[]> {
 	const coursesRes = await apiFetch("/courses");
 	if (!coursesRes.ok) throw new Error(`Failed to fetch courses (${coursesRes.status})`);
-	const { data: coursesData } = (await coursesRes.json()) as { data: { data: Course[] } };
-	const courses: Course[] = coursesData?.data ?? [];
+	const coursesJson = await coursesRes.json();
+	const courses: Course[] = coursesJson.data?.data ?? coursesJson.data ?? [];
 
 	const materialsByCourse = await Promise.all(
 		courses.map(async (course) => {
 			const res = await apiFetch(`/learning-materials/course/${course.id}`);
 			if (!res.ok) return [];
-			const { data } = (await res.json()) as { data: LearningMaterial[] };
+			const json = await res.json();
+			const data = json.data?.data ?? json.data;
 			const items = Array.isArray(data) ? data : [];
 			return items.map((m) => ({ ...m, courseName: course.name }));
 		}),

@@ -20,8 +20,11 @@ export async function fetchAssignments(
 export async function fetchAssignmentById(id: string): Promise<Assignment> {
 	const res = await apiFetch(`/assignments/${id}`);
 	if (!res.ok) throw new Error(`Failed to fetch assignment (${res.status})`);
-	const { data } = (await res.json()) as { data: Assignment };
-	return data;
+	const json = (await res.json()) as { data: { data: Assignment } | Assignment };
+	if ("data" in json.data && !Array.isArray(json.data.data)) {
+		return json.data.data;
+	}
+	return json.data as Assignment;
 }
 
 export async function fetchStudentAssignments(
@@ -38,8 +41,9 @@ export async function fetchStudentAssignments(
 export async function fetchMyAssignments(): Promise<Assignment[]> {
 	const res = await apiFetch("/assignments?limit=100");
 	if (!res.ok) throw new Error(`Failed to fetch assignments (${res.status})`);
-	const { data } = (await res.json()) as { data: { data: Assignment[] } };
-	return data?.data ?? [];
+	const json = await res.json();
+	const data = json.data?.data ?? json.data;
+	return Array.isArray(data) ? data : [];
 }
 
 export async function gradeSubmission(
@@ -72,8 +76,11 @@ export async function createAssignment(payload: AssignmentPayload): Promise<Assi
 		const err = (await res.json()) as { message?: string };
 		throw new Error(err.message ?? "Failed to create assignment");
 	}
-	const { data } = (await res.json()) as { data: Assignment };
-	return data;
+	const json = (await res.json()) as { data: { data: Assignment } | Assignment };
+	if ("data" in json.data && !Array.isArray(json.data.data)) {
+		return json.data.data;
+	}
+	return json.data as Assignment;
 }
 
 export async function updateAssignment(
@@ -88,6 +95,9 @@ export async function updateAssignment(
 		const err = (await res.json()) as { message?: string };
 		throw new Error(err.message ?? "Failed to update assignment");
 	}
-	const { data } = (await res.json()) as { data: Assignment };
-	return data;
+	const json = (await res.json()) as { data: { data: Assignment } | Assignment };
+	if ("data" in json.data && !Array.isArray(json.data.data)) {
+		return json.data.data;
+	}
+	return json.data as Assignment;
 }

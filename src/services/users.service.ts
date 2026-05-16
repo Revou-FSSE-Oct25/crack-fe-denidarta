@@ -18,6 +18,8 @@ export async function fetchStudents(
 	limit: number,
 	search?: string,
 	status?: string,
+	sortBy?: "fullName" | "createdAt" | "email",
+	sortOrder?: "asc" | "desc",
 ): Promise<Paginated<User>> {
 	const params = new URLSearchParams({
 		role: "student",
@@ -25,6 +27,8 @@ export async function fetchStudents(
 		limit: String(limit),
 		...(search && { search }),
 		...(status && status !== "all" && { status }),
+		...(sortBy && { sortBy }),
+		...(sortOrder && { sortOrder }),
 	});
 	const res = await apiFetch(`/users?${params}`);
 	if (!res.ok) throw new Error(`Failed to fetch students (${res.status})`);
@@ -54,9 +58,18 @@ export async function inviteUser(userId: string): Promise<string> {
 	return data.inviteToken;
 }
 
-export async function fetchAdminsAndInstructors(): Promise<User[]> {
+export async function fetchAdminsAndInstructors(
+	sortBy: "fullName" | "createdAt" | "email" = "fullName",
+	sortOrder: "asc" | "desc" = "asc",
+): Promise<User[]> {
 	console.log("[users.service] fetching admins and instructors...");
-	const res = await apiFetch("/users?roles=admin,instructor&limit=100");
+	const params = new URLSearchParams({
+		roles: "admin,instructor",
+		limit: "100",
+		...(sortBy && { sortBy }),
+		...(sortOrder && { sortOrder }),
+	});
+	const res = await apiFetch(`/users?${params}`);
 	console.log("[users.service] response status:", res.status);
 	if (!res.ok) {
 		const errBody = await res.text();

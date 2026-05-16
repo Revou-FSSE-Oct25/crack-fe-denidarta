@@ -10,7 +10,10 @@ export async function fetchCourses(
 	page: number,
 	limit: number,
 ): Promise<Paginated<Course>> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const params = new URLSearchParams({
+		page: String(page),
+		limit: String(limit),
+	});
 	const res = await apiFetch(`/courses?${params}`);
 	if (!res.ok) throw new Error(`Failed to fetch courses (${res.status})`);
 	const { data } = (await res.json()) as { data: Paginated<Course> };
@@ -28,7 +31,10 @@ export async function fetchStudentCourses(
 	page: number,
 	limit: number,
 ): Promise<Paginated<Course>> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const params = new URLSearchParams({
+		page: String(page),
+		limit: String(limit),
+	});
 	const res = await apiFetch(`/courses/student?${params}`);
 	if (!res.ok) throw new Error(`Failed to fetch courses (${res.status})`);
 	const { data } = (await res.json()) as { data: Paginated<Course> };
@@ -59,8 +65,12 @@ export async function createCourse(payload: CoursePayload): Promise<Course> {
 }
 
 export async function fetchCourseById(id: string): Promise<Course> {
-  const res = await apiFetch(`/courses/${id}`);
-  if (!res.ok) throw new Error(`Failed to fetch course (${res.status})`);
-  const { data } = (await res.json()) as { data: Course };
-  return data;
+	const res = await apiFetch(`/courses/${id}`);
+	if (!res.ok) throw new Error(`Failed to fetch course (${res.status})`);
+	const json = (await res.json()) as { data: { data: Course } | Course };
+	// Handle potential double nesting from singleResponse + ResponseInterceptor
+	if ("data" in json.data && !Array.isArray(json.data.data)) {
+		return json.data.data;
+	}
+	return json.data as Course;
 }
