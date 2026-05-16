@@ -57,3 +57,10 @@ export async function createCourse(payload: CoursePayload): Promise<Course> {
 	const { data } = (await res.json()) as { data: Course };
 	return data;
 }
+
+export async function fetchCourseById(id: string): Promise<Course> {
+  const res = await apiFetch(`/courses/${id}`);
+  if (!res.ok) throw new Error(`Failed to fetch course (${res.status})`);
+  const { data } = (await res.json()) as { data: Course };
+  return data;
+}

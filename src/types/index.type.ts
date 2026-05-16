@@ -19,4 +19,6 @@ export type {
 	ProfileFormValues,
 	Gender,
 	EducationLevel,
+	StudentProfile,
+	AcademicStatus,
 } from "./profile";

@@ -30,6 +30,7 @@ export const adminNavItems: NavItem[] = [
 
 export const studentNavItems: NavItem[] = [
   { href: "/dashboard-student", label: "Dashboard", icon: Home, exact: true },
+  { href: "/dashboard-student/programs", label: "My Programs", icon: Education, exact: false },
   { href: "/dashboard-student/courses", label: "My Courses", icon: Course, exact: false },
   { href: "/dashboard-student/assignments", label: "Assignments", icon: IbmKnowledgeCatalog, exact: false },
   { href: "/dashboard-student/class-sessions", label: "Class Sessions", icon: EventSchedule, exact: false },

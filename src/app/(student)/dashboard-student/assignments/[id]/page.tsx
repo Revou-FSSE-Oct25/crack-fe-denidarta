@@ -68,7 +68,7 @@ export default function AssignmentDetailPage() {
 	const submissionStatus = submission?.status ?? "notSubmitted";
 	const isDraftOrNew = submissionStatus === "notSubmitted" || !submission;
 
-	async function saveDraft() {
+	async function saveDraft(): Promise<AssignmentSubmission | null> {
 		setSaving(true);
 		setSubmitError(null);
 		try {
@@ -80,6 +80,7 @@ export default function AssignmentDetailPage() {
 				if (!res.ok) throw new Error("Failed to update draft");
 				const { data } = (await res.json()) as { data: AssignmentSubmission };
 				setSubmission(data);
+				return data;
 			} else {
 				const studentId = getCurrentUserId();
 				if (!studentId) throw new Error("Not authenticated");
@@ -97,9 +98,11 @@ export default function AssignmentDetailPage() {
 				if (!res.ok) throw new Error("Failed to create draft");
 				const { data } = (await res.json()) as { data: AssignmentSubmission };
 				setSubmission(data);
+				return data;
 			}
 		} catch (err) {
 			setSubmitError(err instanceof Error ? err.message : "Save failed");
+			return null;
 		} finally {
 			setSaving(false);
 		}
@@ -110,13 +113,12 @@ export default function AssignmentDetailPage() {
 		setSaving(true);
 		setSubmitError(null);
 		try {
-			let subId = submission?.id;
-			if (!subId) {
-				await saveDraft();
-				subId = submission?.id; // Note: In a real scenario, we would need to get this from the state that was just updated
+			let sub = submission;
+			if (!sub?.id) {
+				sub = await saveDraft();
 			}
-			if (!subId) throw new Error("No draft to submit");
-			const res = await apiFetch(`/submissions/${subId}/submit`, {
+			if (!sub?.id) throw new Error("Failed to save draft before submitting");
+			const res = await apiFetch(`/submissions/${sub.id}/submit`, {
 				method: "PATCH",
 				body: JSON.stringify({}),
 			});

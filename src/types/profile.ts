@@ -58,3 +58,24 @@ export interface ProfileFormValues {
 	highestEducation?: EducationLevel;
 	fieldOfStudy?: string;
 }
+
+export type AcademicStatus =
+  | "active"
+  | "inactive"
+  | "graduated"
+  | "dropped_out"
+  | "on_leave";
+
+export interface StudentProfile {
+  id: string;
+  userId: string;
+  nim: string;
+  enrollmentYear: number;
+  major: string;
+  faculty: string | null;
+  currentSemester: number | null;
+  gpa: string | null;
+  academicStatus: AcademicStatus;
+  createdAt: string;
+  updatedAt: string;
+}

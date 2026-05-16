@@ -1,5 +1,6 @@
 import { apiFetch } from "@/lib/api-client";
 import type { ProgramEnrollment } from "@/types/program";
+import type { Program } from "@/types/program";
 
 interface ApiResponse<T> {
 	data: T;
@@ -19,4 +20,28 @@ export async function enrollStudent(
 	}
 	const json = (await res.json()) as ApiResponse<ProgramEnrollment>;
 	return json.data;
+}
+
+export interface MyEnrollment {
+  id: string;
+  programId: string;
+  userId: string;
+  status: "pending" | "enrolled" | "completed" | "dropped";
+  createdAt: string;
+  program: {
+    id?: string;
+    name: string;
+    headOfProgram: { userId: string; fullName: string | null } | null;
+    courses: { courseId?: string; id?: string; courseTitle?: string; name?: string }[];
+  };
+}
+
+export async function fetchMyEnrollments(): Promise<MyEnrollment[]> {
+  const { getCurrentUserId } = await import("@/utils/auth");
+  const userId = getCurrentUserId();
+  if (!userId) throw new Error("Not authenticated");
+  const res = await apiFetch(`/enrollments/user/${userId}`);
+  if (!res.ok) throw new Error(`Failed to fetch enrollments (${res.status})`);
+  const { data } = (await res.json()) as { data: MyEnrollment[] };
+  return Array.isArray(data) ? data : [];
 }

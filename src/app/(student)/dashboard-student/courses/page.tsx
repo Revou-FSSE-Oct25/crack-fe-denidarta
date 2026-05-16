@@ -1,99 +1,136 @@
 "use client";
 
-import { useState } from "react";
-import { Tag, Search } from "@carbon/react";
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Select, SelectItem, Tag } from "@carbon/react";
+import { Search } from "@carbon/react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCourses } from "@/services/courses.service";
-import { courseTableHeaders } from "@/constants/courses";
+import { fetchAllCourses } from "@/services/courses.service";
 import { statusTagType } from "@/utils/tag-type";
 import { DATE_LOCALE } from "@/constants";
 import PageLayout, { PageHeader } from "@/components/PageLayout";
 import ResourceTableSection, {
-	resourceTableStyles,
+  resourceTableStyles,
 } from "@/components/ResourceTableSection";
 
+const headers = [
+  { key: "courseName", header: "Course Name" },
+  { key: "instructor", header: "Instructor" },
+  { key: "status", header: "Status" },
+  { key: "startedAt", header: "Start Date" },
+  { key: "endedAt", header: "End Date" },
+  { key: "description", header: "Description" },
+] as const;
+
+const STATUS_OPTIONS = [
+  { value: "", label: "All Statuses" },
+  { value: "draft", label: "Draft" },
+  { value: "active", label: "Active" },
+  { value: "archived", label: "Archived" },
+  { value: "completed", label: "Completed" },
+];
+
 export default function StudentCoursesPage() {
-	const [page, setPage] = useState(1);
-	const [pageSize, setPageSize] = useState(10);
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
-	const { data, isLoading, error } = useQuery({
-		queryKey: ["student-courses", page, pageSize],
-		queryFn: () => fetchCourses(page, pageSize),
-	});
+  const { data: courses = [], isLoading, error } = useQuery({
+    queryKey: ["student-courses-all"],
+    queryFn: fetchAllCourses,
+  });
 
-	const courses = data?.data ?? [];
-	const total = data?.meta.total ?? 0;
+  const filtered = useMemo(
+    () =>
+      courses
+        .filter((c) =>
+          c.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .filter((c) => statusFilter === "" || c.status === statusFilter),
+    [courses, searchTerm, statusFilter]
+  );
 
-	const rows = courses.map((course) => ({
-		id: String(course.id),
-		courseName: {
-			primary: course.name,
-			secondary: course.program?.name ?? "—",
-		},
-		instructor: course.instructor?.profile?.fullName ?? "—",
-		status: course.status,
-		startedAt: course.startedAt
-			? new Date(course.startedAt).toLocaleDateString(DATE_LOCALE)
-			: "—",
-		endedAt: course.endedAt
-			? new Date(course.endedAt).toLocaleDateString(DATE_LOCALE)
-			: "—",
-		description: course.description ?? "—",
-	}));
+  const rows = filtered.map((course) => ({
+    id: String(course.id),
+    courseName: {
+      primary: course.name,
+      secondary: course.program?.name ?? "—",
+    },
+    instructor: course.instructor?.profile?.fullName ?? "—",
+    status: course.status,
+    startedAt: course.startedAt
+      ? new Date(course.startedAt).toLocaleDateString(DATE_LOCALE)
+      : "—",
+    endedAt: course.endedAt
+      ? new Date(course.endedAt).toLocaleDateString(DATE_LOCALE)
+      : "—",
+    description: course.description ?? "—",
+  }));
 
-	return (
-		<PageLayout>
-			<PageHeader
-				title="My Courses"
-				subtitle={isLoading ? "..." : `${total} courses enrolled`}
-			/>
-			<ResourceTableSection
-				loading={isLoading}
-				error={error ? error.message : null}
-				headers={courseTableHeaders}
-				rows={rows}
-				pagination={{
-					page,
-					pageSize,
-					total,
-					onChange: ({ page, pageSize }) => {
-						setPage(page);
-						setPageSize(pageSize);
-					},
-				}}
-				toolbar={
-					<Search
-						closeButtonLabelText="Clear search input"
-						id="search-student-courses"
-						labelText="Search"
-						placeholder="Search courses (coming soon)"
-						size="md"
-						type="search"
-						disabled
-					/>
-				}
-				renderCell={(cell) => {
-					if (cell.info.header === "courseName") {
-						const v = cell.value as { primary: string; secondary: string };
-						return (
-							<>
-								<p style={{ fontWeight: 400, marginBottom: "0.125rem" }}>
-									{v.primary}
-								</p>
-								<p className={resourceTableStyles.secondaryText}>{v.secondary}</p>
-							</>
-						);
-					}
-					if (cell.info.header === "status") {
-						return (
-							<Tag type={statusTagType(String(cell.value))} size="sm">
-								{String(cell.value)}
-							</Tag>
-						);
-					}
-					return null;
-				}}
-			/>
-		</PageLayout>
-	);
+  return (
+    <PageLayout>
+      <PageHeader
+        title="My Courses"
+        subtitle={isLoading ? "..." : `${filtered.length} course${filtered.length !== 1 ? "s" : ""}`}
+      />
+      <ResourceTableSection
+        loading={isLoading}
+        error={error ? error.message : null}
+        headers={headers}
+        rows={rows}
+        toolbar={
+          <div style={{ display: "flex", gap: "0.5rem", alignItems: "flex-end" }}>
+            <Search
+              closeButtonLabelText="Clear search input"
+              id="search-student-courses"
+              labelText="Search courses"
+              placeholder="Search by course name"
+              size="md"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Select
+              id="status-filter"
+              labelText="Status"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              style={{ minWidth: "160px" }}
+            >
+              {STATUS_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value} text={o.label} />
+              ))}
+            </Select>
+          </div>
+        }
+        renderCell={(cell, row) => {
+          if (cell.info.header === "courseName") {
+            const v = cell.value as { primary: string; secondary: string };
+            return (
+              <>
+                <Button
+                  kind="ghost"
+                  size="sm"
+                  onClick={() =>
+                    router.push(`/dashboard-student/courses/${row.id}`)
+                  }
+                  style={{ paddingInline: 0 }}
+                >
+                  {v.primary}
+                </Button>
+                <p className={resourceTableStyles.secondaryText}>{v.secondary}</p>
+              </>
+            );
+          }
+          if (cell.info.header === "status") {
+            return (
+              <Tag type={statusTagType(String(cell.value))} size="sm">
+                {String(cell.value)}
+              </Tag>
+            );
+          }
+          return null;
+        }}
+      />
+    </PageLayout>
+  );
 }
