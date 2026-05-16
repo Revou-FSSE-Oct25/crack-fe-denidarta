@@ -59,7 +59,9 @@ export default function EnrollStudentModal({
 				onSuccess();
 			})
 			.catch((err: unknown) => {
-				setError(err instanceof Error ? err.message : "Failed to enroll student");
+				setError(
+					err instanceof Error ? err.message : "Failed to enroll student",
+				);
 			})
 			.finally(() => {
 				setLoading(false);
@@ -92,7 +94,11 @@ export default function EnrollStudentModal({
 				<ComboBox
 					id="enroll-student-combo"
 					titleText="Select Student"
-					placeholder={fetchingStudents ? "Loading students..." : "Search by name or username"}
+					placeholder={
+						fetchingStudents
+							? "Loading students..."
+							: "Search by name or username"
+					}
 					items={items}
 					itemToString={(item) => (item ? item.label : "")}
 					selectedItem={selected}
@@ -100,7 +106,9 @@ export default function EnrollStudentModal({
 					disabled={fetchingStudents || loading}
 				/>
 				{!fetchingStudents && items.length === 0 && (
-					<p style={{ fontSize: "0.875rem", color: "var(--cds-text-secondary)" }}>
+					<p
+						style={{ fontSize: "0.875rem", color: "var(--cds-text-secondary)" }}
+					>
 						All students are already enrolled in this program.
 					</p>
 				)}

@@ -61,3 +61,12 @@ export async function fetchMyEnrollments(): Promise<MyEnrollment[]> {
 	const json = (await res.json()) as { data: { data: MyEnrollment[] } };
 	return Array.isArray(json.data?.data) ? json.data.data : [];
 }
+
+export async function fetchUserEnrollments(
+	userId: string,
+): Promise<MyEnrollment[]> {
+	const res = await apiFetch(`/enrollments/user/${userId}`);
+	if (!res.ok) throw new Error(`Failed to fetch enrollments (${res.status})`);
+	const json = (await res.json()) as { data: { data: MyEnrollment[] } };
+	return Array.isArray(json.data?.data) ? json.data.data : [];
+}

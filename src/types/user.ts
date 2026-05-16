@@ -1,3 +1,5 @@
+import type { Profile, StudentProfile } from "./profile";
+
 export type UserRole = "student" | "instructor" | "admin";
 
 export interface User {
@@ -7,7 +9,6 @@ export interface User {
 	role: UserRole;
 	status: string;
 	createdAt: string;
-	profile?: {
-		fullName: string | null;
-	} | null;
+	profile?: Profile | null;
+	studentProfile?: StudentProfile | null;
 }

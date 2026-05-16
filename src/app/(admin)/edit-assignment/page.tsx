@@ -29,15 +29,18 @@ import { apiFetch } from "@/lib/api-client";
 import { fetchAllCourses } from "@/services/courses.service";
 import { Assignment } from "@/types/assignment";
 import AppShell from "@/components/AppShell";
-import { assignmentSchema, type AssignmentFormValues } from "@/schemas/assignment.schema";
+import {
+	assignmentSchema,
+	type AssignmentFormValues,
+} from "@/schemas/assignment.schema";
 import styles from "./edit-assignment.module.scss";
 
 export default function EditAssignmentPage() {
-  return (
-    <Suspense>
-      <EditAssignmentPageInner />
-    </Suspense>
-  );
+	return (
+		<Suspense>
+			<EditAssignmentPageInner />
+		</Suspense>
+	);
 }
 
 function EditAssignmentPageInner() {
@@ -89,7 +92,9 @@ function EditAssignmentPageInner() {
 		apiFetch(`/assignments/${assignmentId}`)
 			.then(async (res) => {
 				if (!res.ok) throw new Error("Failed to fetch assignment details");
-				const { data: assignmentData } = (await res.json()) as { data: Assignment };
+				const { data: assignmentData } = (await res.json()) as {
+					data: Assignment;
+				};
 				reset({
 					courseId: assignmentData.courseId,
 					title: assignmentData.title,
@@ -192,7 +197,7 @@ function EditAssignmentPageInner() {
 						<Controller
 							name="courseId"
 							control={control}
-								render={({ field }) => (
+							render={({ field }) => (
 								<Select
 									{...field}
 									id="courseId"
@@ -217,7 +222,7 @@ function EditAssignmentPageInner() {
 						<Controller
 							name="title"
 							control={control}
-								render={({ field }) => (
+							render={({ field }) => (
 								<TextInput
 									{...field}
 									id="title"
@@ -270,7 +275,7 @@ function EditAssignmentPageInner() {
 											<Controller
 												name={`gradingCriteria.${index}.label`}
 												control={control}
-													render={({ field: inputField }) => (
+												render={({ field: inputField }) => (
 													<TextInput
 														{...inputField}
 														id={`criteria-label-${index}`}
@@ -288,7 +293,7 @@ function EditAssignmentPageInner() {
 											<Controller
 												name={`gradingCriteria.${index}.points`}
 												control={control}
-													render={({ field: inputField }) => (
+												render={({ field: inputField }) => (
 													<NumberInput
 														id={`criteria-points-${index}`}
 														label="Points"
@@ -346,7 +351,7 @@ function EditAssignmentPageInner() {
 								<Controller
 									name="dueDate"
 									control={control}
-										render={({ field }) => (
+									render={({ field }) => (
 										<DatePicker
 											datePickerType="single"
 											value={field.value}

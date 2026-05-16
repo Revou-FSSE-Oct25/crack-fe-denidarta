@@ -1,5 +1,9 @@
 import { apiFetch } from "@/lib/api-client";
-import type { ClassAttendance, ClassSession } from "@/types/index.type";
+import type {
+	ClassAttendance,
+	ClassSession,
+	AttendanceRecord,
+} from "@/types/index.type";
 
 interface Paginated<T> {
 	data: T[];
@@ -10,9 +14,13 @@ export async function fetchClassSessions(
 	page: number,
 	limit: number,
 ): Promise<Paginated<ClassSession>> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const params = new URLSearchParams({
+		page: String(page),
+		limit: String(limit),
+	});
 	const res = await apiFetch(`/class-sessions?${params}`);
-	if (!res.ok) throw new Error(`Failed to fetch class sessions (${res.status})`);
+	if (!res.ok)
+		throw new Error(`Failed to fetch class sessions (${res.status})`);
 	const { data } = (await res.json()) as { data: Paginated<ClassSession> };
 	return data;
 }
@@ -20,7 +28,9 @@ export async function fetchClassSessions(
 export async function fetchClassSessionById(id: string): Promise<ClassSession> {
 	const res = await apiFetch(`/class-sessions/${id}`);
 	if (!res.ok) throw new Error(`Failed to fetch class session (${res.status})`);
-	const json = (await res.json()) as { data: { data: ClassSession } | ClassSession };
+	const json = (await res.json()) as {
+		data: { data: ClassSession } | ClassSession;
+	};
 	if ("data" in json.data && !Array.isArray(json.data.data)) {
 		return json.data.data;
 	}
@@ -31,28 +41,20 @@ export async function fetchStudentClassSessions(
 	page: number,
 	limit: number,
 ): Promise<Paginated<ClassSession>> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const params = new URLSearchParams({
+		page: String(page),
+		limit: String(limit),
+	});
 	const res = await apiFetch(`/class-sessions/student?${params}`);
-	if (!res.ok) throw new Error(`Failed to fetch class sessions (${res.status})`);
+	if (!res.ok)
+		throw new Error(`Failed to fetch class sessions (${res.status})`);
 	const { data } = (await res.json()) as { data: Paginated<ClassSession> };
 	return data;
 }
 
-export interface AttendanceRecord {
-	id: string;
-	classSessionId: string;
-	status: string;
-	createdAt: string;
-	isVerified: boolean;
-	verifiedBy: string | null;
-	verifiedAt: string | null;
-	user: {
-		username: string;
-		profile: { fullName: string | null } | null;
-	};
-}
-
-export async function fetchSessionAttendance(sessionId: string): Promise<AttendanceRecord[]> {
+export async function fetchSessionAttendance(
+	sessionId: string,
+): Promise<AttendanceRecord[]> {
 	const res = await apiFetch(`/attendances/session/${sessionId}`);
 	if (!res.ok) throw new Error(`Failed to load attendance (${res.status})`);
 	const { data } = (await res.json()) as { data: AttendanceRecord[] };
@@ -72,16 +74,20 @@ export interface SessionWithAttendance {
 	isVerified: boolean;
 }
 
-export async function fetchMySessionsWithAttendance(): Promise<SessionWithAttendance[]> {
+export async function fetchMySessionsWithAttendance(): Promise<
+	SessionWithAttendance[]
+> {
 	const [sessionsRes, attendancesRes] = await Promise.all([
 		apiFetch("/class-sessions?limit=100"),
 		apiFetch("/attendances"),
 	]);
 
-	if (!sessionsRes.ok) throw new Error(`Failed to fetch sessions (${sessionsRes.status})`);
+	if (!sessionsRes.ok)
+		throw new Error(`Failed to fetch sessions (${sessionsRes.status})`);
 
 	const sessionsJson = await sessionsRes.json();
-	const sessions: ClassSession[] = sessionsJson.data?.data ?? sessionsJson.data ?? [];
+	const sessions: ClassSession[] =
+		sessionsJson.data?.data ?? sessionsJson.data ?? [];
 
 	const attendancesJson = await attendancesRes.json();
 	const attendances: ClassAttendance[] = attendancesRes.ok
@@ -108,4 +114,20 @@ export async function fetchMySessionsWithAttendance(): Promise<SessionWithAttend
 			isVerified: att?.isVerified ?? false,
 		};
 	});
+}
+
+export async function fetchAttendanceByStudentId(
+	studentId: string,
+	page = 1,
+	limit = 100,
+): Promise<Paginated<ClassAttendance>> {
+	const params = new URLSearchParams({
+		studentId,
+		page: String(page),
+		limit: String(limit),
+	});
+	const res = await apiFetch(`/attendances?${params}`);
+	if (!res.ok) throw new Error(`Failed to fetch attendance (${res.status})`);
+	const { data } = (await res.json()) as { data: Paginated<ClassAttendance> };
+	return data;
 }

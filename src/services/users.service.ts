@@ -80,3 +80,10 @@ export async function fetchAdminsAndInstructors(
 	console.log("[users.service] data:", json);
 	return json.data?.data ?? [];
 }
+
+export async function fetchUser(id: string): Promise<User> {
+	const res = await apiFetch(`/users/${id}`);
+	if (!res.ok) throw new Error(`Failed to fetch user (${res.status})`);
+	const { data } = (await res.json()) as { data: { data: User } };
+	return data.data;
+}

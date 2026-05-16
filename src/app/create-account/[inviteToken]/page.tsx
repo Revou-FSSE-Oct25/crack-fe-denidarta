@@ -15,7 +15,10 @@ import { ArrowRight } from "@carbon/icons-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { apiFetch } from "@/lib/api-client";
-import { createAccountSchema, type CreateAccountFormValues } from "@/schemas/auth.schema";
+import {
+	createAccountSchema,
+	type CreateAccountFormValues,
+} from "@/schemas/auth.schema";
 import styles from "./page.module.scss";
 
 interface PageProps {
@@ -36,7 +39,9 @@ export default function CreateAccountPage({ params }: PageProps) {
 		handleSubmit,
 		watch,
 		formState: { errors },
-	} = useForm<CreateAccountFormValues>({ resolver: zodResolver(createAccountSchema) });
+	} = useForm<CreateAccountFormValues>({
+		resolver: zodResolver(createAccountSchema),
+	});
 
 	const passwordValue = watch("password", "");
 
@@ -115,7 +120,11 @@ export default function CreateAccountPage({ params }: PageProps) {
 					/>
 				)}
 
-				<Form onSubmit={handleSubmit(onSubmit)} noValidate className={styles.form}>
+				<Form
+					onSubmit={handleSubmit(onSubmit)}
+					noValidate
+					className={styles.form}
+				>
 					<Stack gap={0}>
 						{/* Email Field */}
 						<FluidTextInput

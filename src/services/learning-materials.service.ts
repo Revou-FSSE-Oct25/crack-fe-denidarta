@@ -10,9 +10,13 @@ export async function fetchLearningMaterials(
 	page: number,
 	limit: number,
 ): Promise<Paginated<LearningMaterial>> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const params = new URLSearchParams({
+		page: String(page),
+		limit: String(limit),
+	});
 	const res = await apiFetch(`/learning-materials?${params}`);
-	if (!res.ok) throw new Error(`Failed to fetch learning materials (${res.status})`);
+	if (!res.ok)
+		throw new Error(`Failed to fetch learning materials (${res.status})`);
 	const { data } = (await res.json()) as { data: Paginated<LearningMaterial> };
 	return data;
 }
@@ -21,9 +25,13 @@ export async function fetchStudentLearningMaterials(
 	page: number,
 	limit: number,
 ): Promise<Paginated<LearningMaterial>> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const params = new URLSearchParams({
+		page: String(page),
+		limit: String(limit),
+	});
 	const res = await apiFetch(`/learning-materials/student?${params}`);
-	if (!res.ok) throw new Error(`Failed to fetch learning materials (${res.status})`);
+	if (!res.ok)
+		throw new Error(`Failed to fetch learning materials (${res.status})`);
 	const { data } = (await res.json()) as { data: Paginated<LearningMaterial> };
 	return data;
 }
@@ -32,9 +40,12 @@ interface MaterialWithCourse extends LearningMaterial {
 	courseName: string;
 }
 
-export async function fetchMyLearningMaterials(): Promise<MaterialWithCourse[]> {
+export async function fetchMyLearningMaterials(): Promise<
+	MaterialWithCourse[]
+> {
 	const coursesRes = await apiFetch("/courses");
-	if (!coursesRes.ok) throw new Error(`Failed to fetch courses (${coursesRes.status})`);
+	if (!coursesRes.ok)
+		throw new Error(`Failed to fetch courses (${coursesRes.status})`);
 	const coursesJson = await coursesRes.json();
 	const courses: Course[] = coursesJson.data?.data ?? coursesJson.data ?? [];
 

@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Tag, Dropdown, ExpandableSearch, OverflowMenuItem, OverflowMenu } from "@carbon/react";
+import { useRouter } from "next/navigation";
+import {
+	Button,
+	Tag,
+	Dropdown,
+	ExpandableSearch,
+	OverflowMenuItem,
+	OverflowMenu,
+} from "@carbon/react";
 import { Add } from "@carbon/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchStudents } from "@/services/users.service";
@@ -12,8 +20,8 @@ import { DATE_LOCALE } from "@/constants";
 import PageLayout, { PageHeader } from "@/components/PageLayout";
 import ResourceTableSection from "@/components/ResourceTableSection";
 
-
 export default function StudentsPage() {
+	const router = useRouter();
 	const queryClient = useQueryClient();
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
@@ -73,11 +81,7 @@ export default function StudentsPage() {
 					key: sortBy,
 					direction: sortOrder,
 					onChange: (key, direction) => {
-						if (
-							key === "fullName" ||
-							key === "email" ||
-							key === "createdAt"
-						) {
+						if (key === "fullName" || key === "email" || key === "createdAt") {
 							setSortBy(key);
 							setSortOrder(direction);
 						}
@@ -155,7 +159,7 @@ export default function StudentsPage() {
 						</div>
 					</div>
 				}
-				renderCell={(cell) => {
+				renderCell={(cell, row) => {
 					if (cell.info.header === "status") {
 						return (
 							<Tag type={statusTagType(String(cell.value))} size="sm">
@@ -165,9 +169,14 @@ export default function StudentsPage() {
 					}
 					if (cell.info.header === "action") {
 						return (
-							<OverflowMenu size="lg">
+							<OverflowMenu size="lg" flipped>
 								<OverflowMenuItem itemText="Invitation Link" />
-								<OverflowMenuItem itemText="View" />
+								<OverflowMenuItem
+									itemText="View Details"
+									onClick={() =>
+										router.push(`/dashboard-admin/students/${row.id}`)
+									}
+								/>
 							</OverflowMenu>
 						);
 					}

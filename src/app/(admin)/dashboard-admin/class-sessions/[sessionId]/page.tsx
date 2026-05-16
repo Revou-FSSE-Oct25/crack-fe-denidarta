@@ -43,15 +43,25 @@ const attendanceHeaders = [
 export default function SessionAttendancePage() {
 	const { sessionId } = useParams<{ sessionId: string }>();
 	const queryClient = useQueryClient();
-	const [verifyRecord, setVerifyRecord] = useState<AttendanceRecord | null>(null);
+	const [verifyRecord, setVerifyRecord] = useState<AttendanceRecord | null>(
+		null,
+	);
 
-	const { data: session, isLoading: sessionLoading, error: sessionError } = useQuery({
+	const {
+		data: session,
+		isLoading: sessionLoading,
+		error: sessionError,
+	} = useQuery({
 		queryKey: ["class-session", sessionId],
 		queryFn: () => fetchClassSessionById(sessionId!),
 		enabled: !!sessionId,
 	});
 
-	const { data: records = [], isLoading: attendanceLoading, error: attendanceError } = useQuery({
+	const {
+		data: records = [],
+		isLoading: attendanceLoading,
+		error: attendanceError,
+	} = useQuery({
 		queryKey: ["session-attendance", sessionId],
 		queryFn: () => fetchSessionAttendance(sessionId!),
 		enabled: !!sessionId,

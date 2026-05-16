@@ -28,7 +28,10 @@ import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-client";
 import { fetchAllCourses } from "@/services/courses.service";
 import AppShell from "@/components/AppShell";
-import { assignmentSchema, type AssignmentFormValues } from "@/schemas/assignment.schema";
+import {
+	assignmentSchema,
+	type AssignmentFormValues,
+} from "@/schemas/assignment.schema";
 import styles from "./create-assignment.module.scss";
 
 export default function CreateAssignmentPage() {
@@ -151,7 +154,7 @@ export default function CreateAssignmentPage() {
 							<Controller
 								name="courseId"
 								control={control}
-																render={({ field }) => (
+								render={({ field }) => (
 									<Select
 										{...field}
 										id="courseId"
@@ -176,7 +179,7 @@ export default function CreateAssignmentPage() {
 							<Controller
 								name="title"
 								control={control}
-									render={({ field }) => (
+								render={({ field }) => (
 									<TextInput
 										{...field}
 										id="title"
@@ -229,7 +232,7 @@ export default function CreateAssignmentPage() {
 												<Controller
 													name={`gradingCriteria.${index}.label`}
 													control={control}
-																			render={({ field: inputField }) => (
+													render={({ field: inputField }) => (
 														<TextInput
 															{...inputField}
 															id={`criteria-label-${index}`}
@@ -247,7 +250,7 @@ export default function CreateAssignmentPage() {
 												<Controller
 													name={`gradingCriteria.${index}.points`}
 													control={control}
-																			render={({ field: inputField }) => (
+													render={({ field: inputField }) => (
 														<NumberInput
 															id={`criteria-points-${index}`}
 															label="Points"
@@ -296,8 +299,8 @@ export default function CreateAssignmentPage() {
 								))}
 								{fields.length === 0 && (
 									<p className={styles.emptyCriteria}>
-										No grading criteria added. Click &quot;Add Criteria&quot; to create
-										one.
+										No grading criteria added. Click &quot;Add Criteria&quot; to
+										create one.
 									</p>
 								)}
 							</Section>
@@ -307,7 +310,7 @@ export default function CreateAssignmentPage() {
 									<Controller
 										name="dueDate"
 										control={control}
-													render={({ field }) => (
+										render={({ field }) => (
 											<DatePicker
 												datePickerType="single"
 												onClose={() => field.onBlur()}

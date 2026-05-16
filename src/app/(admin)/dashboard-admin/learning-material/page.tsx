@@ -50,7 +50,8 @@ export default function LearningMaterialPage() {
 		title: material.title,
 		materialType: material.materialType.toUpperCase(),
 		orderIndex: String(material.orderIndex),
-		uploadedBy: material.uploader.profile?.fullName ?? material.uploader.username,
+		uploadedBy:
+			material.uploader.profile?.fullName ?? material.uploader.username,
 		createdAt: new Date(material.createdAt).toLocaleDateString(DATE_LOCALE),
 	}));
 

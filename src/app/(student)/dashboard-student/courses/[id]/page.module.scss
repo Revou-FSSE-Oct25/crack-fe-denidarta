@@ -1,47 +1,47 @@
 .container {
-  padding: 1.5rem;
+	padding: 1.5rem;
 }
 
 .header {
-  margin-bottom: 1.5rem;
+	margin-bottom: 1.5rem;
 }
 
 .title {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
+	font-size: 1.75rem;
+	font-weight: 600;
+	margin-bottom: 0.25rem;
 }
 
 .meta {
-  font-size: 0.875rem;
-  color: var(--cds-text-secondary, #525252);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+	font-size: 0.875rem;
+	color: var(--cds-text-secondary, #525252);
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
 }
 
 .progressStrip {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 2rem;
+	display: flex;
+	gap: 1rem;
+	flex-wrap: wrap;
+	margin-bottom: 2rem;
 }
 
 .section {
-  margin-bottom: 2.5rem;
+	margin-bottom: 2.5rem;
 }
 
 .sectionTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--cds-border-subtle-01, #e0e0e0);
+	font-size: 1.125rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px solid var(--cds-border-subtle-01, #e0e0e0);
 }
 
 .empty {
-  color: var(--cds-text-secondary, #525252);
-  font-style: italic;
-  padding: 1rem 0;
+	color: var(--cds-text-secondary, #525252);
+	font-style: italic;
+	padding: 1rem 0;
 }

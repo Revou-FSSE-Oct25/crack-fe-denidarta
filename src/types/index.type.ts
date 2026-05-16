@@ -22,3 +22,5 @@ export type {
 	StudentProfile,
 	AcademicStatus,
 } from "./profile";
+
+export type { AttendanceRecord } from "./class-attendance";

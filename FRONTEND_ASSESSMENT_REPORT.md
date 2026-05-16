@@ -78,7 +78,7 @@ Assessment:
 
 ### 3. Page scaffolding is inconsistent across dashboards
 
-Admin dashboard pages more often use Carbon grid primitives, for example [`src/app/(admin)/dashboard-admin/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/dashboard-admin/page.tsx:81), while student pages often use custom wrappers and headings such as [`src/app/(student)/dashboard-student/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/page.tsx:82) with bespoke spacing in [`src/app/(student)/dashboard-student/page.module.scss`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/page.module.scss:1).
+Admin dashboard pages more often use Carbon grid primitives, for example [`src/app/(admin)/dashboard-admin/page.tsx`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/dashboard-admin/page.tsx:81>), while student pages often use custom wrappers and headings such as [`src/app/(student)/dashboard-student/page.tsx`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/page.tsx:82>) with bespoke spacing in [`src/app/(student)/dashboard-student/page.module.scss`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/page.module.scss:1>).
 
 Impact:
 
@@ -92,7 +92,7 @@ Assessment:
 
 ### 4. Carbon tokens are used inconsistently; many screens fall back to hardcoded values
 
-Some pages stay close to Carbon tokens, but others hardcode large amounts of color and spacing. A clear example is [`src/app/(admin)/create-program/create-program.module.scss`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/create-program/create-program.module.scss:1), which hardcodes background, borders, labels, step indicators, and action areas instead of consistently referencing Carbon tokens.
+Some pages stay close to Carbon tokens, but others hardcode large amounts of color and spacing. A clear example is [`src/app/(admin)/create-program/create-program.module.scss`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/create-program/create-program.module.scss:1>), which hardcodes background, borders, labels, step indicators, and action areas instead of consistently referencing Carbon tokens.
 
 The create-account experience does the same at a larger scale in:
 
@@ -127,9 +127,9 @@ Assessment:
 
 Inline style usage appears in many routes, including:
 
-- [`src/app/(admin)/dashboard-admin/assignments/[id]/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/dashboard-admin/assignments/[id]/page.tsx:266)
-- [`src/app/(student)/dashboard-student/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/page.tsx:107)
-- [`src/app/(student)/dashboard-student/profile/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/profile/page.tsx:250)
+- [`src/app/(admin)/dashboard-admin/assignments/[id]/page.tsx`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/dashboard-admin/assignments/[id]/page.tsx:266>)
+- [`src/app/(student)/dashboard-student/page.tsx`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/page.tsx:107>)
+- [`src/app/(student)/dashboard-student/profile/page.tsx`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/profile/page.tsx:250>)
 - several modal components under [`src/components/Modals`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/components/Modals)
 
 Impact:
@@ -153,10 +153,10 @@ There are many pages with nearly the same structure:
 
 Examples include:
 
-- [`src/app/(admin)/dashboard-admin/programs/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/dashboard-admin/programs/page.tsx:103)
-- [`src/app/(admin)/dashboard-admin/courses/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/dashboard-admin/courses/page.tsx:101)
-- [`src/app/(student)/dashboard-student/courses/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/courses/page.tsx:105)
-- [`src/app/(student)/dashboard-student/assignments/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/assignments/page.tsx:103)
+- [`src/app/(admin)/dashboard-admin/programs/page.tsx`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/dashboard-admin/programs/page.tsx:103>)
+- [`src/app/(admin)/dashboard-admin/courses/page.tsx`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/dashboard-admin/courses/page.tsx:101>)
+- [`src/app/(student)/dashboard-student/courses/page.tsx`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/courses/page.tsx:105>)
+- [`src/app/(student)/dashboard-student/assignments/page.tsx`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/assignments/page.tsx:103>)
 
 Impact:
 
@@ -174,8 +174,8 @@ Forms currently span multiple patterns:
 
 - Carbon-first login tile: [`src/app/login/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/login/page.tsx:48)
 - heavily custom create-account screens: [`src/app/create-account/[inviteToken]/page.module.scss`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/create-account/[inviteToken]/page.module.scss:91)
-- custom multi-step admin form styles: [`src/app/(admin)/create-program/create-program.module.scss`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/create-program/create-program.module.scss:99)
-- profile edit mixing `FluidTextInput`, `Select`, `TextArea`, and inline spacing: [`src/app/(student)/dashboard-student/profile/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/profile/page.tsx:241)
+- custom multi-step admin form styles: [`src/app/(admin)/create-program/create-program.module.scss`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/create-program/create-program.module.scss:99>)
+- profile edit mixing `FluidTextInput`, `Select`, `TextArea`, and inline spacing: [`src/app/(student)/dashboard-student/profile/page.tsx`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/profile/page.tsx:241>)
 
 Impact:
 
@@ -321,8 +321,8 @@ If the team wants maximum return with minimal brand disruption, start here:
 2. [`src/providers/CarbonProvider.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/providers/CarbonProvider.tsx:1)
 3. [`src/components/DashboardShell/index.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/components/DashboardShell/index.tsx:1)
 4. [`src/components/StudentDashboardShell/index.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/components/StudentDashboardShell/index.tsx:1)
-5. [`src/app/(admin)/create-program/create-program.module.scss`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/create-program/create-program.module.scss:1)
-6. [`src/app/(student)/dashboard-student/profile/page.tsx`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/profile/page.tsx:241)
+5. [`src/app/(admin)/create-program/create-program.module.scss`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(admin)/create-program/create-program.module.scss:1>)
+6. [`src/app/(student)/dashboard-student/profile/page.tsx`](</Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/(student)/dashboard-student/profile/page.tsx:241>)
 7. [`src/app/create-account/page.module.scss`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/create-account/page.module.scss:1)
 8. [`src/app/create-account/[inviteToken]/page.module.scss`](/Users/denidarta/codebase/crack/crack-fe-denidarta/src/app/create-account/[inviteToken]/page.module.scss:1)
 

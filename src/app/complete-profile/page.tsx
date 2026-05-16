@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { profileSchema, type ProfileFormValues } from "@/schemas/profile.schema";
+import {
+	profileSchema,
+	type ProfileFormValues,
+} from "@/schemas/profile.schema";
 import {
 	Button,
 	FluidTextInput,
@@ -14,11 +17,7 @@ import {
 	TextArea,
 } from "@carbon/react";
 import { apiFetch } from "@/lib/api-client";
-import {
-	Profile,
-	Gender,
-	EducationLevel,
-} from "@/types/index.type";
+import { Profile, Gender, EducationLevel } from "@/types/index.type";
 import styles from "./page.module.scss";
 
 const GENDER_OPTIONS: { value: Gender; label: string }[] = [
@@ -72,10 +71,13 @@ export default function CompleteProfilePage() {
 
 	async function onSubmit(values: ProfileFormValues) {
 		setSubmitError(null);
-		
+
 		// Clean up empty strings to undefined to satisfy backend validation
 		const payload = Object.fromEntries(
-			Object.entries(values).map(([key, value]) => [key, value === "" ? undefined : value])
+			Object.entries(values).map(([key, value]) => [
+				key,
+				value === "" ? undefined : value,
+			]),
 		);
 
 		const res = await apiFetch("/profiles/me", {
@@ -85,7 +87,9 @@ export default function CompleteProfilePage() {
 		if (!res.ok) {
 			const err = (await res.json()) as { message?: string | string[] };
 			setSubmitError(
-				Array.isArray(err.message) ? err.message.join(", ") : err.message ?? "Failed to save profile"
+				Array.isArray(err.message)
+					? err.message.join(", ")
+					: (err.message ?? "Failed to save profile"),
 			);
 			return;
 		}
@@ -112,8 +116,10 @@ export default function CompleteProfilePage() {
 					/>
 				)}
 
-				<form 
-					onSubmit={handleSubmit(onSubmit, (err) => console.error("Validation errors:", err))} 
+				<form
+					onSubmit={handleSubmit(onSubmit, (err) =>
+						console.error("Validation errors:", err),
+					)}
 					noValidate
 				>
 					{/* Section 1: Personal Info */}

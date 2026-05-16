@@ -13,13 +13,13 @@ import {
 } from "@carbon/react";
 import styles from "./ResourceTableSection.module.scss";
 
-interface Cell {
+export interface Cell {
 	id: string;
 	value: unknown;
 	info: { header: string };
 }
 
-interface Row {
+export interface Row {
 	id: string;
 	cells: Cell[];
 }
@@ -45,6 +45,8 @@ interface ResourceTableSectionProps {
 	pagination?: PaginationConfig;
 	sort?: SortConfig;
 	toolbar?: React.ReactNode;
+	title?: string;
+	description?: string;
 	renderCell?: (cell: Cell, row: Row) => React.ReactNode | null;
 }
 
@@ -58,6 +60,8 @@ export default function ResourceTableSection({
 	pagination,
 	sort,
 	toolbar,
+	title,
+	description,
 	renderCell,
 }: ResourceTableSectionProps) {
 	return (
@@ -77,11 +81,7 @@ export default function ResourceTableSection({
 			{loading ? (
 				<DataTableSkeleton headers={[...headers]} rowCount={10} />
 			) : (
-				<DataTable
-					rows={[...rows]}
-					headers={[...headers]}
-					isSortable={true}
-				>
+				<DataTable rows={[...rows]} headers={[...headers]} isSortable={true}>
 					{({
 						rows: tableRows,
 						headers: tableHeaders,
@@ -90,7 +90,11 @@ export default function ResourceTableSection({
 						getRowProps,
 						getTableContainerProps,
 					}) => (
-						<TableContainer {...getTableContainerProps()}>
+						<TableContainer
+							{...getTableContainerProps()}
+							title={title}
+							description={description}
+						>
 							<Table {...getTableProps()} size="xl">
 								<TableHead>
 									<TableRow>
@@ -103,10 +107,7 @@ export default function ResourceTableSection({
 															const isAsc =
 																sort.key === header.key &&
 																sort.direction === "asc";
-															sort.onChange(
-																header.key,
-																isAsc ? "desc" : "asc",
-															);
+															sort.onChange(header.key, isAsc ? "desc" : "asc");
 														}
 													},
 												})}
@@ -129,9 +130,7 @@ export default function ResourceTableSection({
 											{row.cells.map((cell) => {
 												const custom = renderCell?.(cell, row);
 												if (custom !== null && custom !== undefined) {
-													return (
-														<TableCell key={cell.id}>{custom}</TableCell>
-													);
+													return <TableCell key={cell.id}>{custom}</TableCell>;
 												}
 												return (
 													<TableCell key={cell.id}>

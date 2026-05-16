@@ -2,7 +2,12 @@
 export { stats, features, steps, testimonials } from "./home";
 
 // Students page constants
-export { studentTableHeaders } from "./students";
+export {
+	studentTableHeaders,
+	studentProfileAssignments,
+	studentProfileContents,
+	studentProfileAttendances,
+} from "./students";
 
 // Dashboard page constants
 export { activityTableHeaders } from "./dashboard";

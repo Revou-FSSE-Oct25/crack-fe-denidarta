@@ -14,7 +14,10 @@ export async function fetchPrograms(
 	page: number,
 	limit: number,
 ): Promise<Paginated<Program>> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const params = new URLSearchParams({
+		page: String(page),
+		limit: String(limit),
+	});
 	const res = await apiFetch(`/programs?${params}`);
 	if (!res.ok) throw new Error(`Failed to fetch programs (${res.status})`);
 	const { data } = (await res.json()) as { data: Paginated<Program> };

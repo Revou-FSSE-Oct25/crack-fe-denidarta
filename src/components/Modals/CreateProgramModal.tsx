@@ -16,7 +16,10 @@ import { useQuery } from "@tanstack/react-query";
 import { createProgram } from "@/services/programs.service";
 import { getCurrentUser } from "@/services/profile.service";
 import { fetchAdminsAndInstructors } from "@/services/users.service";
-import { programSchema, type ProgramFormValues } from "@/schemas/program.schema";
+import {
+	programSchema,
+	type ProgramFormValues,
+} from "@/schemas/program.schema";
 
 interface CreateProgramModalProps {
 	open: boolean;
@@ -59,7 +62,11 @@ export default function CreateProgramModal({
 		setError(null);
 		try {
 			const user = await getCurrentUser();
-			await createProgram(values.programName, user.id, values.headOfProgram || undefined);
+			await createProgram(
+				values.programName,
+				user.id,
+				values.headOfProgram || undefined,
+			);
 			handleClose();
 			onSuccess();
 		} catch (err) {
@@ -110,7 +117,9 @@ export default function CreateProgramModal({
 					>
 						<SelectItem
 							value=""
-							text={headLoading ? "Loading users..." : "Select a head of program"}
+							text={
+								headLoading ? "Loading users..." : "Select a head of program"
+							}
 						/>
 						{headItems.map((item) => (
 							<SelectItem key={item.id} value={item.id} text={item.text} />

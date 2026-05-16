@@ -28,7 +28,11 @@ function deriveSubmissionStatus(a: Assignment): string {
 export default function StudentAssignmentsPage() {
 	const router = useRouter();
 
-	const { data: assignments = [], isLoading, error } = useQuery({
+	const {
+		data: assignments = [],
+		isLoading,
+		error,
+	} = useQuery({
 		queryKey: ["my-assignments"],
 		queryFn: fetchMyAssignments,
 	});

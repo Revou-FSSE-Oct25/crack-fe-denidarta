@@ -11,3 +11,23 @@ export const userStatusFilters = [
 	{ id: "inactive", text: "Inactive" },
 	{ id: "invited", text: "Invited" },
 ];
+
+export const studentProfileContents = [
+	{ key: "programName", header: "Program" },
+	{ key: "status", header: "Status" },
+	{ key: "enrolledAt", header: "Enrolled At" },
+];
+
+export const studentProfileAssignments = [
+	{ key: "assignmentTitle", header: "Assignment" },
+	{ key: "status", header: "Status" },
+	{ key: "grade", header: "Grade" },
+	{ key: "submittedAt", header: "Submitted At" },
+];
+
+export const studentProfileAttendances = [
+	{ key: "session", header: "Session" },
+	{ key: "date", header: "Date" },
+	{ key: "status", header: "Status" },
+	{ key: "verified", header: "Verification" },
+];

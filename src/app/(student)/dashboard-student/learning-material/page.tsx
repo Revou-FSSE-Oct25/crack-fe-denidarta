@@ -27,7 +27,11 @@ const headers = [
 ];
 
 export default function StudentLearningMaterialPage() {
-	const { data: materials = [], isLoading, error } = useQuery({
+	const {
+		data: materials = [],
+		isLoading,
+		error,
+	} = useQuery({
 		queryKey: ["my-learning-materials"],
 		queryFn: fetchMyLearningMaterials,
 	});

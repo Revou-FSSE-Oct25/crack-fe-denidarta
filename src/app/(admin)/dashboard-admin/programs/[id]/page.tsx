@@ -13,7 +13,10 @@ import {
 import { Add } from "@carbon/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchProgram } from "@/services/programs.service";
-import { enrolledStudentHeaders, programCourseHeaders } from "@/constants/programs";
+import {
+	enrolledStudentHeaders,
+	programCourseHeaders,
+} from "@/constants/programs";
 import PageLayout, { PageHeader, PageSection } from "@/components/PageLayout";
 import ResourceTableSection from "@/components/ResourceTableSection";
 import dynamic from "next/dynamic";
@@ -29,7 +32,11 @@ export default function ProgramDetailPage() {
 	const queryClient = useQueryClient();
 	const [enrollModalOpen, setEnrollModalOpen] = useState(false);
 
-	const { data: program, isLoading, error } = useQuery({
+	const {
+		data: program,
+		isLoading,
+		error,
+	} = useQuery({
 		queryKey: ["program", id],
 		queryFn: () => fetchProgram(id!),
 		enabled: !!id,
@@ -64,7 +71,9 @@ export default function ProgramDetailPage() {
 	return (
 		<PageLayout>
 			<Breadcrumb>
-				<BreadcrumbItem href="/dashboard-admin/programs">Programs</BreadcrumbItem>
+				<BreadcrumbItem href="/dashboard-admin/programs">
+					Programs
+				</BreadcrumbItem>
 				<BreadcrumbItem isCurrentPage>
 					{isLoading ? "..." : (program?.name ?? id)}
 				</BreadcrumbItem>
@@ -76,7 +85,9 @@ export default function ProgramDetailPage() {
 				<InlineNotification
 					kind="error"
 					title="Error"
-					subtitle={error instanceof Error ? error.message : "Failed to load program"}
+					subtitle={
+						error instanceof Error ? error.message : "Failed to load program"
+					}
 					lowContrast
 				/>
 			) : (
@@ -91,7 +102,13 @@ export default function ProgramDetailPage() {
 					headers={enrolledStudentHeaders}
 					rows={studentRows}
 					toolbar={
-						<div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "flex-end",
+								width: "100%",
+							}}
+						>
 							<Button
 								kind="primary"
 								size="md"

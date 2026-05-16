@@ -18,7 +18,10 @@ import { useQuery } from "@tanstack/react-query";
 import { createProgram } from "@/services/programs.service";
 import { getCurrentUser } from "@/services/profile.service";
 import { fetchAdminsAndInstructors } from "@/services/users.service";
-import { programSchema, type ProgramFormValues } from "@/schemas/program.schema";
+import {
+	programSchema,
+	type ProgramFormValues,
+} from "@/schemas/program.schema";
 import styles from "./create-program.module.scss";
 
 export default function CreateProgramPage() {
@@ -46,7 +49,11 @@ export default function CreateProgramPage() {
 		setError(null);
 		try {
 			const user = await getCurrentUser();
-			await createProgram(values.programName, user.id, values.headOfProgram || undefined);
+			await createProgram(
+				values.programName,
+				user.id,
+				values.headOfProgram || undefined,
+			);
 			router.push("/dashboard/programs");
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Failed to create program");
@@ -142,10 +149,18 @@ export default function CreateProgramPage() {
 								>
 									<SelectItem
 										value=""
-										text={headLoading ? "Loading users..." : "Select a head of program"}
+										text={
+											headLoading
+												? "Loading users..."
+												: "Select a head of program"
+										}
 									/>
 									{headItems.map((item) => (
-										<SelectItem key={item.id} value={item.id} text={item.text} />
+										<SelectItem
+											key={item.id}
+											value={item.id}
+											text={item.text}
+										/>
 									))}
 								</FluidSelect>
 							</FluidForm>

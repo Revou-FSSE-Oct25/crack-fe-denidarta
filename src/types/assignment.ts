@@ -57,4 +57,5 @@ export interface AssignmentSubmission {
 	status: "notSubmitted" | "submitted" | "graded";
 	createdAt: string;
 	updatedAt: string;
+	assignment?: { id: string; title: string } | null;
 }

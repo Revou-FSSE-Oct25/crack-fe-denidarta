@@ -17,11 +17,13 @@ npm install
 ```
 
 Buat file `.env.local`:
+
 ```env
 NEXT_PUBLIC_BACKEND_URL=http://localhost:3001
 ```
 
 Jalankan dev server:
+
 ```bash
 npm run dev
 ```
@@ -44,8 +46,8 @@ Frontend di-deploy ke **Netlify**: [https://rapor-biru.netlify.app](https://rapo
 
 Environment variable yang wajib di-set di Netlify:
 
-| Key | Value |
-|-----|-------|
+| Key                       | Value                          |
+| ------------------------- | ------------------------------ |
 | `NEXT_PUBLIC_BACKEND_URL` | `https://api.raporbiru.web.id` |
 
 Deploy otomatis saat push ke branch `main`.

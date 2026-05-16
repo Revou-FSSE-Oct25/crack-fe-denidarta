@@ -24,7 +24,10 @@ export async function fetchCertificates(
 	page: number,
 	limit: number,
 ): Promise<Paginated<Certificate>> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const params = new URLSearchParams({
+		page: String(page),
+		limit: String(limit),
+	});
 	const res = await apiFetch(`/certificates?${params}`);
 	if (!res.ok) throw new Error(`Failed to fetch certificates (${res.status})`);
 	const { data } = (await res.json()) as { data: Paginated<Certificate> };
@@ -35,7 +38,10 @@ export async function fetchStudentCertificates(
 	page: number,
 	limit: number,
 ): Promise<Paginated<Certificate>> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const params = new URLSearchParams({
+		page: String(page),
+		limit: String(limit),
+	});
 	const res = await apiFetch(`/certificates/student?${params}`);
 	if (!res.ok) throw new Error(`Failed to fetch certificates (${res.status})`);
 	const { data } = (await res.json()) as { data: Paginated<Certificate> };

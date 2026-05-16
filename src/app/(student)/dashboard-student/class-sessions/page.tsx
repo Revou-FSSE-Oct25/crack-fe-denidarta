@@ -34,10 +34,16 @@ const headers = [
 
 export default function StudentSessionsPage() {
 	const queryClient = useQueryClient();
-	const [checkInErrors, setCheckInErrors] = useState<Record<string, string>>({});
+	const [checkInErrors, setCheckInErrors] = useState<Record<string, string>>(
+		{},
+	);
 	const [checkingIn, setCheckingIn] = useState<Record<string, boolean>>({});
 
-	const { data: rows = [], isLoading, error } = useQuery({
+	const {
+		data: rows = [],
+		isLoading,
+		error,
+	} = useQuery({
 		queryKey: ["my-sessions"],
 		queryFn: fetchMySessionsWithAttendance,
 	});
@@ -136,11 +142,17 @@ export default function StudentSessionsPage() {
 														return (
 															<TableCell key={cell.id}>
 																{att === "present" ? (
-																	<Tag type="green" size="sm">Present</Tag>
+																	<Tag type="green" size="sm">
+																		Present
+																	</Tag>
 																) : att === "unverified" ? (
-																	<Tag type="gray" size="sm">Not checked in</Tag>
+																	<Tag type="gray" size="sm">
+																		Not checked in
+																	</Tag>
 																) : att ? (
-																	<Tag type="red" size="sm">{att}</Tag>
+																	<Tag type="red" size="sm">
+																		{att}
+																	</Tag>
 																) : (
 																	<span>—</span>
 																)}

@@ -1,0 +1,41 @@
+.content {
+	padding-top: 1.5rem;
+}
+
+.tabContent {
+	padding: 2rem 0;
+}
+
+.sectionTitle {
+	margin-bottom: 1.5rem;
+	font-weight: 600;
+	color: #161616;
+}
+
+.infoGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: 1.5rem;
+	background: #f4f4f4;
+	padding: 1.5rem;
+	border-radius: 4px;
+}
+
+.infoItem {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.label {
+	font-size: 0.75rem;
+	color: #525252;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.value {
+	font-size: 1rem;
+	font-weight: 500;
+	color: #161616;
+}

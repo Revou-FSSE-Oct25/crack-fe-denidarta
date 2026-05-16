@@ -26,7 +26,11 @@ import { DATE_LOCALE } from "@/constants";
 export default function ProgramCertificatesPage() {
 	const [search, setSearch] = useState("");
 
-	const { data: certificates = [], isLoading, error } = useQuery({
+	const {
+		data: certificates = [],
+		isLoading,
+		error,
+	} = useQuery({
 		queryKey: ["certificates-all"],
 		queryFn: fetchAllCertificates,
 	});

@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Modal, TextInput, Select, SelectItem, InlineNotification } from "@carbon/react";
+import {
+	Modal,
+	TextInput,
+	Select,
+	SelectItem,
+	InlineNotification,
+} from "@carbon/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { apiFetch } from "@/lib/api-client";
@@ -43,7 +49,11 @@ export default function AddNewUserModal({
 		try {
 			const res = await apiFetch("/users", {
 				method: "POST",
-				body: JSON.stringify({ username: values.username, email: values.email, role: values.role }),
+				body: JSON.stringify({
+					username: values.username,
+					email: values.email,
+					role: values.role,
+				}),
 			});
 
 			if (res.status === 409) {
@@ -51,11 +61,15 @@ export default function AddNewUserModal({
 				return;
 			}
 			if (!res.ok) {
-				const body = (await res.json().catch(() => ({}))) as { message?: string };
+				const body = (await res.json().catch(() => ({}))) as {
+					message?: string;
+				};
 				throw new Error(body.message ?? `Error ${res.status}`);
 			}
 
-			const { data: { data: user } } = (await res.json()) as { data: { data: { id: string } } };
+			const {
+				data: { data: user },
+			} = (await res.json()) as { data: { data: { id: string } } };
 			const token = await inviteUser(user.id);
 			const link = `${window.location.origin}/create-account/${token}?email=${encodeURIComponent(values.email)}`;
 			setInvitationLink(link);

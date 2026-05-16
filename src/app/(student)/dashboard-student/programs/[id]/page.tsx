@@ -81,9 +81,9 @@ export default function StudentProgramDetailPage() {
 					<p className={styles.empty}>No courses in this program yet.</p>
 				) : (
 					<DataTable
-						rows={courses.map((c) => ({
-							id: c.courseId || c.id,
-							name: c.courseTitle || c.name,
+						rows={courses.map((c, index) => ({
+							id: c.courseId || c.id || `course-${index}`,
+							name: c.courseTitle || c.name || "Untitled Course",
 							instructor: c.instructor?.fullName ?? "—",
 							startedAt: c.startedAt
 								? new Date(c.startedAt).toLocaleDateString(DATE_LOCALE)

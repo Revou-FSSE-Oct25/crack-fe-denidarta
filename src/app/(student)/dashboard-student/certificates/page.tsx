@@ -24,7 +24,11 @@ const headers = [
 ];
 
 export default function StudentCertificatesPage() {
-	const { data: certs = [], isLoading, error } = useQuery({
+	const {
+		data: certs = [],
+		isLoading,
+		error,
+	} = useQuery({
 		queryKey: ["my-certificates"],
 		queryFn: fetchMyCertificates,
 	});
@@ -32,7 +36,8 @@ export default function StudentCertificatesPage() {
 	const rows = certs.map((c) => ({
 		id: c.id,
 		programNameSnapshot: c.programNameSnapshot ?? c.program?.name ?? "—",
-		studentNameSnapshot: c.studentNameSnapshot ?? c.user?.profile?.fullName ?? "—",
+		studentNameSnapshot:
+			c.studentNameSnapshot ?? c.user?.profile?.fullName ?? "—",
 		issuedAt: new Date(c.issuedAt).toLocaleDateString("id-ID"),
 		certNumber: c.certNumber ?? "—",
 	}));

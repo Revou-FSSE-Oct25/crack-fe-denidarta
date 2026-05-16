@@ -10,7 +10,10 @@ export async function fetchAssignments(
 	page: number,
 	limit: number,
 ): Promise<Paginated<Assignment>> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const params = new URLSearchParams({
+		page: String(page),
+		limit: String(limit),
+	});
 	const res = await apiFetch(`/assignments?${params}`);
 	if (!res.ok) throw new Error(`Failed to fetch assignments (${res.status})`);
 	const { data } = (await res.json()) as { data: Paginated<Assignment> };
@@ -20,7 +23,9 @@ export async function fetchAssignments(
 export async function fetchAssignmentById(id: string): Promise<Assignment> {
 	const res = await apiFetch(`/assignments/${id}`);
 	if (!res.ok) throw new Error(`Failed to fetch assignment (${res.status})`);
-	const json = (await res.json()) as { data: { data: Assignment } | Assignment };
+	const json = (await res.json()) as {
+		data: { data: Assignment } | Assignment;
+	};
 	if ("data" in json.data && !Array.isArray(json.data.data)) {
 		return json.data.data;
 	}
@@ -31,7 +36,10 @@ export async function fetchStudentAssignments(
 	page: number,
 	limit: number,
 ): Promise<Paginated<Assignment>> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+	const params = new URLSearchParams({
+		page: String(page),
+		limit: String(limit),
+	});
 	const res = await apiFetch(`/assignments/student?${params}`);
 	if (!res.ok) throw new Error(`Failed to fetch assignments (${res.status})`);
 	const { data } = (await res.json()) as { data: Paginated<Assignment> };
@@ -67,7 +75,9 @@ interface AssignmentPayload {
 	gradingCriteria: { label: string; description?: string; points: number }[];
 }
 
-export async function createAssignment(payload: AssignmentPayload): Promise<Assignment> {
+export async function createAssignment(
+	payload: AssignmentPayload,
+): Promise<Assignment> {
 	const res = await apiFetch("/assignments", {
 		method: "POST",
 		body: JSON.stringify(payload),
@@ -76,7 +86,9 @@ export async function createAssignment(payload: AssignmentPayload): Promise<Assi
 		const err = (await res.json()) as { message?: string };
 		throw new Error(err.message ?? "Failed to create assignment");
 	}
-	const json = (await res.json()) as { data: { data: Assignment } | Assignment };
+	const json = (await res.json()) as {
+		data: { data: Assignment } | Assignment;
+	};
 	if ("data" in json.data && !Array.isArray(json.data.data)) {
 		return json.data.data;
 	}
@@ -95,7 +107,9 @@ export async function updateAssignment(
 		const err = (await res.json()) as { message?: string };
 		throw new Error(err.message ?? "Failed to update assignment");
 	}
-	const json = (await res.json()) as { data: { data: Assignment } | Assignment };
+	const json = (await res.json()) as {
+		data: { data: Assignment } | Assignment;
+	};
 	if ("data" in json.data && !Array.isArray(json.data.data)) {
 		return json.data.data;
 	}

@@ -76,4 +76,8 @@ export interface ClassAttendance {
 	verifiedAt: string | null;
 	createdAt: string;
 	updatedAt: string;
+	classSession?: {
+		title: string;
+		sessionDate: string;
+	};
 }

@@ -1,6 +1,6 @@
 // Configure Carbon's IBM Plex font asset path for modern bundlers (Turbopack).
 @use "@carbon/styles/scss/config" with (
-  $use-akamai-cdn: true
+	$use-akamai-cdn: true
 );
 
 @use "@carbon/styles";
@@ -12,9 +12,9 @@
 // Semantic brand tokens — mapped to Carbon blue scale.
 // Use these on custom surfaces instead of repeating hex values.
 :root {
-  --app-brand-primary: #0f62fe;
-  --app-brand-primary-hover: #0043ce;
-  --app-content-max-width: 99rem;
-  --app-spacing-page-x: 2rem;
-  --app-spacing-page-y: 1.5rem;
+	--app-brand-primary: #0f62fe;
+	--app-brand-primary-hover: #0043ce;
+	--app-content-max-width: 99rem;
+	--app-spacing-page-x: 2rem;
+	--app-spacing-page-y: 1.5rem;
 }

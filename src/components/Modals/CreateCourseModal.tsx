@@ -22,7 +22,6 @@ import { fetchAdminsAndInstructors } from "@/services/users.service";
 import { fetchAllPrograms } from "@/services/programs.service";
 import { courseSchema, type CourseFormValues } from "@/schemas/course.schema";
 
-
 interface CreateCourseModalProps {
 	open: boolean;
 	onRequestClose: () => void;
@@ -88,13 +87,17 @@ export default function CreateCourseModal({
 				}),
 			});
 			if (!res.ok) {
-				const body = (await res.json().catch(() => ({}))) as { message?: string };
+				const body = (await res.json().catch(() => ({}))) as {
+					message?: string;
+				};
 				throw new Error(body?.message ?? `Error ${res.status}`);
 			}
 			onSuccess();
 			handleClose();
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "An unexpected error occurred");
+			setError(
+				err instanceof Error ? err.message : "An unexpected error occurred",
+			);
 		} finally {
 			setSubmitting(false);
 		}
@@ -130,7 +133,7 @@ export default function CreateCourseModal({
 						<Controller
 							name="name"
 							control={control}
-								render={({ field }) => (
+							render={({ field }) => (
 								<TextInput
 									{...field}
 									id="course-name"
@@ -159,7 +162,7 @@ export default function CreateCourseModal({
 						<Controller
 							name="instructorId"
 							control={control}
-								render={({ field }) => (
+							render={({ field }) => (
 								<Select
 									{...field}
 									id="course-instructor"
@@ -182,7 +185,7 @@ export default function CreateCourseModal({
 						<Controller
 							name="programId"
 							control={control}
-								render={({ field }) => (
+							render={({ field }) => (
 								<Select
 									{...field}
 									id="course-program"
@@ -205,7 +208,7 @@ export default function CreateCourseModal({
 						<Controller
 							name="status"
 							control={control}
-								render={({ field }) => (
+							render={({ field }) => (
 								<Select
 									{...field}
 									id="course-status"
@@ -224,14 +227,18 @@ export default function CreateCourseModal({
 						<Controller
 							name="startedAt"
 							control={control}
-								render={({ field }) => (
+							render={({ field }) => (
 								<DatePicker
 									datePickerType="single"
 									onChange={(dates) => {
 										if (dates[0])
 											field.onChange(
 												new Date(
-													Date.UTC(dates[0].getFullYear(), dates[0].getMonth(), dates[0].getDate()),
+													Date.UTC(
+														dates[0].getFullYear(),
+														dates[0].getMonth(),
+														dates[0].getDate(),
+													),
 												).toISOString(),
 											);
 										else field.onChange("");
@@ -251,14 +258,18 @@ export default function CreateCourseModal({
 						<Controller
 							name="endedAt"
 							control={control}
-								render={({ field }) => (
+							render={({ field }) => (
 								<DatePicker
 									datePickerType="single"
 									onChange={(dates) => {
 										if (dates[0])
 											field.onChange(
 												new Date(
-													Date.UTC(dates[0].getFullYear(), dates[0].getMonth(), dates[0].getDate()),
+													Date.UTC(
+														dates[0].getFullYear(),
+														dates[0].getMonth(),
+														dates[0].getDate(),
+													),
 												).toISOString(),
 											);
 										else field.onChange("");
